@@ -122,3 +122,9 @@ jobs:
         with:
           command: doc
           args: --features=std
+
+  cargo-deny:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: EmbarkStudios/cargo-deny-action@v1
