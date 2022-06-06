@@ -150,10 +150,8 @@ fn test_with_file(tmp_path: &Path, sgdisk_path: &Path) -> Result<()> {
 #[test]
 #[cfg_attr(miri, ignore)]
 fn test_disk() -> Result<()> {
-    // If sgdisk is not available, silently skip the test. TODO: ensure
-    // that the test is not skipped in CI.
     if Command::new("sgdisk").arg("--version").status().is_err() {
-        return Ok(());
+        panic!("failed to run sgdisk, is it installed?");
     }
 
     let tmp_dir = TempDir::new()?;
