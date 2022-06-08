@@ -19,11 +19,7 @@ use common::check_derives;
 use gpt_disk_io::{BlockIo, MutSliceBlockIo, SliceBlockIo, SliceBlockIoError};
 use gpt_disk_types::{BlockSize, Lba};
 #[cfg(feature = "std")]
-use {
-    gpt_disk_io::StdBlockIo,
-    std::fs::{self, OpenOptions},
-    tempfile::TempDir,
-};
+use {gpt_disk_io::StdBlockIo, std::io::Cursor};
 
 fn test_block_io_read<Io>(mut bio: Io) -> Result<(), Io::Error>
 where
@@ -146,41 +142,44 @@ fn test_slice_block_io() -> Result<()> {
 
 #[cfg(feature = "std")]
 fn test_std_block_io() -> Result<()> {
-    let mut data = vec![0; 512 * 3];
+    let empty = vec![0; 512 * 3];
 
-    // Write data to the beginning and end of the first two blocks.
-    data[0] = 1;
-    data[511] = 2;
-    data[512] = 3;
-    data[1023] = 4;
+    {
+        // Write data to the beginning and end of the first two blocks.
+        let mut data = empty.clone();
+        data[0] = 1;
+        data[511] = 2;
+        data[512] = 3;
+        data[1023] = 4;
 
-    // Copy the data to a file for testing with StdBlockIo.
-    let tmp_dir = TempDir::new()?;
-    let disk_path = tmp_dir.path().join("disk");
-    fs::write(&disk_path, &data)?;
+        let mut cursor = Cursor::new(data);
+        test_block_io_read(StdBlockIo::new(&mut cursor, BlockSize::B512))
+            .unwrap();
+    };
 
-    let mut file = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .truncate(false)
-        .open(&disk_path)?;
-    test_block_io_read(StdBlockIo::new(&mut file, BlockSize::B512)).unwrap();
+    {
+        let mut cursor = Cursor::new(empty.clone());
+        test_block_io_write1(StdBlockIo::new(&mut cursor, BlockSize::B512))
+            .unwrap();
+        let data = cursor.into_inner();
+        assert_eq!(data.len(), 512 * 3);
+        assert_eq!(data[0], 5);
+        assert_eq!(data[511], 6);
+        assert_eq!(data[512], 7);
+        assert_eq!(data[1023], 8);
+    }
 
-    test_block_io_write1(StdBlockIo::new(&mut file, BlockSize::B512)).unwrap();
-    data = fs::read(&disk_path)?;
-    assert_eq!(data.len(), 512 * 3);
-    assert_eq!(data[0], 5);
-    assert_eq!(data[511], 6);
-    assert_eq!(data[512], 7);
-    assert_eq!(data[1023], 8);
-
-    test_block_io_write2(StdBlockIo::new(&mut file, BlockSize::B512)).unwrap();
-    data = fs::read(&disk_path)?;
-    assert_eq!(data.len(), 512 * 3);
-    assert_eq!(data[512], 9);
-    assert_eq!(data[1023], 10);
-    assert_eq!(data[1024], 11);
-    assert_eq!(data[1535], 12);
+    {
+        let mut cursor = Cursor::new(empty.clone());
+        test_block_io_write2(StdBlockIo::new(&mut cursor, BlockSize::B512))
+            .unwrap();
+        let data = cursor.into_inner();
+        assert_eq!(data.len(), 512 * 3);
+        assert_eq!(data[512], 9);
+        assert_eq!(data[1023], 10);
+        assert_eq!(data[1024], 11);
+        assert_eq!(data[1535], 12);
+    }
 
     Ok(())
 }
