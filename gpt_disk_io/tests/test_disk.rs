@@ -21,13 +21,12 @@ use common::{
 use gpt_disk_io::{BlockIo, Disk, DiskError, MutSliceBlockIo};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
 use std::io::{Cursor, Read};
-use std::path::Path;
-use std::process::Command;
-use tempfile::TempDir;
 #[cfg(feature = "std")]
 use {
     gpt_disk_io::StdBlockIo,
     std::fs::{self, File, OpenOptions},
+    std::path::Path,
+    tempfile::TempDir,
 };
 
 fn load_test_disk() -> Vec<u8> {
@@ -120,16 +119,6 @@ where
     Ok(())
 }
 
-fn run_cmd(cmd: &mut Command) -> Result<()> {
-    let o = cmd.output()?;
-    assert!(o.status.success());
-    Ok(())
-}
-
-fn create_empty_file(path: &Path, size: &str) -> Result<()> {
-    run_cmd(Command::new("truncate").args(&["--size", size]).arg(path))
-}
-
 fn test_with_mut_slice(test_disk: &[u8]) -> Result<()> {
     let mut contents = test_disk.to_vec();
 
@@ -157,7 +146,7 @@ fn test_with_file(tmp_path: &Path, test_disk: &[u8]) -> Result<()> {
 
     // Test write.
     let new_disk_path = tmp_path.join("new_disk.bin");
-    create_empty_file(&new_disk_path, "4MiB")?;
+    fs::write(&new_disk_path, vec![0; 4 * 1024 * 1024])?;
     let mut new_file = OpenOptions::new()
         .read(true)
         .write(true)
@@ -174,15 +163,17 @@ fn test_with_file(tmp_path: &Path, test_disk: &[u8]) -> Result<()> {
 #[test]
 #[cfg_attr(miri, ignore)]
 fn test_disk() -> Result<()> {
-    let tmp_dir = TempDir::new()?;
-    let tmp_path = tmp_dir.path();
-
     let test_disk = load_test_disk();
 
     test_with_mut_slice(&test_disk)?;
 
     #[cfg(feature = "std")]
-    test_with_file(&tmp_path, &test_disk)?;
+    {
+        let tmp_dir = TempDir::new()?;
+        let tmp_path = tmp_dir.path();
+
+        test_with_file(&tmp_path, &test_disk)?;
+    }
 
     Ok(())
 }
