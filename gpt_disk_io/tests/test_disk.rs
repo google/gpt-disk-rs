@@ -20,15 +20,35 @@ use common::{
 };
 use gpt_disk_io::{BlockIo, Disk, DiskError, MutSliceBlockIo};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
-use std::fs;
+use std::io::{Cursor, Read};
 use std::path::Path;
 use std::process::Command;
 use tempfile::TempDir;
 #[cfg(feature = "std")]
 use {
     gpt_disk_io::StdBlockIo,
-    std::fs::{File, OpenOptions},
+    std::fs::{self, File, OpenOptions},
 };
+
+fn load_test_disk() -> Vec<u8> {
+    // Test data generated as follows:
+    //
+    // truncate --size 4MiB disk.bin
+    // sgdisk disk.bin \
+    //   --disk-guid=57a7feb6-8cd5-4922-b7bd-c78b0914e870 \
+    //   --new=1:2048:4096 \
+    //   --change-name='1:hello world!' \
+    //   --partition-guid=1:37c75ffd-8932-467a-9c56-8cf1f0456b12 \
+    //   --typecode=1:ccf0994f-f7e0-4e26-a011-843e38aa2eac
+    // bzip2 disk.bin
+    // mv disk.bin.bz2 gpt_disk_io/tests/
+    let compressed_data = Cursor::new(include_bytes!("disk.bin.bz2"));
+
+    let mut reader = bzip2_rs::DecoderReader::new(compressed_data);
+    let mut disk = Vec::new();
+    reader.read_to_end(&mut disk).unwrap();
+    disk
+}
 
 fn test_disk_read<Io>(block_io: Io) -> Result<(), DiskError<Io::Error>>
 where
@@ -110,9 +130,10 @@ fn create_empty_file(path: &Path, size: &str) -> Result<()> {
     run_cmd(Command::new("truncate").args(&["--size", size]).arg(path))
 }
 
-fn test_with_mut_slice(sgdisk_path: &Path) -> Result<()> {
+fn test_with_mut_slice(test_disk: &[u8]) -> Result<()> {
+    let mut contents = test_disk.to_vec();
+
     // Test read.
-    let mut contents = fs::read(&sgdisk_path)?;
     test_disk_read(MutSliceBlockIo::new(&mut contents, BlockSize::B512))
         .unwrap();
 
@@ -126,7 +147,10 @@ fn test_with_mut_slice(sgdisk_path: &Path) -> Result<()> {
 }
 
 #[cfg(feature = "std")]
-fn test_with_file(tmp_path: &Path, sgdisk_path: &Path) -> Result<()> {
+fn test_with_file(tmp_path: &Path, test_disk: &[u8]) -> Result<()> {
+    let sgdisk_path = tmp_path.join("disk.bin");
+    fs::write(&sgdisk_path, test_disk)?;
+
     // Test read.
     let mut file = File::open(&sgdisk_path)?;
     test_disk_read(StdBlockIo::new(&mut file, BlockSize::B512))?;
@@ -150,27 +174,15 @@ fn test_with_file(tmp_path: &Path, sgdisk_path: &Path) -> Result<()> {
 #[test]
 #[cfg_attr(miri, ignore)]
 fn test_disk() -> Result<()> {
-    if Command::new("sgdisk").arg("--version").status().is_err() {
-        panic!("failed to run sgdisk, is it installed?");
-    }
-
     let tmp_dir = TempDir::new()?;
     let tmp_path = tmp_dir.path();
 
-    let sgdisk_path = tmp_path.join("disk.bin");
-    create_empty_file(&sgdisk_path, "4MiB")?;
-    run_cmd(Command::new("sgdisk").arg(&sgdisk_path).args(&[
-        "--disk-guid=57a7feb6-8cd5-4922-b7bd-c78b0914e870",
-        "--new=1:2048:4096",
-        "--change-name=1:hello world!",
-        "--partition-guid=1:37c75ffd-8932-467a-9c56-8cf1f0456b12",
-        "--typecode=1:ccf0994f-f7e0-4e26-a011-843e38aa2eac",
-    ]))?;
+    let test_disk = load_test_disk();
 
-    test_with_mut_slice(&sgdisk_path)?;
+    test_with_mut_slice(&test_disk)?;
 
     #[cfg(feature = "std")]
-    test_with_file(&tmp_path, &sgdisk_path)?;
+    test_with_file(&tmp_path, &test_disk)?;
 
     Ok(())
 }
