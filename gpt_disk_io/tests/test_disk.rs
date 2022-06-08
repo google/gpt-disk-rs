@@ -18,16 +18,11 @@ use anyhow::Result;
 use common::{
     create_partition_entry, create_primary_header, create_secondary_header,
 };
+#[cfg(feature = "std")]
+use gpt_disk_io::StdBlockIo;
 use gpt_disk_io::{BlockIo, Disk, DiskError, MutSliceBlockIo};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
 use std::io::{Cursor, Read};
-#[cfg(feature = "std")]
-use {
-    gpt_disk_io::StdBlockIo,
-    std::fs::{self, File, OpenOptions},
-    std::path::Path,
-    tempfile::TempDir,
-};
 
 fn load_test_disk() -> Vec<u8> {
     // Test data generated as follows:
@@ -136,26 +131,17 @@ fn test_with_mut_slice(test_disk: &[u8]) -> Result<()> {
 }
 
 #[cfg(feature = "std")]
-fn test_with_file(tmp_path: &Path, test_disk: &[u8]) -> Result<()> {
-    let sgdisk_path = tmp_path.join("disk.bin");
-    fs::write(&sgdisk_path, test_disk)?;
+fn test_with_filelike(test_disk: &[u8]) -> Result<()> {
+    let mut test_disk_cursor = Cursor::new(test_disk.to_vec());
 
     // Test read.
-    let mut file = File::open(&sgdisk_path)?;
-    test_disk_read(StdBlockIo::new(&mut file, BlockSize::B512))?;
+    test_disk_read(StdBlockIo::new(&mut test_disk_cursor, BlockSize::B512))?;
 
     // Test write.
-    let new_disk_path = tmp_path.join("new_disk.bin");
-    fs::write(&new_disk_path, vec![0; 4 * 1024 * 1024])?;
-    let mut new_file = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .truncate(false)
-        .open(&new_disk_path)?;
-    test_disk_write(StdBlockIo::new(&mut new_file, BlockSize::B512)).unwrap();
-    let expected_bytes = fs::read(&sgdisk_path)?;
-    let actual_bytes = fs::read(&new_disk_path)?;
-    assert_eq!(expected_bytes, actual_bytes);
+    let mut new_disk = vec![0; 4 * 1024 * 1024];
+    let mut new_disk_cursor = Cursor::new(&mut new_disk);
+    test_disk_write(StdBlockIo::new(&mut new_disk_cursor, BlockSize::B512))?;
+    assert_eq!(new_disk, test_disk);
 
     Ok(())
 }
@@ -168,12 +154,7 @@ fn test_disk() -> Result<()> {
     test_with_mut_slice(&test_disk)?;
 
     #[cfg(feature = "std")]
-    {
-        let tmp_dir = TempDir::new()?;
-        let tmp_path = tmp_dir.path();
-
-        test_with_file(&tmp_path, &test_disk)?;
-    }
+    test_with_filelike(&test_disk)?;
 
     Ok(())
 }
