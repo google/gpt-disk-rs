@@ -254,14 +254,14 @@ pub struct BlockSize(NonZeroU32);
 
 impl BlockSize {
     /// 512-byte block size.
-    pub const B512: Self = Self(if let Some(nz) = NonZeroU32::new(512) {
+    pub const BS_512: Self = Self(if let Some(nz) = NonZeroU32::new(512) {
         nz
     } else {
         unreachable!()
     });
 
     /// 4096-byte block size.
-    pub const B4096: Self = Self(if let Some(nz) = NonZeroU32::new(4096) {
+    pub const BS_4096: Self = Self(if let Some(nz) = NonZeroU32::new(4096) {
         nz
     } else {
         unreachable!()
@@ -309,7 +309,7 @@ impl BlockSize {
 
 impl Default for BlockSize {
     fn default() -> Self {
-        BlockSize::B512
+        BlockSize::BS_512
     }
 }
 

@@ -47,7 +47,7 @@
 //! let mut disk_storage = vec![0; 4 * 1024 * 1024];
 //!
 //! // Standard 512-byte block size.
-//! let bs = BlockSize::B512;
+//! let bs = BlockSize::BS_512;
 //!
 //! // `MutSliceBlockIo` implements the `BlockIo` trait which is used by
 //! // the `Disk` type for reading and writing.

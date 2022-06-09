@@ -28,9 +28,11 @@ fn test_partition_entry_array_layout() {
         entry_size: GptPartitionEntrySize::new(256).unwrap(),
         num_entries: 128,
     };
-    assert_eq!(layout.num_blocks(BlockSize::B512).unwrap(), 64);
+    assert_eq!(layout.num_blocks(BlockSize::BS_512).unwrap(), 64);
     assert_eq!(
-        layout.num_bytes_rounded_to_block(BlockSize::B512).unwrap(),
+        layout
+            .num_bytes_rounded_to_block(BlockSize::BS_512)
+            .unwrap(),
         64 * 512
     );
     assert_eq!(layout.num_bytes_exact().unwrap(), 256 * 128);
