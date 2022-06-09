@@ -20,7 +20,7 @@ use common::{
 };
 #[cfg(feature = "std")]
 use gpt_disk_io::StdBlockIo;
-use gpt_disk_io::{BlockIo, Disk, DiskError, MutSliceBlockIo};
+use gpt_disk_io::{BlockIo, Disk, DiskError, MutSliceBlockIo, SliceBlockIo};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
 use std::io::{Cursor, Read};
 
@@ -135,7 +135,11 @@ where
     Ok(())
 }
 
-fn test_with_mut_slice(test_disk: &[u8]) -> Result<()> {
+fn test_with_slice(test_disk: &[u8]) {
+    test_disk_read(SliceBlockIo::new(test_disk, BlockSize::BS_512)).unwrap();
+}
+
+fn test_with_mut_slice(test_disk: &[u8]) {
     let mut contents = test_disk.to_vec();
 
     // Test read.
@@ -147,8 +151,6 @@ fn test_with_mut_slice(test_disk: &[u8]) -> Result<()> {
     test_disk_write(MutSliceBlockIo::new(&mut new_contents, BlockSize::BS_512))
         .unwrap();
     assert_eq!(contents, new_contents);
-
-    Ok(())
 }
 
 #[cfg(feature = "std")]
@@ -172,7 +174,8 @@ fn test_with_filelike(test_disk: &[u8]) -> Result<()> {
 fn test_disk() -> Result<()> {
     let test_disk = load_test_disk();
 
-    test_with_mut_slice(&test_disk)?;
+    test_with_slice(&test_disk);
+    test_with_mut_slice(&test_disk);
 
     #[cfg(feature = "std")]
     test_with_filelike(&test_disk)?;
