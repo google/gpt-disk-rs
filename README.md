@@ -1,5 +1,7 @@
 # gpt-disk-rs
 
+[![codecov](https://codecov.io/gh/google/gpt-disk-rs/branch/main/graph/badge.svg?token=qN5MUcTVQ5)](https://codecov.io/gh/google/gpt-disk-rs)
+
 `no_std` libraries related to [GPT] (GUID Partition Table) disk
 data. There are two Rust packages in this repository:
 
