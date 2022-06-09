@@ -99,6 +99,10 @@ fn test_slice_block_io_error() {
         "numeric overflow occurred"
     );
     assert_eq!(
+        SliceBlockIoError::ReadOnly.to_string(),
+        "attempted to write to a read-only byte slice"
+    );
+    assert_eq!(
         SliceBlockIoError::OutOfBounds {
             start_lba: Lba(1),
             length_in_bytes: 2
@@ -117,8 +121,13 @@ fn test_slice_block_io() -> Result<()> {
     data[512] = 3;
     data[1023] = 4;
 
-    let bio = SliceBlockIo::new(&mut data, BlockSize::BS_512);
-    test_block_io_read(bio).unwrap();
+    test_block_io_read(SliceBlockIo::new(&mut data, BlockSize::BS_512))
+        .unwrap();
+    // Test that writes to a read-only slice fail.
+    assert_eq!(
+        test_block_io_write1(SliceBlockIo::new(&mut data, BlockSize::BS_512)),
+        Err(SliceBlockIoError::ReadOnly)
+    );
 
     let bio = MutSliceBlockIo::new(&mut data, BlockSize::BS_512);
     test_block_io_read(bio).unwrap();
