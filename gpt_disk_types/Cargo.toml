@@ -14,7 +14,7 @@
 
 [package]
 name = "gpt_disk_types"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
 
 categories = ["data-structures", "embedded", "no-std"]
