@@ -15,7 +15,7 @@
 mod common;
 
 use common::check_derives;
-use gpt_disk_types::{BlockSize, Lba, LbaLe, LbaRangeInclusive};
+use gpt_disk_types::{BlockSize, Lba, LbaLe, LbaRangeInclusive, U64Le};
 
 #[test]
 fn test_lba() {
@@ -25,6 +25,8 @@ fn test_lba() {
 #[test]
 fn test_lba_le() {
     check_derives::<LbaLe>();
+
+    assert_eq!(LbaLe::from(Lba(123)), LbaLe(U64Le::from_u64(123)));
 }
 
 #[test]
@@ -82,5 +84,6 @@ fn test_block_size() {
     assert_eq!(BlockSize::from_usize(512).unwrap().to_u64(), 512);
     assert!(BlockSize::from_usize(0).is_none());
 
+    assert_eq!(BlockSize::default().to_u32(), 512);
     assert_eq!(BlockSize::default().to_u64(), 512);
 }
