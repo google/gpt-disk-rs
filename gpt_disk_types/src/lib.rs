@@ -47,12 +47,52 @@
 //! little endian and partially big endian as described in Appendix A of
 //! the UEFI Specification.
 //!
+//! [`Display`]: core::fmt::Display
+//!
 //! # Features
 //!
 //! * `std`: Provides `std::error::Error` implementations for all of the
 //!   error types. Off by default.
 //!
-//! [`Display`]: core::fmt::Display
+//! # Examples
+//!
+//! Construct a GPT header:
+//!
+//! ```
+//! use gpt_disk_types::{Crc32, GptHeader, LbaLe, U32Le};
+//!
+//! let header = GptHeader {
+//!     header_crc32: Crc32(U32Le::from_u32(0xa4877843)),
+//!     my_lba: LbaLe::from_u64(1),
+//!     alternate_lba: LbaLe::from_u64(8191),
+//!     first_usable_lba: LbaLe::from_u64(34),
+//!     last_usable_lba: LbaLe::from_u64(8158),
+//!     disk_guid: "57a7feb6-8cd5-4922-b7bd-c78b0914e870".parse().unwrap(),
+//!     partition_entry_lba: LbaLe::from_u64(2),
+//!     number_of_partition_entries: U32Le::from_u32(128),
+//!     partition_entry_array_crc32: Crc32(U32Le::from_u32(0x9206adff)),
+//!     ..Default::default()
+//! };
+//! ```
+//!
+//! Construct a GPT partition entry:
+//!
+//! ```
+//! use gpt_disk_types::{GptPartitionEntry, LbaLe};
+//!
+//! let entry = GptPartitionEntry {
+//!     partition_type_guid: "ccf0994f-f7e0-4e26-a011-843e38aa2eac"
+//!         .parse()
+//!         .unwrap(),
+//!     unique_partition_guid: "37c75ffd-8932-467a-9c56-8cf1f0456b12"
+//!         .parse()
+//!         .unwrap(),
+//!     starting_lba: LbaLe::from_u64(2048),
+//!     ending_lba: LbaLe::from_u64(4096),
+//!     attributes: Default::default(),
+//!     name: "hello world!".parse().unwrap(),
+//! };
+//! ```
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![warn(missing_copy_implementations)]
