@@ -13,8 +13,8 @@ See also the [`gpt_disk_types`] package.
 
 ## Features
 
-* `std`: Provides `std::error::Error` implementations for all of the
-  error types. Off by default.
+* `std`: Enables the `StdBlockIo` type, as well as `std::error::Error`
+  implementations for all of the error types. Off by default.
 
 ## License
 
