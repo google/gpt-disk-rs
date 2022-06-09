@@ -48,7 +48,8 @@ fn test_disk_read<Io>(block_io: Io) -> Result<(), DiskError<Io::Error>>
 where
     Io: BlockIo,
 {
-    let mut block_buf = vec![0u8; 512];
+    let bs = BlockSize::BS_512;
+    let mut block_buf = vec![0u8; bs.to_usize().unwrap()];
     let mut disk = Disk::new(block_io)?;
 
     let primary_header = disk.read_primary_gpt_header(&mut block_buf)?;
@@ -59,25 +60,45 @@ where
 
     let expected_partition_entry = create_partition_entry();
 
+    let check_partition_entry_array = |disk: &mut Disk<Io>, layout| {
+        // First use the iter interface.
+        {
+            let mut block_buf = vec![0u8; bs.to_usize().unwrap()];
+            let mut iter = disk
+                .gpt_partition_entry_array_iter(layout, &mut block_buf)
+                .unwrap();
+            let entry = iter.next().unwrap().unwrap();
+            assert_eq!(entry, expected_partition_entry);
+            assert!(entry.is_used());
+
+            let entry = iter.next().unwrap().unwrap();
+            assert!(!entry.is_used());
+        }
+
+        // Then check the whole array.
+        let mut array_buf = vec![0u8; bs.to_usize().unwrap() * 34];
+        let array = disk
+            .read_gpt_partition_entry_array(layout, &mut array_buf)
+            .unwrap();
+        let entry = *array.get_partition_entry(0).unwrap();
+        assert_eq!(entry, expected_partition_entry);
+        assert!(entry.is_used());
+
+        let entry = *array.get_partition_entry(1).unwrap();
+        assert!(!entry.is_used());
+    };
+
     // Check the primary partition entry array.
-    let primary_partition_entry = disk
-        .gpt_partition_entry_array_iter(
-            primary_header.get_partition_entry_array_layout().unwrap(),
-            &mut block_buf,
-        )?
-        .next()
-        .unwrap()?;
-    assert_eq!(primary_partition_entry, expected_partition_entry);
+    check_partition_entry_array(
+        &mut disk,
+        primary_header.get_partition_entry_array_layout().unwrap(),
+    );
 
     // Check the secondary partition entry array.
-    let second_partition_entry = disk
-        .gpt_partition_entry_array_iter(
-            primary_header.get_partition_entry_array_layout().unwrap(),
-            &mut block_buf,
-        )?
-        .next()
-        .unwrap()?;
-    assert_eq!(second_partition_entry, expected_partition_entry);
+    check_partition_entry_array(
+        &mut disk,
+        secondary_header.get_partition_entry_array_layout().unwrap(),
+    );
 
     Ok(())
 }
