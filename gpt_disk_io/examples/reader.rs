@@ -35,7 +35,7 @@ fn main() -> Result<()> {
 
     let mut block_buf = vec![0u8; 512];
 
-    let block_io = StdBlockIo::new(&mut file, BlockSize::B512);
+    let block_io = StdBlockIo::new(&mut file, BlockSize::BS_512);
     let mut disk = Disk::new(block_io)?;
 
     let primary_header = disk.read_primary_gpt_header(&mut block_buf)?;

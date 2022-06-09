@@ -117,20 +117,20 @@ fn test_slice_block_io() -> Result<()> {
     data[512] = 3;
     data[1023] = 4;
 
-    let bio = SliceBlockIo::new(&mut data, BlockSize::B512);
+    let bio = SliceBlockIo::new(&mut data, BlockSize::BS_512);
     test_block_io_read(bio).unwrap();
 
-    let bio = MutSliceBlockIo::new(&mut data, BlockSize::B512);
+    let bio = MutSliceBlockIo::new(&mut data, BlockSize::BS_512);
     test_block_io_read(bio).unwrap();
 
-    test_block_io_write1(MutSliceBlockIo::new(&mut data, BlockSize::B512))
+    test_block_io_write1(MutSliceBlockIo::new(&mut data, BlockSize::BS_512))
         .unwrap();
     assert_eq!(data[0], 5);
     assert_eq!(data[511], 6);
     assert_eq!(data[512], 7);
     assert_eq!(data[1023], 8);
 
-    test_block_io_write2(MutSliceBlockIo::new(&mut data, BlockSize::B512))
+    test_block_io_write2(MutSliceBlockIo::new(&mut data, BlockSize::BS_512))
         .unwrap();
     assert_eq!(data[512], 9);
     assert_eq!(data[1023], 10);
@@ -153,13 +153,13 @@ fn test_std_block_io() -> Result<()> {
         data[1023] = 4;
 
         let mut cursor = Cursor::new(data);
-        test_block_io_read(StdBlockIo::new(&mut cursor, BlockSize::B512))
+        test_block_io_read(StdBlockIo::new(&mut cursor, BlockSize::BS_512))
             .unwrap();
     };
 
     {
         let mut cursor = Cursor::new(empty.clone());
-        test_block_io_write1(StdBlockIo::new(&mut cursor, BlockSize::B512))
+        test_block_io_write1(StdBlockIo::new(&mut cursor, BlockSize::BS_512))
             .unwrap();
         let data = cursor.into_inner();
         assert_eq!(data.len(), 512 * 3);
@@ -171,7 +171,7 @@ fn test_std_block_io() -> Result<()> {
 
     {
         let mut cursor = Cursor::new(empty.clone());
-        test_block_io_write2(StdBlockIo::new(&mut cursor, BlockSize::B512))
+        test_block_io_write2(StdBlockIo::new(&mut cursor, BlockSize::BS_512))
             .unwrap();
         let data = cursor.into_inner();
         assert_eq!(data.len(), 512 * 3);

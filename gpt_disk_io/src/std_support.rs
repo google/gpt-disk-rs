@@ -30,7 +30,7 @@ use std::io::{self, Read, Seek, SeekFrom, Write};
 /// use std::fs::File;
 ///
 /// let mut file = File::open("some/disk")?;
-/// let block_io = StdBlockIo::new(&mut file, BlockSize::B512);
+/// let block_io = StdBlockIo::new(&mut file, BlockSize::BS_512);
 ///
 /// let mut block_buf = vec![0u8; 512];
 /// let mut disk = Disk::new(block_io)?;

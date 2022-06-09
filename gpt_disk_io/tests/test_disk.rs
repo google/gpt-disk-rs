@@ -86,7 +86,7 @@ fn test_disk_write<Io>(block_io: Io) -> Result<(), DiskError<Io::Error>>
 where
     Io: BlockIo,
 {
-    let bs = BlockSize::B512;
+    let bs = BlockSize::BS_512;
     let mut block_buf = vec![0u8; bs.to_usize().unwrap()];
     let mut disk = Disk::new(block_io)?;
 
@@ -118,12 +118,12 @@ fn test_with_mut_slice(test_disk: &[u8]) -> Result<()> {
     let mut contents = test_disk.to_vec();
 
     // Test read.
-    test_disk_read(MutSliceBlockIo::new(&mut contents, BlockSize::B512))
+    test_disk_read(MutSliceBlockIo::new(&mut contents, BlockSize::BS_512))
         .unwrap();
 
     // Test write.
     let mut new_contents = vec![0; contents.len()];
-    test_disk_write(MutSliceBlockIo::new(&mut new_contents, BlockSize::B512))
+    test_disk_write(MutSliceBlockIo::new(&mut new_contents, BlockSize::BS_512))
         .unwrap();
     assert_eq!(contents, new_contents);
 
@@ -135,12 +135,12 @@ fn test_with_filelike(test_disk: &[u8]) -> Result<()> {
     let mut test_disk_cursor = Cursor::new(test_disk.to_vec());
 
     // Test read.
-    test_disk_read(StdBlockIo::new(&mut test_disk_cursor, BlockSize::B512))?;
+    test_disk_read(StdBlockIo::new(&mut test_disk_cursor, BlockSize::BS_512))?;
 
     // Test write.
     let mut new_disk = vec![0; 4 * 1024 * 1024];
     let mut new_disk_cursor = Cursor::new(&mut new_disk);
-    test_disk_write(StdBlockIo::new(&mut new_disk_cursor, BlockSize::B512))?;
+    test_disk_write(StdBlockIo::new(&mut new_disk_cursor, BlockSize::BS_512))?;
     assert_eq!(new_disk, test_disk);
 
     Ok(())
