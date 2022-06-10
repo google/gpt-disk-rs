@@ -48,6 +48,9 @@ IO.
 * `disk.rs`: Read and write GPT data from a block device.
 * `std_support.rs`: Provides `std` trait impls when the `std` feature is enabled.
 
+Most of the tests are under `gpt_disk_io/tests`, including the tests for
+`gpt_disk_types`. Having all the tests in one place allow them to share code.
+
 ## License
 
 Apache 2.0; see [`LICENSE`](LICENSE) for details.
