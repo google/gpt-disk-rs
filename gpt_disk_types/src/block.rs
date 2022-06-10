@@ -168,15 +168,10 @@ impl LbaRangeInclusive {
     /// ```
     /// use gpt_disk_types::{BlockSize, LbaRangeInclusive};
     ///
-    /// # fn t() -> Option<()> {
-    /// let block_size = BlockSize::new(4)?;
-    /// let r = LbaRangeInclusive::from_byte_range(4..=11, block_size)?;
+    /// let bs = BlockSize::BS_512;
+    /// let r = LbaRangeInclusive::from_byte_range(512..=1535, bs).unwrap();
     /// assert_eq!(r.start().0, 1);
     /// assert_eq!(r.end().0, 2);
-    /// # None
-    /// # }
-    /// #
-    /// # fn main() { t(); }
     #[must_use]
     pub fn from_byte_range(
         byte_range: RangeInclusive<u64>,
@@ -206,14 +201,9 @@ impl LbaRangeInclusive {
     /// ```
     /// use gpt_disk_types::{BlockSize, Lba, LbaRangeInclusive};
     ///
-    /// # fn t() -> Option<()> {
-    /// let r = LbaRangeInclusive::new(Lba(1), Lba(2))?;
-    /// let block_size = BlockSize::new(4)?;
-    /// assert_eq!(r.to_byte_range(block_size)?, 4..=11);
-    /// # None
-    /// # }
-    /// #
-    /// # fn main() { t(); }
+    /// let r = LbaRangeInclusive::new(Lba(1), Lba(2)).unwrap();
+    /// let bs = BlockSize::BS_512;
+    /// assert_eq!(r.to_byte_range(bs).unwrap(), 512..=1535);
     /// ```
     #[must_use]
     pub fn to_byte_range(
