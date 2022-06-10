@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::{Guid, GuidFromStrError, LbaLe, LbaRangeInclusive, U16Le, U64Le};
+use crate::{
+    guid, Guid, GuidFromStrError, LbaLe, LbaRangeInclusive, U16Le, U64Le,
+};
 use bytemuck::{Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
 use core::num::NonZeroU32;
@@ -35,9 +37,40 @@ use core::str::FromStr;
 #[repr(transparent)]
 pub struct GptPartitionType(pub Guid);
 
+// This lint incorrectly says that "ChromeOS" should be in backticks.
+#[allow(clippy::doc_markdown)]
 impl GptPartitionType {
     /// Indicates an entry within the GPT partition array is not in use.
     pub const UNUSED: Self = Self(Guid::ZERO);
+
+    /// EFI system partition.
+    ///
+    /// This constant is defined in the UEFI Specification in Table 5-7
+    /// "Defined GPT Partition Entry - Partition Type GUIDs".
+    pub const EFI_SYSTEM: Self =
+        Self(guid!("c12a7328-f81f-11d2-ba4b-00a0c93ec93b"));
+
+    /// Partition containing a legacy MBR.
+    ///
+    /// This constant is defined in the UEFI Specification in Table 5-7
+    /// "Defined GPT Partition Entry - Partition Type GUIDs".
+    pub const LEGACY_MBR: Self =
+        Self(guid!("024dee41-33e7-11d3-9d69-0008c781f39f"));
+
+    /// Basic data partition.
+    pub const BASIC_DATA: Self =
+        Self(guid!("ebd0a0a2-b9e5-4433-87c0-68b6b72699c7"));
+
+    /// ChromeOS kernel partition.
+    pub const CHROME_OS_KERNEL: Self =
+        Self(guid!("fe3a2a5d-4f32-41a7-b725-accc3285a309"));
+
+    /// ChromeOS rootfs partition.
+    pub const CHROME_OS_ROOT_FS: Self =
+        Self(guid!("3cb8e202-3b7e-47dd-8a3c-7ff2a13cfcec"));
+
+    // TODO: there are many more "known" partition types for which we
+    // could add constants.
 }
 
 impl Display for GptPartitionType {
