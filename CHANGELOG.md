@@ -1,3 +1,13 @@
+# 0.8.0
+
+## `gpt_disk_types`
+
+* Added `LbaRangeInclusive::num_bytes`.
+
+## `gpt_disk_io`
+
+* Updated to latest `gpt_disk_types`.
+
 # 0.7.0
 
 ## `gpt_disk_types`
