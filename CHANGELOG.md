@@ -4,6 +4,7 @@
 
 * Added `Guid::try_parse`. This is a `const` method that is functionally
   equivalent to `Guid::from_str`.
+* Added `guid!` macro for creating a `Guid` from a string at compile time.
 
 ## `gpt_disk_io`
 

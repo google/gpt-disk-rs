@@ -15,7 +15,7 @@
 mod common;
 
 use common::check_derives;
-use gpt_disk_types::{Guid, GuidFromStrError, U16Le, U32Le};
+use gpt_disk_types::{guid, Guid, GuidFromStrError, U16Le, U32Le};
 
 #[test]
 fn test_guid() {
@@ -43,6 +43,9 @@ fn test_guid() {
         Guid::try_parse("01234567-89ab-cdef-0123-456789abcdef").unwrap(),
         guid
     );
+
+    // Macro.
+    assert_eq!(guid!("01234567-89ab-cdef-0123-456789abcdef"), guid);
 }
 
 #[test]
@@ -61,4 +64,16 @@ fn test_guid_error() {
     // Invalid hex.
     let s = "g1234567-89ab-cdef-0123-456789abcdef";
     assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError));
+}
+
+/// Inner module that only imports the `guid!` macro.
+mod inner {
+    use gpt_disk_types::guid;
+
+    /// Test that the `guid!` macro works without importing anything
+    /// else.
+    #[test]
+    fn test_guid_macro_paths() {
+        guid!("01234567-89ab-cdef-0123-456789abcdef");
+    }
 }
