@@ -39,8 +39,8 @@
 //! ```
 //! use gpt_disk_io::{BlockIo, Disk, DiskError, MutSliceBlockIo};
 //! use gpt_disk_types::{
-//!     BlockSize, Crc32, GptHeader, GptPartitionEntry, GptPartitionEntryArray,
-//!     LbaLe, U32Le,
+//!     guid, BlockSize, Crc32, GptHeader, GptPartitionEntry,
+//!     GptPartitionEntryArray, GptPartitionType, LbaLe, U32Le,
 //! };
 //!
 //! // Space for a 4MiB disk.
@@ -62,7 +62,7 @@
 //!     alternate_lba: LbaLe::from_u64(8191),
 //!     first_usable_lba: LbaLe::from_u64(34),
 //!     last_usable_lba: LbaLe::from_u64(8158),
-//!     disk_guid: "57a7feb6-8cd5-4922-b7bd-c78b0914e870".parse().unwrap(),
+//!     disk_guid: guid!("57a7feb6-8cd5-4922-b7bd-c78b0914e870"),
 //!     partition_entry_lba: LbaLe::from_u64(2),
 //!     number_of_partition_entries: U32Le::from_u32(128),
 //!     partition_entry_array_crc32: Crc32(U32Le::from_u32(0x9206adff)),
@@ -76,12 +76,10 @@
 //!     ..primary_header
 //! };
 //! let partition_entry = GptPartitionEntry {
-//!     partition_type_guid: "ccf0994f-f7e0-4e26-a011-843e38aa2eac"
-//!         .parse()
-//!         .unwrap(),
-//!     unique_partition_guid: "37c75ffd-8932-467a-9c56-8cf1f0456b12"
-//!         .parse()
-//!         .unwrap(),
+//!     partition_type_guid: GptPartitionType(guid!(
+//!         "ccf0994f-f7e0-4e26-a011-843e38aa2eac"
+//!     )),
+//!     unique_partition_guid: guid!("37c75ffd-8932-467a-9c56-8cf1f0456b12"),
 //!     starting_lba: LbaLe::from_u64(2048),
 //!     ending_lba: LbaLe::from_u64(4096),
 //!     attributes: Default::default(),
