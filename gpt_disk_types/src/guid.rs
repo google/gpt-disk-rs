@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use crate::{U16Le, U32Le};
-use bytemuck::{Pod, Zeroable};
+use bytemuck::{bytes_of, Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
 use core::num::ParseIntError;
 use core::str::FromStr;
@@ -111,13 +111,20 @@ const fn parse_byte_from_ascii_str_at(
 /// );
 /// ```
 ///
-/// Convert to a string:
+/// Convert to a string or a byte array:
 ///
 /// ```
 /// use gpt_disk_types::guid;
 ///
 /// let guid = guid!("01234567-89ab-cdef-0123-456789abcdef");
 /// assert_eq!(guid.to_string(), "01234567-89ab-cdef-0123-456789abcdef");
+/// assert_eq!(
+///     guid.to_bytes(),
+///     [
+///         0x67, 0x45, 0x23, 0x01, 0xab, 0x89, 0xef, 0xcd, 0x01, 0x23, 0x45,
+///         0x67, 0x89, 0xab, 0xcd, 0xef
+///     ]
+/// );
 /// ```
 #[derive(
     Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Pod, Zeroable,
@@ -209,6 +216,14 @@ impl Guid {
                 mtry!(parse_byte_from_ascii_str_at(s, 34)),
             ],
         })
+    }
+
+    /// Convert to a 16-byte array.
+    #[allow(clippy::missing_panics_doc)]
+    #[must_use]
+    pub fn to_bytes(self) -> [u8; 16] {
+        // OK to unwrap as the `Guid` size is 16 bytes.
+        bytes_of(&self).try_into().unwrap()
     }
 }
 

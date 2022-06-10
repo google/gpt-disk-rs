@@ -2,6 +2,7 @@
 
 ## `gpt_disk_types`
 
+* Added `Guid::to_bytes`
 * Added `LbaRangeInclusive::num_bytes`.
 
 ## `gpt_disk_io`
