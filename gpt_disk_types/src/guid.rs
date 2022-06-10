@@ -255,6 +255,34 @@ impl FromStr for Guid {
     }
 }
 
+/// Create a [`Guid`] from a string at compile time.
+///
+/// # Examples
+///
+/// ```
+/// use gpt_disk_types::{guid, Guid, U16Le, U32Le};
+/// assert_eq!(
+///     guid!("01234567-89ab-cdef-0123-456789abcdef"),
+///     Guid::new(
+///         U32Le::from_u32(0x01234567),
+///         U16Le::from_u16(0x89ab),
+///         U16Le::from_u16(0xcdef),
+///         0x01,
+///         0x23,
+///         [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
+///     )
+/// );
+/// ```
+#[macro_export]
+macro_rules! guid {
+    ($s:literal) => {
+        match $crate::Guid::try_parse($s) {
+            Ok(g) => g,
+            Err(_) => panic!("invalid GUID string"),
+        }
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
