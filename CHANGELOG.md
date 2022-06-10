@@ -1,3 +1,14 @@
+# 0.7.0
+
+## `gpt_disk_types`
+
+* Added `Guid::try_parse`. This is a `const` method that is functionally
+  equivalent to `Guid::from_str`.
+
+## `gpt_disk_io`
+
+* Updated to latest `gpt_disk_types`.
+
 # 0.6.0
 
 ## `gpt_disk_types`
@@ -9,3 +20,4 @@
 ## `gpt_disk_io`
 
 * Updated documentation.
+* Updated to latest `gpt_disk_types`.
