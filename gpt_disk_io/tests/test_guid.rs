@@ -29,7 +29,20 @@ fn test_guid() {
         0x23,
         [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
     );
+    // Formatting.
     assert_eq!(guid.to_string(), "01234567-89ab-cdef-0123-456789abcdef");
+
+    // Parsing.
+    assert_eq!(
+        "01234567-89ab-cdef-0123-456789abcdef"
+            .parse::<Guid>()
+            .unwrap(),
+        guid
+    );
+    assert_eq!(
+        Guid::try_parse("01234567-89ab-cdef-0123-456789abcdef").unwrap(),
+        guid
+    );
 }
 
 #[test]

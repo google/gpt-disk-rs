@@ -18,6 +18,62 @@ use core::fmt::{self, Display, Formatter};
 use core::num::ParseIntError;
 use core::str::FromStr;
 
+/// Macro replacement for the `?` operator, which cannot be used in
+/// const functions.
+macro_rules! mtry {
+    ($expr:expr $(,)?) => {
+        match $expr {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            }
+        }
+    };
+}
+
+/// Parse a hexadecimal ASCII character as a `u8`.
+const fn parse_byte_from_ascii_char(c: u8) -> Result<u8, GuidFromStrError> {
+    match c {
+        b'0' => Ok(0x0),
+        b'1' => Ok(0x1),
+        b'2' => Ok(0x2),
+        b'3' => Ok(0x3),
+        b'4' => Ok(0x4),
+        b'5' => Ok(0x5),
+        b'6' => Ok(0x6),
+        b'7' => Ok(0x7),
+        b'8' => Ok(0x8),
+        b'9' => Ok(0x9),
+        b'a' | b'A' => Ok(0xa),
+        b'b' | b'B' => Ok(0xb),
+        b'c' | b'C' => Ok(0xc),
+        b'd' | b'D' => Ok(0xd),
+        b'e' | b'E' => Ok(0xe),
+        b'f' | b'F' => Ok(0xf),
+        _ => Err(GuidFromStrError),
+    }
+}
+
+/// Parse a pair of hexadecimal ASCII characters as a `u8`. For example,
+/// `(b'1', b'a')` is parsed as `0x1a`.
+const fn parse_byte_from_ascii_char_pair(
+    a: u8,
+    b: u8,
+) -> Result<u8, GuidFromStrError> {
+    let a = mtry!(parse_byte_from_ascii_char(a));
+    let b = mtry!(parse_byte_from_ascii_char(b));
+    Ok(a << 4 | b)
+}
+
+/// Parse a pair of hexadecimal ASCII characters at position `start` as
+/// a `u8`.
+const fn parse_byte_from_ascii_str_at(
+    s: &[u8],
+    start: usize,
+) -> Result<u8, GuidFromStrError> {
+    parse_byte_from_ascii_char_pair(s[start], s[start + 1])
+}
+
 /// Globally-unique identifier.
 ///
 /// The format is described in Appendix A of the UEFI Specification.
@@ -87,6 +143,53 @@ impl Guid {
             node,
         }
     }
+
+    /// Parse a GUID from a string.
+    ///
+    /// This is functionally the same as [`Guid::from_str`], but is
+    /// exposed separately to provide a `const` method for parsing.
+    pub const fn try_parse(s: &str) -> Result<Self, GuidFromStrError> {
+        // Treat input as ASCII.
+        let s = s.as_bytes();
+
+        if s.len() != 36 {
+            return Err(GuidFromStrError);
+        }
+
+        let sep = b'-';
+        if s[8] != sep || s[13] != sep || s[18] != sep || s[23] != sep {
+            return Err(GuidFromStrError);
+        }
+
+        Ok(Guid {
+            time_low: U32Le([
+                mtry!(parse_byte_from_ascii_str_at(s, 6)),
+                mtry!(parse_byte_from_ascii_str_at(s, 4)),
+                mtry!(parse_byte_from_ascii_str_at(s, 2)),
+                mtry!(parse_byte_from_ascii_str_at(s, 0)),
+            ]),
+            time_mid: U16Le([
+                mtry!(parse_byte_from_ascii_str_at(s, 11)),
+                mtry!(parse_byte_from_ascii_str_at(s, 9)),
+            ]),
+            time_high_and_version: U16Le([
+                mtry!(parse_byte_from_ascii_str_at(s, 16)),
+                mtry!(parse_byte_from_ascii_str_at(s, 14)),
+            ]),
+            clock_seq_high_and_reserved: mtry!(parse_byte_from_ascii_str_at(
+                s, 19
+            )),
+            clock_seq_low: mtry!(parse_byte_from_ascii_str_at(s, 21)),
+            node: [
+                mtry!(parse_byte_from_ascii_str_at(s, 24)),
+                mtry!(parse_byte_from_ascii_str_at(s, 26)),
+                mtry!(parse_byte_from_ascii_str_at(s, 28)),
+                mtry!(parse_byte_from_ascii_str_at(s, 30)),
+                mtry!(parse_byte_from_ascii_str_at(s, 32)),
+                mtry!(parse_byte_from_ascii_str_at(s, 34)),
+            ],
+        })
+    }
 }
 
 impl Default for Guid {
@@ -123,7 +226,7 @@ impl Display for Guid {
     }
 }
 
-/// Error type for [`Guid::from_str`].
+/// Error type for [`Guid::try_parse`] and [`Guid::from_str`].
 ///
 /// If the `std` feature is enabled, this type implements the [`Error`]
 /// trait.
@@ -148,37 +251,17 @@ impl FromStr for Guid {
     type Err = GuidFromStrError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() != 36 {
-            return Err(GuidFromStrError);
-        }
+        Self::try_parse(s)
+    }
+}
 
-        let sep = b'-';
-        let b = s.as_bytes();
-        if b[8] != sep || b[13] != sep || b[18] != sep || b[23] != sep {
-            return Err(GuidFromStrError);
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-        let parse_byte = |start| u8::from_str_radix(&s[start..start + 2], 16);
-
-        Ok(Guid {
-            time_low: U32Le([
-                parse_byte(6)?,
-                parse_byte(4)?,
-                parse_byte(2)?,
-                parse_byte(0)?,
-            ]),
-            time_mid: U16Le([parse_byte(11)?, parse_byte(9)?]),
-            time_high_and_version: U16Le([parse_byte(16)?, parse_byte(14)?]),
-            clock_seq_high_and_reserved: parse_byte(19)?,
-            clock_seq_low: parse_byte(21)?,
-            node: [
-                parse_byte(24)?,
-                parse_byte(26)?,
-                parse_byte(28)?,
-                parse_byte(30)?,
-                parse_byte(32)?,
-                parse_byte(34)?,
-            ],
-        })
+    #[test]
+    fn test_parse() {
+        assert_eq!(parse_byte_from_ascii_char_pair(b'1', b'a'), Ok(0x1a));
+        assert_eq!(parse_byte_from_ascii_char_pair(b'8', b'f'), Ok(0x8f));
     }
 }
