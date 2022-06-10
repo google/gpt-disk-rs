@@ -219,6 +219,24 @@ impl LbaRangeInclusive {
             .checked_add(block_size - 1)?;
         Some(start_byte..=end_byte)
     }
+
+    /// Get the number of bytes in the LBA range for the given block
+    /// size.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gpt_disk_types::{BlockSize, Lba, LbaRangeInclusive};
+    ///
+    /// let r = LbaRangeInclusive::new(Lba(1), Lba(2)).unwrap();
+    /// let bs = BlockSize::BS_512;
+    /// assert_eq!(r.num_bytes(bs).unwrap(), 1024);
+    /// ```
+    #[must_use]
+    pub fn num_bytes(self, block_size: BlockSize) -> Option<u64> {
+        let r = self.to_byte_range(block_size)?;
+        r.end().checked_sub(*r.start())?.checked_add(1)
+    }
 }
 
 impl Display for LbaRangeInclusive {
