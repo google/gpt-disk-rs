@@ -24,7 +24,7 @@ license = "Apache-2.0"
 repository = "https://github.com/google/gpt-disk-rs"
 
 [dependencies]
-gpt_disk_types = { version = "0.7.0", path = "../gpt_disk_types" }
+gpt_disk_types = { version = "0.8.0", path = "../gpt_disk_types" }
 
 [dev-dependencies]
 anyhow = "1.0.57"
