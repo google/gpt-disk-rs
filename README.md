@@ -9,6 +9,9 @@ data. There are three Rust packages in this repository:
 
 ## `uguid`
 
+[![Crates.io](https://img.shields.io/crates/v/uguid)](https://crates.io/crates/uguid) 
+[![Docs.rs](https://docs.rs/uguid/badge.svg)](https://docs.rs/uguid)
+
 The `uguid` package provides the GUID type used in the [UEFI
 Specification], and also in Microsoft Windows.
 
