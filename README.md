@@ -3,9 +3,14 @@
 [![codecov](https://codecov.io/gh/google/gpt-disk-rs/branch/main/graph/badge.svg?token=qN5MUcTVQ5)](https://codecov.io/gh/google/gpt-disk-rs)
 
 `no_std` libraries related to [GPT] (GUID Partition Table) disk
-data. There are two Rust packages in this repository:
+data. There are three Rust packages in this repository:
 
 [GPT]: https://en.wikipedia.org/wiki/GUID_Partition_Table
+
+## `uguid`
+
+The `uguid` package provides the GUID type used in the [UEFI
+Specification], and also in Microsoft Windows.
 
 ## `gpt_disk_types`
 
