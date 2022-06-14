@@ -15,16 +15,16 @@
 mod common;
 
 use common::check_derives;
-use gpt_disk_types::{guid, Guid, GuidFromStrError, U16Le, U32Le};
+use gpt_disk_types::{guid, Guid, GuidFromStrError};
 
 #[test]
 fn test_guid() {
     check_derives::<Guid>();
 
     let guid = Guid::new(
-        U32Le::from_u32(0x01234567),
-        U16Le::from_u16(0x89ab),
-        U16Le::from_u16(0xcdef),
+        0x01234567_u32.to_le_bytes(),
+        0x89ab_u16.to_le_bytes(),
+        0xcdef_u16.to_le_bytes(),
         0x01,
         0x23,
         [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
