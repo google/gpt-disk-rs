@@ -1,3 +1,7 @@
+# 0.9.0
+
+* Updated to latest `gpt_disk_types`.
+
 # 0.8.0
 
 * Updated to latest `gpt_disk_types`.
