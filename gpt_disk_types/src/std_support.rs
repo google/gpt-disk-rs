@@ -15,11 +15,8 @@
 use crate::{
     GptPartitionEntryArrayError, GptPartitionEntrySizeError,
     GptPartitionNameFromStrError, GptPartitionNameSetCharError,
-    GuidFromStrError,
 };
 use std::error::Error;
-
-impl Error for GuidFromStrError {}
 
 impl Error for GptPartitionNameFromStrError {}
 

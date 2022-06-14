@@ -43,10 +43,6 @@
 //! implementations. This means bytes within each field will appear
 //! reversed when compared with a flat hex dump of GPT data.
 //!
-//! One notable exception is the [`Guid`] type, which is partially
-//! little endian and partially big endian as described in Appendix A of
-//! the UEFI Specification.
-//!
 //! [`Display`]: core::fmt::Display
 //!
 //! # Features
@@ -108,7 +104,6 @@
 
 mod block;
 mod crc32;
-mod guid;
 mod header;
 mod mbr;
 mod num;
@@ -121,10 +116,10 @@ mod std_support;
 pub use bytemuck;
 pub use crc;
 pub use ucs2;
+pub use uguid::{guid, Guid, GuidFromStrError};
 
 pub use block::{BlockSize, Lba, LbaLe, LbaRangeInclusive};
 pub use crc32::Crc32;
-pub use guid::{Guid, GuidFromStrError};
 pub use header::{GptHeader, GptHeaderRevision, GptHeaderSignature};
 pub use mbr::{Chs, DiskGeometry, MasterBootRecord, MbrPartitionRecord};
 pub use num::{U16Le, U32Le, U64Le};
