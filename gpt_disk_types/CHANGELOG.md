@@ -1,3 +1,9 @@
+# 0.9.0
+
+* Add dependency on `uguid`. The `Guid` and `GuidFromStrError` types, as
+  well as the `guid!` macro, are now provided by `uguid` and re-exported
+  by `gpt_disk_types`.
+
 # 0.8.0
 
 * Added `Guid::to_bytes`
