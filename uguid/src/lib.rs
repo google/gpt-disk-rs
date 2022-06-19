@@ -17,6 +17,13 @@
 //! Specification. This format of GUID is also used in Microsoft
 //! Windows.
 //!
+//! # Features
+//!
+//! No features are enabled by default.
+//!
+//! * `serde`: Implements serde's `Serialize` and `Deserialize` traits for `Guid`.
+//! * `std`: Provides `std::error::Error` implementation for the error type.
+//!
 //! # Examples
 //!
 //! Construct a GUID at compile time with the `guid!` macro:
@@ -74,10 +81,12 @@
 #![warn(trivial_numeric_casts)]
 #![warn(unreachable_pub)]
 #![warn(unsafe_code)]
-#![warn(unused_crate_dependencies)]
 #![warn(clippy::pedantic)]
 #![warn(clippy::as_conversions)]
 #![allow(clippy::missing_errors_doc)]
+
+#[cfg(feature = "serde")]
+mod guid_serde;
 
 use bytemuck::{bytes_of, Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
@@ -299,7 +308,7 @@ impl Default for Guid {
 impl Display for Guid {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let ascii = self.to_ascii_hex_lower();
-        // OK to unwrap since the ascii output is valid unicode.
+        // OK to unwrap since the ascii output is valid utf-8.
         let s = str::from_utf8(&ascii).unwrap();
         f.write_str(s)
     }

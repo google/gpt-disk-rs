@@ -25,8 +25,13 @@ repository = "https://github.com/google/gpt-disk-rs"
 
 [dependencies]
 bytemuck = { version = "1.9.1", features = ["derive"] }
+serde = { version = "1.0.137", default-features = false, features = ["derive"], optional = true }
+
+[dev-dependencies]
+serde-json-core = "0.4.0"
 
 [features]
+serde = ["dep:serde"]
 std = []
 
 [package.metadata.docs.rs]
