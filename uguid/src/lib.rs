@@ -90,7 +90,6 @@ mod guid_serde;
 
 use bytemuck::{bytes_of, Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
-use core::num::ParseIntError;
 use core::str::{self, FromStr};
 
 // Re-export dependencies.
@@ -326,12 +325,6 @@ pub struct GuidFromStrError;
 impl Display for GuidFromStrError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.write_str("GUID hex string does not match expected format \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"")
-    }
-}
-
-impl From<ParseIntError> for GuidFromStrError {
-    fn from(_err: ParseIntError) -> Self {
-        Self
     }
 }
 
