@@ -40,6 +40,9 @@ jobs:
 
   test:
     name: Test Suite
+    strategy:
+      matrix:
+        features: ['', 'serde', 'std', 'serde,std']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -52,38 +55,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: test
-
-  test-with-serde:
-    name: Test Suite (with serde enabled)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --features=serde
-
-  test-with-std:
-    name: Test Suite (with std enabled)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --features=std
+          args: --features=${{ matrix.features }}
 
   fmt:
     name: Rustfmt
@@ -103,6 +75,9 @@ jobs:
 
   clippy:
     name: Clippy
+    strategy:
+      matrix:
+        features: ['', 'serde', 'std', 'serde,std']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -117,40 +92,6 @@ jobs:
         with:
           command: clippy
           args: -- -D warnings
-
-  clippy-serde:
-    name: Clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: rustup component add clippy
-      - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --features=serde -- -D warnings
-
-  clippy-std:
-    name: Clippy (with std enabled)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: rustup component add clippy
-      - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --features=std -- -D warnings
 
   doc:
     name: Docs
