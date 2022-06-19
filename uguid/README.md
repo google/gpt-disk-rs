@@ -11,8 +11,10 @@ used in GPT disks, UEFI, and Microsoft Windows.
 
 ## Features
 
-* `std`: Provides `std::error::Error` implementation for the error
-  type. Off by default.
+No features are enabled by default.
+
+* `serde`: Implements serde's `Serialize` and `Deserialize` traits for `Guid`.
+* `std`: Provides `std::error::Error` implementation for the error type.
 
 ## License
 
