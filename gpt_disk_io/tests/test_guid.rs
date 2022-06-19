@@ -40,6 +40,10 @@ fn test_guid() {
     );
 
     // Formatting.
+    assert_eq!(
+        guid.to_ascii_hex_lower(),
+        *b"01234567-89ab-cdef-0123-456789abcdef"
+    );
     assert_eq!(guid.to_string(), "01234567-89ab-cdef-0123-456789abcdef");
 
     // Parsing.

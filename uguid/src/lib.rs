@@ -82,7 +82,7 @@
 use bytemuck::{bytes_of, Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
 use core::num::ParseIntError;
-use core::str::FromStr;
+use core::str::{self, FromStr};
 
 // Re-export dependencies.
 pub use bytemuck;
@@ -98,6 +98,22 @@ macro_rules! mtry {
             }
         }
     };
+}
+
+const fn byte_to_ascii_hex_lower(byte: u8) -> (u8, u8) {
+    let mut l = byte & 0xf;
+    let mut h = byte >> 4;
+    if l <= 9 {
+        l += b'0';
+    } else {
+        l += b'a' - 10;
+    }
+    if h <= 9 {
+        h += b'0';
+    } else {
+        h += b'a' - 10;
+    }
+    (h, l)
 }
 
 /// Parse a hexadecimal ASCII character as a `u8`.
@@ -240,6 +256,38 @@ impl Guid {
         // OK to unwrap as the `Guid` size is 16 bytes.
         bytes_of(&self).try_into().unwrap()
     }
+
+    /// Convert to a lower-case hex ASCII string.
+    ///
+    /// The output is in "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" format.
+    #[must_use]
+    pub const fn to_ascii_hex_lower(self) -> [u8; 36] {
+        let mut buf = [0; 36];
+        (buf[0], buf[1]) = byte_to_ascii_hex_lower(self.time_low[3]);
+        (buf[2], buf[3]) = byte_to_ascii_hex_lower(self.time_low[2]);
+        (buf[4], buf[5]) = byte_to_ascii_hex_lower(self.time_low[1]);
+        (buf[6], buf[7]) = byte_to_ascii_hex_lower(self.time_low[0]);
+        buf[8] = b'-';
+        (buf[9], buf[10]) = byte_to_ascii_hex_lower(self.time_mid[1]);
+        (buf[11], buf[12]) = byte_to_ascii_hex_lower(self.time_mid[0]);
+        buf[13] = b'-';
+        (buf[14], buf[15]) =
+            byte_to_ascii_hex_lower(self.time_high_and_version[1]);
+        (buf[16], buf[17]) =
+            byte_to_ascii_hex_lower(self.time_high_and_version[0]);
+        buf[18] = b'-';
+        (buf[19], buf[20]) =
+            byte_to_ascii_hex_lower(self.clock_seq_high_and_reserved);
+        (buf[21], buf[22]) = byte_to_ascii_hex_lower(self.clock_seq_low);
+        buf[23] = b'-';
+        (buf[24], buf[25]) = byte_to_ascii_hex_lower(self.node[0]);
+        (buf[26], buf[27]) = byte_to_ascii_hex_lower(self.node[1]);
+        (buf[28], buf[29]) = byte_to_ascii_hex_lower(self.node[2]);
+        (buf[30], buf[31]) = byte_to_ascii_hex_lower(self.node[3]);
+        (buf[32], buf[33]) = byte_to_ascii_hex_lower(self.node[4]);
+        (buf[34], buf[35]) = byte_to_ascii_hex_lower(self.node[5]);
+        buf
+    }
 }
 
 impl Default for Guid {
@@ -250,29 +298,10 @@ impl Default for Guid {
 
 impl Display for Guid {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(
-            f, "{:02x}{:02x}{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}",
-            self.time_low[3],
-            self.time_low[2],
-            self.time_low[1],
-            self.time_low[0],
-
-            self.time_mid[1],
-            self.time_mid[0],
-
-            self.time_high_and_version[1],
-            self.time_high_and_version[0],
-
-            self.clock_seq_high_and_reserved,
-            self.clock_seq_low,
-
-            self.node[0],
-            self.node[1],
-            self.node[2],
-            self.node[3],
-            self.node[4],
-            self.node[5],
-        )
+        let ascii = self.to_ascii_hex_lower();
+        // OK to unwrap since the ascii output is valid unicode.
+        let s = str::from_utf8(&ascii).unwrap();
+        f.write_str(s)
     }
 }
 
@@ -344,5 +373,11 @@ mod tests {
     fn test_parse() {
         assert_eq!(parse_byte_from_ascii_char_pair(b'1', b'a'), Ok(0x1a));
         assert_eq!(parse_byte_from_ascii_char_pair(b'8', b'f'), Ok(0x8f));
+    }
+
+    #[test]
+    fn test_to_ascii() {
+        assert_eq!(byte_to_ascii_hex_lower(0x1f), (b'1', b'f'));
+        assert_eq!(byte_to_ascii_hex_lower(0xf1), (b'f', b'1'));
     }
 }
