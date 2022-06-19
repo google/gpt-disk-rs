@@ -53,6 +53,22 @@ jobs:
         with:
           command: test
 
+  test-with-serde:
+    name: Test Suite (with serde enabled)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: Swatinem/rust-cache@v1
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --features=serde
+
   test-with-std:
     name: Test Suite (with std enabled)
     runs-on: ubuntu-latest
@@ -102,6 +118,23 @@ jobs:
           command: clippy
           args: -- -D warnings
 
+  clippy-serde:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: rustup component add clippy
+      - uses: Swatinem/rust-cache@v1
+      - uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --features=serde -- -D warnings
+
   clippy-std:
     name: Clippy (with std enabled)
     runs-on: ubuntu-latest
@@ -135,7 +168,7 @@ jobs:
           RUSTDOCFLAGS: -Dwarnings
         with:
           command: doc
-          args: --features=std
+          args: --features=serde,std
 
   cargo-deny:
     runs-on: ubuntu-latest
