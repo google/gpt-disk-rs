@@ -1,3 +1,7 @@
+# 0.10.0
+
+* Updated to latest `uguid`.
+
 # 0.9.0
 
 * Add dependency on `uguid`. The `Guid` and `GuidFromStrError` types, as
