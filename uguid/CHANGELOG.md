@@ -5,3 +5,4 @@
   `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` format.
 * Add `serde` feature (disabled by default) that implements serde's
   `Serialize` and `Deserialize` traits for the `Guid` type.
+* Remove unused `From<ParseIntError>` impl for `GuidFromStrError`.
