@@ -7,32 +7,32 @@ data. There are three Rust packages in this repository:
 
 [GPT]: https://en.wikipedia.org/wiki/GUID_Partition_Table
 
-## `uguid`
+## [`uguid`]
 
 [![Crates.io](https://img.shields.io/crates/v/uguid)](https://crates.io/crates/uguid) 
 [![Docs.rs](https://docs.rs/uguid/badge.svg)](https://docs.rs/uguid)
 
-The `uguid` package provides the GUID type used in the [UEFI
+The [`uguid`] package provides the GUID type used in the [UEFI
 Specification], and also in Microsoft Windows.
 
-## `gpt_disk_types`
+## [`gpt_disk_types`]
 
 [![Crates.io](https://img.shields.io/crates/v/gpt_disk_types)](https://crates.io/crates/gpt_disk_types) 
 [![Docs.rs](https://docs.rs/gpt_disk_types/badge.svg)](https://docs.rs/gpt_disk_types)
 
-The `gpt_disk_types` package provides flexible types for
+The [`gpt_disk_types`] package provides flexible types for
 all the GPT types defined in the [UEFI Specification]. The types are
 designed to ensure correct endianness regardless of host platform, and
 can be used even with corrupted input data.
 
 [UEFI Specification]: https://uefi.org/specifications
 
-## `gpt_disk_io`
+## [`gpt_disk_io`]
 
 [![Crates.io](https://img.shields.io/crates/v/gpt_disk_io)](https://crates.io/crates/gpt_disk_io) 
 [![Docs.rs](https://docs.rs/gpt_disk_io/badge.svg)](https://docs.rs/gpt_disk_io)
 
-The `gpt_disk_io` package depends on `gpt_disk_types` and adds types for
+The [`gpt_disk_io`] package depends on `gpt_disk_types` and adds types for
 reading and writing GPT data to an abstract disk interface. This
 interface can be implemented for any backend that supports block-level
 IO.
@@ -68,3 +68,7 @@ Apache 2.0; see [`LICENSE`](LICENSE) for details.
 This project is not an official Google project. It is not supported by
 Google and Google specifically disclaims all warranties as to its quality,
 merchantability, or fitness for a particular purpose.
+
+[`uguid`]: uguid
+[`gpt_disk_types`]: gpt_disk_types
+[`gpt_disk_io`]: gpt_disk_io
