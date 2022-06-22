@@ -78,11 +78,16 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - run: rustup component add clippy
       - uses: Swatinem/rust-cache@v1
       - uses: actions-rs/cargo@v1
         with:
           command: test
           args: --package=gpt_disk_types --package=gpt_disk_io --features=${{ matrix.features }}
+      - uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --package=gpt_disk_types --package=gpt_disk_io --features=${{ matrix.features }} -- -D warnings
 
   fmt:
     name: Rustfmt
@@ -99,26 +104,6 @@ jobs:
         with:
           command: fmt
           args: --all -- --check --config format_code_in_doc_comments=true
-
-  clippy:
-    name: Clippy
-    strategy:
-      matrix:
-        features: ['', 'serde', 'std', 'serde,std']
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: rustup component add clippy
-      - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
 
   doc:
     name: Docs
