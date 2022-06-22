@@ -42,11 +42,12 @@ jobs:
     name: Test uguid
     strategy:
       matrix:
+        bytemuck: ['', 'bytemuck']
         serde: ['', 'serde']
         std: ['', 'std']
     runs-on: ubuntu-latest
     env:
-      FEATURES: ${{ matrix.serde }},${{ matrix.std }}
+      FEATURES: ${{ matrix.bytemuck }},${{ matrix.serde }},${{ matrix.std }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1

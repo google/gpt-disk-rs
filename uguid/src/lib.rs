@@ -21,6 +21,7 @@
 //!
 //! No features are enabled by default.
 //!
+//! * `bytemuck`: Implements bytemuck's `Pod` and `Zeroable` traits for `Guid`.
 //! * `serde`: Implements serde's `Serialize` and `Deserialize` traits for `Guid`.
 //! * `std`: Provides `std::error::Error` implementation for the error type.
 //!
@@ -93,7 +94,9 @@
 #[cfg(feature = "serde")]
 mod guid_serde;
 
+#[cfg(feature = "bytemuck")]
 use bytemuck::{Pod, Zeroable};
+
 use core::fmt::{self, Display, Formatter};
 use core::str::{self, FromStr};
 
@@ -173,9 +176,8 @@ const fn parse_byte_from_ascii_str_at(
 ///
 /// The format is described in Appendix A of the UEFI
 /// Specification. Note that the first three fields are little-endian.
-#[derive(
-    Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Pod, Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(C)]
 #[allow(missing_docs)]
 pub struct Guid {

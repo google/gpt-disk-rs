@@ -3,6 +3,7 @@
 * Add a const `Guid::from_bytes` constructor.
 * Make `Guid::to_bytes` const.
 * Remove re-export of `bytemuck` dependency.
+* Make the `bytemuck` dependency optional with the new `bytemuck` feature.
 
 # 0.6.0
 
