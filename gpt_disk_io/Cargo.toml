@@ -27,7 +27,7 @@ repository = "https://github.com/google/gpt-disk-rs"
 gpt_disk_types = { version = "0.10.0", path = "../gpt_disk_types" }
 
 [dev-dependencies]
-anyhow = "1.0.57"
+anyhow = "1.0.58"
 bzip2-rs = "0.1.2"
 
 [features]
