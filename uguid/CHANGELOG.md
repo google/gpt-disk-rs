@@ -1,3 +1,7 @@
+# 0.7.0
+
+* Add `Guid::from_bytes` constructor.
+
 # 0.6.0
 
 * Add `Guid::to_ascii_hex_lower` method. This is a const function that
