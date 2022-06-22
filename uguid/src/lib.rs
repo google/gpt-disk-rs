@@ -42,12 +42,12 @@
 //! let guid: Guid = "01234567-89ab-cdef-0123-456789abcdef".parse().unwrap();
 //! ```
 //!
-//! Construct a GUID from its components:
+//! Construct a GUID from its components or a byte array:
 //!
 //! ```
 //! use uguid::Guid;
 //!
-//! let guid = Guid::new(
+//! let guid1 = Guid::new(
 //!     0x01234567_u32.to_le_bytes(),
 //!     0x89ab_u16.to_le_bytes(),
 //!     0xcdef_u16.to_le_bytes(),
@@ -55,6 +55,11 @@
 //!     0x23,
 //!     [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
 //! );
+//! let guid2 = Guid::from_bytes([
+//!     0x67, 0x45, 0x23, 0x01, 0xab, 0x89, 0xef, 0xcd, 0x01, 0x23, 0x45, 0x67,
+//!     0x89, 0xab, 0xcd, 0xef,
+//! ]);
+//! assert_eq!(guid1, guid2);
 //! ```
 //!
 //! Convert to a string or a byte array:
@@ -255,6 +260,22 @@ impl Guid {
                 mtry!(parse_byte_from_ascii_str_at(s, 34)),
             ],
         })
+    }
+
+    /// Create a GUID from a 16-byte array. No changes to byte order are made.
+    #[must_use]
+    pub const fn from_bytes(bytes: [u8; 16]) -> Self {
+        Self {
+            time_low: [bytes[0], bytes[1], bytes[2], bytes[3]],
+            time_mid: [bytes[4], bytes[5]],
+            time_high_and_version: [bytes[6], bytes[7]],
+            clock_seq_high_and_reserved: bytes[8],
+            clock_seq_low: bytes[9],
+            node: [
+                bytes[10], bytes[11], bytes[12], bytes[13], bytes[14],
+                bytes[15],
+            ],
+        }
     }
 
     /// Convert to a 16-byte array.
