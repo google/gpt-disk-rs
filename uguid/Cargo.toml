@@ -24,13 +24,14 @@ license = "Apache-2.0"
 repository = "https://github.com/google/gpt-disk-rs"
 
 [dependencies]
-bytemuck = { version = "1.9.1", features = ["derive"] }
+bytemuck = { version = "1.9.1", features = ["derive"], optional = true }
 serde = { version = "1.0.137", default-features = false, features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde_test = "1.0.137"
 
 [features]
+bytemuck = ["dep:bytemuck"]
 serde = ["dep:serde"]
 std = []
 
