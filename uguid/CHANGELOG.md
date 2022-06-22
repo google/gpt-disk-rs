@@ -1,6 +1,7 @@
 # 0.7.0
 
-* Add `Guid::from_bytes` constructor.
+* Add a const `Guid::from_bytes` constructor.
+* Make `Guid::to_bytes` const.
 
 # 0.6.0
 
