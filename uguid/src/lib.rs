@@ -97,9 +97,6 @@ use bytemuck::{Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
 use core::str::{self, FromStr};
 
-// Re-export dependencies.
-pub use bytemuck;
-
 /// Macro replacement for the `?` operator, which cannot be used in
 /// const functions.
 macro_rules! mtry {
