@@ -38,6 +38,33 @@ jobs:
         with:
           command: check
 
+  test-uguid:
+    name: Test uguid
+    strategy:
+      matrix:
+        serde: ['', 'serde']
+        std: ['', 'std']
+    runs-on: ubuntu-latest
+    env:
+      FEATURES: ${{ matrix.serde }},${{ matrix.std }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: rustup component add clippy
+      - uses: Swatinem/rust-cache@v1
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --package=uguid --features=${{ env.FEATURES }}
+      - uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --package=uguid --features=${{ env.FEATURES }} -- -D warnings
+
   test:
     name: Test Suite
     strategy:
