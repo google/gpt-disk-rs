@@ -93,7 +93,7 @@
 #[cfg(feature = "serde")]
 mod guid_serde;
 
-use bytemuck::{bytes_of, Pod, Zeroable};
+use bytemuck::{Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
 use core::str::{self, FromStr};
 
@@ -279,11 +279,26 @@ impl Guid {
     }
 
     /// Convert to a 16-byte array.
-    #[allow(clippy::missing_panics_doc)]
     #[must_use]
-    pub fn to_bytes(self) -> [u8; 16] {
-        // OK to unwrap as the `Guid` size is 16 bytes.
-        bytes_of(&self).try_into().unwrap()
+    pub const fn to_bytes(self) -> [u8; 16] {
+        [
+            self.time_low[0],
+            self.time_low[1],
+            self.time_low[2],
+            self.time_low[3],
+            self.time_mid[0],
+            self.time_mid[1],
+            self.time_high_and_version[0],
+            self.time_high_and_version[1],
+            self.clock_seq_high_and_reserved,
+            self.clock_seq_low,
+            self.node[0],
+            self.node[1],
+            self.node[2],
+            self.node[3],
+            self.node[4],
+            self.node[5],
+        ]
     }
 
     /// Convert to a lower-case hex ASCII string.
