@@ -13,9 +13,9 @@
 // limitations under the License.
 
 use crate::BlockIo;
+use bytemuck::{bytes_of, from_bytes};
 use core::fmt::{self, Debug, Display, Formatter};
 use core::mem;
-use gpt_disk_types::bytemuck::{bytes_of, from_bytes};
 use gpt_disk_types::{
     GptHeader, GptPartitionEntry, GptPartitionEntryArray,
     GptPartitionEntryArrayError, GptPartitionEntryArrayLayout, Lba,

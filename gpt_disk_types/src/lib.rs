@@ -113,7 +113,6 @@ mod partition_entry;
 mod std_support;
 
 // Re-export dependencies.
-pub use bytemuck;
 pub use crc;
 pub use ucs2;
 pub use uguid::{guid, Guid, GuidFromStrError};

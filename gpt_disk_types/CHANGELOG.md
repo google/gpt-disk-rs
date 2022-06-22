@@ -1,3 +1,8 @@
+# 0.11.0
+
+* Updated to latest `uguid`.
+* Remove re-export of `bytemuck` dependency.
+
 # 0.10.0
 
 * Updated to latest `uguid`.
