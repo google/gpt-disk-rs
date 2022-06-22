@@ -65,11 +65,11 @@ jobs:
           command: clippy
           args: --package=uguid --features=${{ env.FEATURES }} -- -D warnings
 
-  test:
-    name: Test Suite
+  test-gpt-disk:
+    name: Test gpt_disk_types/gpt_disk_io
     strategy:
       matrix:
-        features: ['', 'serde', 'std', 'serde,std']
+        features: ['', 'std']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -82,7 +82,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --features=${{ matrix.features }}
+          args: --package=gpt_disk_types --package=gpt_disk_io --features=${{ matrix.features }}
 
   fmt:
     name: Rustfmt
