@@ -229,7 +229,9 @@ impl<Io: BlockIo> Disk<Io> {
         block_buf: &mut [u8],
     ) -> Result<GptHeader, DiskError<Io::Error>> {
         let num_blocks = self.io.num_blocks()?;
-        self.read_gpt_header(Lba(num_blocks - 1), block_buf)
+        let last_block =
+            Lba(num_blocks.checked_sub(1).ok_or(DiskError::Overflow)?);
+        self.read_gpt_header(last_block, block_buf)
     }
 
     /// Read a GPT header at the given [`Lba`]. No validation of the
@@ -383,7 +385,9 @@ impl<Io: BlockIo> Disk<Io> {
         block_buf: &mut [u8],
     ) -> Result<(), DiskError<Io::Error>> {
         let num_blocks = self.io.num_blocks()?;
-        self.write_gpt_header(Lba(num_blocks - 1), header, block_buf)
+        let last_block =
+            Lba(num_blocks.checked_sub(1).ok_or(DiskError::Overflow)?);
+        self.write_gpt_header(last_block, header, block_buf)
     }
 
     /// Write a [`GptHeader`] to the specified [`Lba`].
