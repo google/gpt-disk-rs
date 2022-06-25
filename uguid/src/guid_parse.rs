@@ -22,35 +22,62 @@ use core::fmt::{self, Display, Formatter};
 ///
 /// [`Error`]: std::error::Error
 /// [`Guid::from_str`]: core::str::FromStr::from_str
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
-pub struct GuidFromStrError;
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
+pub enum GuidFromStrError {
+    /// Input has the wrong length, expected 36 bytes.
+    Length,
+
+    /// Input is missing a separator (`-`) at this byte index.
+    Separator(u8),
+
+    /// Input contains invalid ASCII hex at this byte index.
+    Hex(u8),
+}
+
+impl Default for GuidFromStrError {
+    fn default() -> Self {
+        Self::Length
+    }
+}
 
 impl Display for GuidFromStrError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        f.write_str("GUID hex string does not match expected format \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"")
+        match self {
+            Self::Length => {
+                f.write_str("Input has wrong length (expected 36 bytes)")
+            }
+            Self::Separator(index) => write!(
+                f,
+                "Input is missing a separator (`-`) at index {}",
+                index,
+            ),
+            Self::Hex(index) => {
+                write!(f, "Input contains invalid ASCII hex at index {}", index,)
+            }
+        }
     }
 }
 
 /// Parse a hexadecimal ASCII character as a `u8`.
-const fn parse_byte_from_ascii_char(c: u8) -> Result<u8, GuidFromStrError> {
+const fn parse_byte_from_ascii_char(c: u8) -> Option<u8> {
     match c {
-        b'0' => Ok(0x0),
-        b'1' => Ok(0x1),
-        b'2' => Ok(0x2),
-        b'3' => Ok(0x3),
-        b'4' => Ok(0x4),
-        b'5' => Ok(0x5),
-        b'6' => Ok(0x6),
-        b'7' => Ok(0x7),
-        b'8' => Ok(0x8),
-        b'9' => Ok(0x9),
-        b'a' | b'A' => Ok(0xa),
-        b'b' | b'B' => Ok(0xb),
-        b'c' | b'C' => Ok(0xc),
-        b'd' | b'D' => Ok(0xd),
-        b'e' | b'E' => Ok(0xe),
-        b'f' | b'F' => Ok(0xf),
-        _ => Err(GuidFromStrError),
+        b'0' => Some(0x0),
+        b'1' => Some(0x1),
+        b'2' => Some(0x2),
+        b'3' => Some(0x3),
+        b'4' => Some(0x4),
+        b'5' => Some(0x5),
+        b'6' => Some(0x6),
+        b'7' => Some(0x7),
+        b'8' => Some(0x8),
+        b'9' => Some(0x9),
+        b'a' | b'A' => Some(0xa),
+        b'b' | b'B' => Some(0xb),
+        b'c' | b'C' => Some(0xc),
+        b'd' | b'D' => Some(0xd),
+        b'e' | b'E' => Some(0xe),
+        b'f' | b'F' => Some(0xf),
+        _ => None,
     }
 }
 
@@ -69,22 +96,42 @@ macro_rules! mtry {
 
 /// Parse a pair of hexadecimal ASCII characters as a `u8`. For example,
 /// `(b'1', b'a')` is parsed as `0x1a`.
-const fn parse_byte_from_ascii_char_pair(
-    a: u8,
-    b: u8,
-) -> Result<u8, GuidFromStrError> {
-    let a = mtry!(parse_byte_from_ascii_char(a));
-    let b = mtry!(parse_byte_from_ascii_char(b));
-    Ok(a << 4 | b)
+#[allow(clippy::question_mark)] // `?` is not allowed in const functions.
+const fn parse_byte_from_ascii_char_pair(a: u8, b: u8) -> Option<u8> {
+    let a = if let Some(a) = parse_byte_from_ascii_char(a) {
+        a
+    } else {
+        return None;
+    };
+
+    let b = if let Some(b) = parse_byte_from_ascii_char(b) {
+        b
+    } else {
+        return None;
+    };
+
+    Some(a << 4 | b)
 }
 
 /// Parse a pair of hexadecimal ASCII characters at position `start` as
 /// a `u8`.
 const fn parse_byte_from_ascii_str_at(
     s: &[u8],
-    start: usize,
+    start: u8,
 ) -> Result<u8, GuidFromStrError> {
-    parse_byte_from_ascii_char_pair(s[start], s[start + 1])
+    // This `as` conversion is needed because this is a const
+    // function. It is always valid since `usize` is always bigger than
+    // a u8.
+    #![allow(clippy::as_conversions)]
+    let start_usize = start as usize;
+
+    if let Some(byte) =
+        parse_byte_from_ascii_char_pair(s[start_usize], s[start_usize + 1])
+    {
+        Ok(byte)
+    } else {
+        Err(GuidFromStrError::Hex(start))
+    }
 }
 
 pub(crate) const fn try_parse_guid(s: &str) -> Result<Guid, GuidFromStrError> {
@@ -92,12 +139,21 @@ pub(crate) const fn try_parse_guid(s: &str) -> Result<Guid, GuidFromStrError> {
     let s = s.as_bytes();
 
     if s.len() != 36 {
-        return Err(GuidFromStrError);
+        return Err(GuidFromStrError::Length);
     }
 
     let sep = b'-';
-    if s[8] != sep || s[13] != sep || s[18] != sep || s[23] != sep {
-        return Err(GuidFromStrError);
+    if s[8] != sep {
+        return Err(GuidFromStrError::Separator(8));
+    }
+    if s[13] != sep {
+        return Err(GuidFromStrError::Separator(13));
+    }
+    if s[18] != sep {
+        return Err(GuidFromStrError::Separator(18));
+    }
+    if s[23] != sep {
+        return Err(GuidFromStrError::Separator(23));
     }
 
     Ok(Guid {
@@ -134,7 +190,7 @@ mod tests {
 
     #[test]
     fn test_parse() {
-        assert_eq!(parse_byte_from_ascii_char_pair(b'1', b'a'), Ok(0x1a));
-        assert_eq!(parse_byte_from_ascii_char_pair(b'8', b'f'), Ok(0x8f));
+        assert_eq!(parse_byte_from_ascii_char_pair(b'1', b'a'), Some(0x1a));
+        assert_eq!(parse_byte_from_ascii_char_pair(b'8', b'f'), Some(0x8f));
     }
 }

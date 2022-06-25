@@ -1,3 +1,8 @@
+# Unreleased
+
+* Make `GuidFromStrError` into an enum with three variants to allow for
+  better error messages.
+
 # 0.7.0
 
 * Add a const `Guid::from_bytes` constructor.
