@@ -65,19 +65,6 @@ fn test_guid() {
 #[test]
 fn test_guid_error() {
     check_derives::<GuidFromStrError>();
-
-    // Wrong length.
-    let s = "01234567-89ab-cdef-0123-456789abcdef0";
-    assert_eq!(s.len(), 37);
-    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError));
-
-    // Wrong separator.
-    let s = "01234567x89ab-cdef-0123-456789abcdef";
-    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError));
-
-    // Invalid hex.
-    let s = "g1234567-89ab-cdef-0123-456789abcdef";
-    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError));
 }
 
 /// Inner module that only imports the `guid!` macro.

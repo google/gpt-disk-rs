@@ -68,15 +68,21 @@ fn test_guid_error() {
     // Wrong length.
     let s = "01234567-89ab-cdef-0123-456789abcdef0";
     assert_eq!(s.len(), 37);
-    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError));
+    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError::Length));
 
     // Wrong separator.
-    let s = "01234567x89ab-cdef-0123-456789abcdef";
-    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError));
+    let s = "01234567089ab-cdef-0123-456789abcdef";
+    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError::Separator(8)));
+    let s = "01234567-89ab0cdef-0123-456789abcdef";
+    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError::Separator(13)));
+    let s = "01234567-89ab-cdef00123-456789abcdef";
+    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError::Separator(18)));
+    let s = "01234567-89ab-cdef-01230456789abcdef";
+    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError::Separator(23)));
 
     // Invalid hex.
     let s = "g1234567-89ab-cdef-0123-456789abcdef";
-    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError));
+    assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError::Hex(0)));
 }
 
 /// Inner module that only imports the `guid!` macro.

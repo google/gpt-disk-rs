@@ -28,7 +28,8 @@ fn test_serde() {
 
     serde_test::assert_de_tokens_error::<Guid>(
         &[Token::Str("1234")],
-        "GUID hex string does not match expected format \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"");
+        "Input has wrong length (expected 36 bytes)",
+    );
 
     serde_test::assert_de_tokens_error::<Guid>(
         &[Token::U64(1234)],
