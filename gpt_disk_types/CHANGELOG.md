@@ -1,3 +1,7 @@
+# 0.12.0
+
+* Updated to latest `uguid`.
+
 # 0.11.0
 
 * Updated to latest `uguid`.
