@@ -39,10 +39,13 @@ IO.
 
 ## Code layout
 
-`gpt_disk_types/src`:
+[`uguid/src`](uguid/src):
+* `guid_serde.rs`: Provides `serde` trait impls when the `serde` feature is enabled.
+* `lib.rs`: Defines the GUID type.
+
+[`gpt_disk_types/src`](gpt_disk_types/src):
 * `block.rs`: Numeric types for addressing blocks.
 * `crc32.rs`: CRC32 type.
-* `guid.rs`: Globally-unique identifier type.
 * `header.rs`: GPT header and related types.
 * `mbr.rs`: Legacy master boot record types.
 * `num.rs`: Little-endian integer types.
@@ -50,7 +53,7 @@ IO.
 * `partition_entry.rs`: GPT partition array entry types.
 * `std_support.rs`: Provides `std` trait impls when the `std` feature is enabled.
 
-`gpt_disk_io/src`:
+[`gpt_disk_io/src`](gpt_disk_io/src):
 * `block_io.rs`: BlockIo trait for generic read/write operations.
 * `slice_block_io.rs`: In-memory byte slice implementations of BlockIo.
 * `disk.rs`: Read and write GPT data from a block device.
