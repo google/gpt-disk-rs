@@ -91,6 +91,9 @@
 #![warn(clippy::as_conversions)]
 #![allow(clippy::missing_errors_doc)]
 
+mod guid_parse;
+pub use guid_parse::GuidFromStrError;
+
 #[cfg(feature = "serde")]
 mod guid_serde;
 
@@ -99,19 +102,6 @@ use bytemuck::{Pod, Zeroable};
 
 use core::fmt::{self, Display, Formatter};
 use core::str::{self, FromStr};
-
-/// Macro replacement for the `?` operator, which cannot be used in
-/// const functions.
-macro_rules! mtry {
-    ($expr:expr $(,)?) => {
-        match $expr {
-            Ok(val) => val,
-            Err(err) => {
-                return Err(err);
-            }
-        }
-    };
-}
 
 const fn byte_to_ascii_hex_lower(byte: u8) -> (u8, u8) {
     let mut l = byte & 0xf;
@@ -127,49 +117,6 @@ const fn byte_to_ascii_hex_lower(byte: u8) -> (u8, u8) {
         h += b'a' - 10;
     }
     (h, l)
-}
-
-/// Parse a hexadecimal ASCII character as a `u8`.
-const fn parse_byte_from_ascii_char(c: u8) -> Result<u8, GuidFromStrError> {
-    match c {
-        b'0' => Ok(0x0),
-        b'1' => Ok(0x1),
-        b'2' => Ok(0x2),
-        b'3' => Ok(0x3),
-        b'4' => Ok(0x4),
-        b'5' => Ok(0x5),
-        b'6' => Ok(0x6),
-        b'7' => Ok(0x7),
-        b'8' => Ok(0x8),
-        b'9' => Ok(0x9),
-        b'a' | b'A' => Ok(0xa),
-        b'b' | b'B' => Ok(0xb),
-        b'c' | b'C' => Ok(0xc),
-        b'd' | b'D' => Ok(0xd),
-        b'e' | b'E' => Ok(0xe),
-        b'f' | b'F' => Ok(0xf),
-        _ => Err(GuidFromStrError),
-    }
-}
-
-/// Parse a pair of hexadecimal ASCII characters as a `u8`. For example,
-/// `(b'1', b'a')` is parsed as `0x1a`.
-const fn parse_byte_from_ascii_char_pair(
-    a: u8,
-    b: u8,
-) -> Result<u8, GuidFromStrError> {
-    let a = mtry!(parse_byte_from_ascii_char(a));
-    let b = mtry!(parse_byte_from_ascii_char(b));
-    Ok(a << 4 | b)
-}
-
-/// Parse a pair of hexadecimal ASCII characters at position `start` as
-/// a `u8`.
-const fn parse_byte_from_ascii_str_at(
-    s: &[u8],
-    start: usize,
-) -> Result<u8, GuidFromStrError> {
-    parse_byte_from_ascii_char_pair(s[start], s[start + 1])
 }
 
 /// Globally-unique identifier.
@@ -231,46 +178,7 @@ impl Guid {
     /// This is functionally the same as [`Guid::from_str`], but is
     /// exposed separately to provide a `const` method for parsing.
     pub const fn try_parse(s: &str) -> Result<Self, GuidFromStrError> {
-        // Treat input as ASCII.
-        let s = s.as_bytes();
-
-        if s.len() != 36 {
-            return Err(GuidFromStrError);
-        }
-
-        let sep = b'-';
-        if s[8] != sep || s[13] != sep || s[18] != sep || s[23] != sep {
-            return Err(GuidFromStrError);
-        }
-
-        Ok(Guid {
-            time_low: [
-                mtry!(parse_byte_from_ascii_str_at(s, 6)),
-                mtry!(parse_byte_from_ascii_str_at(s, 4)),
-                mtry!(parse_byte_from_ascii_str_at(s, 2)),
-                mtry!(parse_byte_from_ascii_str_at(s, 0)),
-            ],
-            time_mid: [
-                mtry!(parse_byte_from_ascii_str_at(s, 11)),
-                mtry!(parse_byte_from_ascii_str_at(s, 9)),
-            ],
-            time_high_and_version: [
-                mtry!(parse_byte_from_ascii_str_at(s, 16)),
-                mtry!(parse_byte_from_ascii_str_at(s, 14)),
-            ],
-            clock_seq_high_and_reserved: mtry!(parse_byte_from_ascii_str_at(
-                s, 19
-            )),
-            clock_seq_low: mtry!(parse_byte_from_ascii_str_at(s, 21)),
-            node: [
-                mtry!(parse_byte_from_ascii_str_at(s, 24)),
-                mtry!(parse_byte_from_ascii_str_at(s, 26)),
-                mtry!(parse_byte_from_ascii_str_at(s, 28)),
-                mtry!(parse_byte_from_ascii_str_at(s, 30)),
-                mtry!(parse_byte_from_ascii_str_at(s, 32)),
-                mtry!(parse_byte_from_ascii_str_at(s, 34)),
-            ],
-        })
+        guid_parse::try_parse_guid(s)
     }
 
     /// Create a GUID from a 16-byte array. No changes to byte order are made.
@@ -360,21 +268,6 @@ impl Display for Guid {
     }
 }
 
-/// Error type for [`Guid::try_parse`] and [`Guid::from_str`].
-///
-/// If the `std` feature is enabled, this type implements the [`Error`]
-/// trait.
-///
-/// [`Error`]: std::error::Error
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
-pub struct GuidFromStrError;
-
-impl Display for GuidFromStrError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        f.write_str("GUID hex string does not match expected format \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"")
-    }
-}
-
 impl FromStr for Guid {
     type Err = GuidFromStrError;
 
@@ -417,12 +310,6 @@ macro_rules! guid {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_parse() {
-        assert_eq!(parse_byte_from_ascii_char_pair(b'1', b'a'), Ok(0x1a));
-        assert_eq!(parse_byte_from_ascii_char_pair(b'8', b'f'), Ok(0x8f));
-    }
 
     #[test]
     fn test_to_ascii() {

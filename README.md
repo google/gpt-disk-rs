@@ -40,6 +40,7 @@ IO.
 ## Code layout
 
 [`uguid/src`](uguid/src):
+* `guid_parse`: GUID-parsing functions and types.
 * `guid_serde.rs`: Provides `serde` trait impls when the `serde` feature is enabled.
 * `lib.rs`: Defines the GUID type.
 
