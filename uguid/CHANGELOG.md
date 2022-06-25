@@ -1,4 +1,4 @@
-# Unreleased
+# 1.0.0
 
 * Make `GuidFromStrError` into an enum with three variants to allow for
   better error messages.
