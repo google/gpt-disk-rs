@@ -14,11 +14,18 @@
 
 use uguid::{guid, Guid, GuidFromStrError};
 
+/// Prevent a value from being visible at compile time so that code
+/// coverage can see the non-const version of code execution.
+#[inline(never)]
+fn hide_u32(v: u32) -> u32 {
+    v
+}
+
 #[test]
 fn test_guid() {
     // Constructors.
     let guid = Guid {
-        time_low: 0x01234567_u32.to_le_bytes(),
+        time_low: hide_u32(0x01234567).to_le_bytes(),
         time_mid: 0x89ab_u16.to_le_bytes(),
         time_high_and_version: 0xcdef_u16.to_le_bytes(),
         clock_seq_high_and_reserved: 0x01,
