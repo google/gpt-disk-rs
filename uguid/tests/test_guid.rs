@@ -17,7 +17,15 @@ use uguid::{guid, Guid, GuidFromStrError};
 #[test]
 fn test_guid() {
     // Constructors.
-    let guid = Guid::new(
+    let guid = Guid {
+        time_low: 0x01234567_u32.to_le_bytes(),
+        time_mid: 0x89ab_u16.to_le_bytes(),
+        time_high_and_version: 0xcdef_u16.to_le_bytes(),
+        clock_seq_high_and_reserved: 0x01,
+        clock_seq_low: 0x23,
+        node: [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
+    };
+    let guid2 = Guid::new(
         0x01234567_u32.to_le_bytes(),
         0x89ab_u16.to_le_bytes(),
         0xcdef_u16.to_le_bytes(),
@@ -25,11 +33,12 @@ fn test_guid() {
         0x23,
         [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
     );
-    let guid2 = Guid::from_bytes([
+    let guid3 = Guid::from_bytes([
         0x67, 0x45, 0x23, 0x01, 0xab, 0x89, 0xef, 0xcd, 0x01, 0x23, 0x45, 0x67,
         0x89, 0xab, 0xcd, 0xef,
     ]);
     assert_eq!(guid, guid2);
+    assert_eq!(guid, guid3);
 
     // To byte array.
     assert_eq!(

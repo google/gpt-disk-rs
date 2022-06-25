@@ -196,5 +196,8 @@ mod tests {
     fn test_parse() {
         assert_eq!(parse_byte_from_ascii_char_pair(b'1', b'a'), Some(0x1a));
         assert_eq!(parse_byte_from_ascii_char_pair(b'8', b'f'), Some(0x8f));
+
+        assert_eq!(parse_byte_from_ascii_char_pair(b'g', b'a'), None);
+        assert_eq!(parse_byte_from_ascii_char_pair(b'a', b'g'), None);
     }
 }
