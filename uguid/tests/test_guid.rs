@@ -83,6 +83,19 @@ fn test_guid_error() {
     // Invalid hex.
     let s = "g1234567-89ab-cdef-0123-456789abcdef";
     assert_eq!(s.parse::<Guid>(), Err(GuidFromStrError::Hex(0)));
+
+    assert_eq!(
+        GuidFromStrError::Length.to_string(),
+        "Input has wrong length (expected 36 bytes)"
+    );
+    assert_eq!(
+        GuidFromStrError::Separator(8).to_string(),
+        "Input is missing a separator (`-`) at index 8"
+    );
+    assert_eq!(
+        GuidFromStrError::Hex(10).to_string(),
+        "Input contains invalid ASCII hex at index 10"
+    );
 }
 
 /// Inner module that only imports the `guid!` macro.
