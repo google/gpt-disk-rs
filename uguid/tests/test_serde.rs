@@ -28,7 +28,7 @@ fn test_serde() {
 
     serde_test::assert_de_tokens_error::<Guid>(
         &[Token::Str("1234")],
-        "Input has wrong length (expected 36 bytes)",
+        "GUID string has wrong length (expected 36 bytes)",
     );
 
     serde_test::assert_de_tokens_error::<Guid>(
