@@ -179,13 +179,25 @@ const fn parse_byte_from_ascii_str_at(
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(C)]
-#[allow(missing_docs)]
 pub struct Guid {
+    /// The little-endian low field of the timestamp.
     pub time_low: [u8; 4],
+
+    /// The little-endian middle field of the timestamp.
     pub time_mid: [u8; 2],
+
+    /// The little-endian high field of the timestamp multiplexed with
+    /// the version number.
     pub time_high_and_version: [u8; 2],
+
+    /// The high field of the clock sequence multiplexed with the
+    /// variant.
     pub clock_seq_high_and_reserved: u8,
+
+    /// The low field of the clock sequence.
     pub clock_seq_low: u8,
+
+    /// The spatially unique node identifier.
     pub node: [u8; 6],
 }
 
