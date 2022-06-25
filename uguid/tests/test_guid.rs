@@ -86,15 +86,15 @@ fn test_guid_error() {
 
     assert_eq!(
         GuidFromStrError::Length.to_string(),
-        "Input has wrong length (expected 36 bytes)"
+        "GUID string has wrong length (expected 36 bytes)"
     );
     assert_eq!(
         GuidFromStrError::Separator(8).to_string(),
-        "Input is missing a separator (`-`) at index 8"
+        "GUID string is missing a separator (`-`) at index 8"
     );
     assert_eq!(
         GuidFromStrError::Hex(10).to_string(),
-        "Input contains invalid ASCII hex at index 10"
+        "GUID string contains invalid ASCII hex at index 10"
     );
 }
 

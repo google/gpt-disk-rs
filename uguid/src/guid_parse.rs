@@ -44,15 +44,19 @@ impl Display for GuidFromStrError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self {
             Self::Length => {
-                f.write_str("Input has wrong length (expected 36 bytes)")
+                f.write_str("GUID string has wrong length (expected 36 bytes)")
             }
             Self::Separator(index) => write!(
                 f,
-                "Input is missing a separator (`-`) at index {}",
+                "GUID string is missing a separator (`-`) at index {}",
                 index,
             ),
             Self::Hex(index) => {
-                write!(f, "Input contains invalid ASCII hex at index {}", index,)
+                write!(
+                    f,
+                    "GUID string contains invalid ASCII hex at index {}",
+                    index,
+                )
             }
         }
     }
