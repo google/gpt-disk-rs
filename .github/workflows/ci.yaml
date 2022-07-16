@@ -28,15 +28,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
+      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
-        with:
-          command: check
+      - run: cargo check
 
   test-uguid:
     name: Test uguid
@@ -50,21 +44,10 @@ jobs:
       FEATURES: ${{ matrix.bytemuck }},${{ matrix.serde }},${{ matrix.std }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: rustup component add clippy
+      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package=uguid --features=${{ env.FEATURES }}
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --package=uguid --features=${{ env.FEATURES }} -- -D warnings
+      - run: cargo test --package=uguid --features=${{ env.FEATURES }}
+      - run: cargo clippy --package=uguid --features=${{ env.FEATURES }} -- -D warnings
 
   test-gpt-disk:
     name: Test gpt_disk_types/gpt_disk_io
@@ -74,55 +57,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: rustup component add clippy
+      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package=gpt_disk_types --package=gpt_disk_io --features=${{ matrix.features }}
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --package=gpt_disk_types --package=gpt_disk_io --features=${{ matrix.features }} -- -D warnings
+      - run: cargo test --package=gpt_disk_types --package=gpt_disk_io --features=${{ matrix.features }}
+      - run: cargo clippy --package=gpt_disk_types --package=gpt_disk_io --features=${{ matrix.features }} -- -D warnings
 
   fmt:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: rustup component add rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check --config format_code_in_doc_comments=true
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo fmt --all -- --check --config format_code_in_doc_comments=true
 
   doc:
     name: Docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
+      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v1
-      - uses: actions-rs/cargo@v1
+      - run: cargo doc --all-features
         env:
           RUSTDOCFLAGS: -Dwarnings
-        with:
-          command: doc
-          args: --all-features
 
   cargo-deny:
     runs-on: ubuntu-latest
