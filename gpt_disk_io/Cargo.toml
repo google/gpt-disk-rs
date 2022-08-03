@@ -19,7 +19,7 @@ repository = "https://github.com/google/gpt-disk-rs"
 
 [dependencies]
 bytemuck = { version = "1.9.1", default-features = false }
-gpt_disk_types = { version = "0.12.0", path = "../gpt_disk_types" }
+gpt_disk_types = { version = "0.13.0", path = "../gpt_disk_types" }
 
 [dev-dependencies]
 anyhow = "1.0.58"
