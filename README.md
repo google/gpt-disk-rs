@@ -65,7 +65,8 @@ Most of the tests are under `gpt_disk_io/tests`, including the tests for
 
 ## License
 
-Apache 2.0; see [`LICENSE`](LICENSE) for details.
+Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE)
+or [MIT license](LICENSE-MIT) at your option.
 
 ## Disclaimer
 
