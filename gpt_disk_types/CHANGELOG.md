@@ -1,3 +1,7 @@
+# 0.13.0
+
+* Allow the MIT license to be used in addition to Apache-2.0.
+
 # 0.12.0
 
 * Updated to latest `uguid`.
