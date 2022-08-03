@@ -1,3 +1,7 @@
+# 1.0.1
+
+* Allow the MIT license to be used in addition to Apache-2.0.
+
 # 1.0.0
 
 * Make `GuidFromStrError` into an enum with three variants to allow for
