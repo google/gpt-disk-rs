@@ -1,3 +1,7 @@
+# 1.0.2
+
+* Fix license links in README.
+
 # 1.0.1
 
 * Allow the MIT license to be used in addition to Apache-2.0.
