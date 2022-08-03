@@ -19,8 +19,8 @@ No features are enabled by default.
 
 ## License
 
-Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE)
-or [MIT license](LICENSE-MIT) at your option.
+Licensed under either of [Apache License, Version 2.0] or [MIT license]
+at your option.
 
 [Apache License, Version 2.0]: https://github.com/google/gpt-disk-rs/blob/HEAD/LICENSE-APACHE
 [MIT license]: https://github.com/google/gpt-disk-rs/blob/HEAD/LICENSE-MIT
