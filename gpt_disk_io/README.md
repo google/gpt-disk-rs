@@ -21,8 +21,8 @@ See also the [`gpt_disk_types`] package.
 Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE)
 or [MIT license](LICENSE-MIT) at your option.
 
-[`LICENSE-APACHE`]: https://github.com/google/gpt-disk-rs/blob/HEAD/LICENSE-APACHE
-[`LICENSE-MIT`]: https://github.com/google/gpt-disk-rs/blob/HEAD/LICENSE-MIT
+[Apache License, Version 2.0]: https://github.com/google/gpt-disk-rs/blob/HEAD/LICENSE-APACHE
+[MIT license]: https://github.com/google/gpt-disk-rs/blob/HEAD/LICENSE-MIT
 
 ## Disclaimer
 
