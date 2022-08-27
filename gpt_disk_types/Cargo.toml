@@ -18,7 +18,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/google/gpt-disk-rs"
 
 [dependencies]
-bytemuck = { version = "1.9.1", features = ["derive"] }
+bytemuck = { version = "1.4.0", features = ["derive"] }
 crc = "3.0.0"
 uguid = { version = "1.0.0", path = "../uguid", features = ["bytemuck"] }
 ucs2 = "0.3.2"
