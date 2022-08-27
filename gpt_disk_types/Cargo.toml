@@ -24,7 +24,7 @@ uguid = { version = "1.0.0", path = "../uguid", features = ["bytemuck"] }
 ucs2 = "0.3.2"
 
 [features]
-std = []
+std = ["uguid/std"]
 
 [package.metadata.docs.rs]
 all-features = true
