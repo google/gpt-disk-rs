@@ -26,7 +26,7 @@ anyhow = "1.0.0"
 bzip2-rs = "0.1.2"
 
 [features]
-std = []
+std = ["gpt_disk_types/std"]
 
 [package.metadata.docs.rs]
 all-features = true
