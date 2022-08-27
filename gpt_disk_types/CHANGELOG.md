@@ -1,3 +1,7 @@
+# Unreleased
+
+* Relax version requirement for `bytemuck`.
+
 # 0.13.0
 
 * Allow the MIT license to be used in addition to Apache-2.0.
