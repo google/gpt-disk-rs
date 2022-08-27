@@ -6,10 +6,9 @@
 # option. This file may not be copied, modified, or distributed
 # except according to those terms.
 
-[workspace]
-members = [
-  "gpt_disk_io",
-  "gpt_disk_types",
-  "uguid",
-  "xtask",
-]
+[package]
+name = "xtask"
+version = "0.0.0"
+edition = "2021"
+publish = false
+license = "MIT OR Apache-2.0"
