@@ -2,6 +2,8 @@
 
 * Relax version requirement for `bytemuck`.
 * When the `std` feature is enabled, also enable it in `uguid`.
+* Added a `bytemuck` feature (disabled by default). All of the code that
+  depends on the `bytemuck` crate is now gated behind this feature.
 
 # 0.13.0
 

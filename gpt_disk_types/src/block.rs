@@ -7,25 +7,16 @@
 // except according to those terms.
 
 use crate::U64Le;
-use bytemuck::{Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
 use core::num::{NonZeroU32, TryFromIntError};
 use core::ops::RangeInclusive;
 
+#[cfg(feature = "bytemuck")]
+use bytemuck::{Pod, Zeroable};
+
 /// Logical block address.
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    PartialEq,
-    Hash,
-    Ord,
-    PartialOrd,
-    Pod,
-    Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct Lba(pub u64);
 
@@ -64,19 +55,8 @@ impl From<LbaLe> for Lba {
 }
 
 /// Logical block address stored as a [`U64Le`].
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    PartialEq,
-    Hash,
-    Ord,
-    PartialOrd,
-    Pod,
-    Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct LbaLe(pub U64Le);
 
@@ -107,19 +87,8 @@ impl From<Lba> for LbaLe {
 }
 
 /// Inclusive range of logical block addresses.
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    PartialEq,
-    Hash,
-    Ord,
-    PartialOrd,
-    Pod,
-    Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(C)]
 pub struct LbaRangeInclusive {
     start: Lba,
