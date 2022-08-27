@@ -6,15 +6,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use crate::{
-    BlockSize, Crc32, GptPartitionEntry, GptPartitionEntrySize, Lba, U32Le,
-};
+use crate::{BlockSize, Crc32, GptPartitionEntrySize, Lba, U32Le};
 use core::fmt::{self, Display, Formatter};
-use core::mem;
-use core::ops::Range;
 
 #[cfg(feature = "bytemuck")]
-use bytemuck::{from_bytes, from_bytes_mut};
+use {
+    crate::GptPartitionEntry,
+    bytemuck::{from_bytes, from_bytes_mut},
+    core::mem,
+    core::ops::Range,
+};
 
 /// Disk layout of a GPT partition entry array.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
