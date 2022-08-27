@@ -1,8 +1,9 @@
-# Unreleased
+# 0.14.0
 
 * Relax version requirement for `bytemuck`.
 * When the `std` feature is enabled, also enable it in `gpt_disk_types`.
 * Enable `doc_auto_cfg` on docs.rs.
+* Updated to latest `gpt_disk_types`.
 
 # 0.13.0
 
