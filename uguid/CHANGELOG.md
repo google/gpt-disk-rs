@@ -1,3 +1,7 @@
+# Unreleased
+
+* Relax version requirements for `bytemuck` and `serde`.
+
 # 1.0.3
 
 * Fix license links in README, take two.
