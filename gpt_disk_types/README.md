@@ -22,6 +22,14 @@ No features are enabled by default.
   byte access.
 * `std`: Provides `std::error::Error` implementations for all of the
   error types.
+  
+## Minimum Supported Rust Version (MSRV)
+
+The current MSRV is 1.60.0 due to the use of the Cargo [`dep:`]
+feature. Feel free to file an issue or create a PR if you have a use
+case that requires an older version.
+
+[`dep:`]: https://blog.rust-lang.org/2022/04/07/Rust-1.60.0.html#new-syntax-for-cargo-features
 
 ## License
 

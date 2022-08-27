@@ -15,6 +15,12 @@ See also the [`gpt_disk_types`] package.
 
 * `std`: Enables the `StdBlockIo` type, as well as `std::error::Error`
   implementations for all of the error types. Off by default.
+  
+## Minimum Supported Rust Version (MSRV)
+
+The current MSRV is 1.60.0 since that's the minimum for `uguid` and
+`gpt_disk_types`. Feel free to file an issue or create a PR if you have
+a use case that requires an older version.
 
 ## License
 
