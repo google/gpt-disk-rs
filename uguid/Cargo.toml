@@ -19,10 +19,10 @@ repository = "https://github.com/google/gpt-disk-rs"
 
 [dependencies]
 bytemuck = { version = "1.9.1", features = ["derive"], optional = true }
-serde = { version = "1.0.137", default-features = false, features = ["derive"], optional = true }
+serde = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
 
 [dev-dependencies]
-serde_test = "1.0.137"
+serde_test = "1.0.0"
 
 [features]
 bytemuck = ["dep:bytemuck"]
