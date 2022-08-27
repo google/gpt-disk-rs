@@ -56,14 +56,17 @@ jobs:
     name: Test gpt_disk_types/gpt_disk_io
     strategy:
       matrix:
+        bytemuck: ['', 'bytemuck']
         features: ['', 'std']
     runs-on: ubuntu-latest
+    env:
+      FEATURES: ${{ matrix.bytemuck }},${{ matrix.serde }},${{ matrix.std }}
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v1
-      - run: cargo test --package=gpt_disk_types --package=gpt_disk_io --features=${{ matrix.features }}
-      - run: cargo clippy --package=gpt_disk_types --package=gpt_disk_io --features=${{ matrix.features }} -- -D warnings
+      - run: cargo test --package=gpt_disk_types --package=gpt_disk_io --features=${{ env.FEATURES }}
+      - run: cargo clippy --package=gpt_disk_types --package=gpt_disk_io --features=${{ env.FEATURES }} -- -D warnings
 
   fmt:
     name: Rustfmt

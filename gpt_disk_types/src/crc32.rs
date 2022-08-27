@@ -7,23 +7,14 @@
 // except according to those terms.
 
 use crate::U32Le;
-use bytemuck::{Pod, Zeroable};
 use core::fmt::{self, Debug, Display, Formatter, LowerHex};
 
+#[cfg(feature = "bytemuck")]
+use bytemuck::{Pod, Zeroable};
+
 /// 32-bit CRC (cyclic redundency check).
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    PartialEq,
-    Hash,
-    Ord,
-    PartialOrd,
-    Pod,
-    Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct Crc32(pub U32Le);
 

@@ -11,14 +11,15 @@ use crate::{
     GptPartitionEntrySize, GptPartitionEntrySizeError, Guid, LbaLe, U32Le,
     U64Le,
 };
-use bytemuck::{bytes_of, Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
 use core::mem;
 
+#[cfg(feature = "bytemuck")]
+use bytemuck::{bytes_of, Pod, Zeroable};
+
 /// GPT header signature.
-#[derive(
-    Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Pod, Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct GptHeaderSignature(pub U64Le);
 
@@ -54,9 +55,8 @@ impl Default for GptHeaderSignature {
 }
 
 /// GPT header revision.
-#[derive(
-    Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Pod, Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct GptHeaderRevision(pub U32Le);
 
@@ -68,14 +68,14 @@ impl GptHeaderRevision {
     #[allow(clippy::missing_panics_doc)]
     #[must_use]
     pub fn major(self) -> u16 {
-        u16::from_le_bytes(bytes_of(&self)[2..4].try_into().unwrap())
+        u16::from_le_bytes(self.0 .0[2..4].try_into().unwrap())
     }
 
     /// Get the minor part of the version.
     #[allow(clippy::missing_panics_doc)]
     #[must_use]
     pub fn minor(self) -> u16 {
-        u16::from_le_bytes(bytes_of(&self)[0..2].try_into().unwrap())
+        u16::from_le_bytes(self.0 .0[0..2].try_into().unwrap())
     }
 }
 
@@ -92,9 +92,8 @@ impl Display for GptHeaderRevision {
 }
 
 /// GPT header that appears near the start and end of a GPT-formatted disk.
-#[derive(
-    Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd, Pod, Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(C)]
 pub struct GptHeader {
     /// Magic signature for the header. In a valid header this must be
@@ -159,6 +158,7 @@ impl GptHeader {
 
     /// Calculate the header's CRC32 checksum. This returns the checksum
     /// but does not update the checksum field in the header.
+    #[cfg(feature = "bytemuck")]
     #[must_use]
     pub fn calculate_header_crc32(&self) -> Crc32 {
         let crc = crc::Crc::<u32>::new(&Crc32::ALGORITHM);
@@ -181,6 +181,7 @@ impl GptHeader {
     }
 
     /// Update the header's CRC32 checksum.
+    #[cfg(feature = "bytemuck")]
     pub fn update_header_crc32(&mut self) {
         self.header_crc32 = self.calculate_header_crc32();
     }

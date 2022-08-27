@@ -8,8 +8,10 @@
 
 use crate::num::format_u8_slice_lower_hex_le;
 use crate::{Lba, U32Le};
-use bytemuck::{Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
+
+#[cfg(feature = "bytemuck")]
+use bytemuck::{Pod, Zeroable};
 
 /// Legacy disk geometry used for converting between [`Lba`] and [`Chs`].
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
@@ -47,19 +49,8 @@ impl Display for DiskGeometry {
 }
 
 /// Legacy MBR cylinder/head/sector.
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    PartialEq,
-    Hash,
-    Ord,
-    PartialOrd,
-    Pod,
-    Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(C)]
 pub struct Chs(pub [u8; 3]);
 
@@ -143,19 +134,8 @@ impl Display for Chs {
 /// Legacy MBR partition record.
 ///
 /// See Table 5-2 "Legacy MBR Partition Record" in the UEFI Specification.
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    PartialEq,
-    Hash,
-    Ord,
-    PartialOrd,
-    Pod,
-    Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(C)]
 pub struct MbrPartitionRecord {
     /// A value of `0x80` indicates this is a legacy bootable
@@ -241,8 +221,10 @@ impl Default for MasterBootRecord {
 
 // Manual implementation needed because of the large boot_strap_code
 // array field.
+#[cfg(feature = "bytemuck")]
 #[allow(unsafe_code)]
 unsafe impl Pod for MasterBootRecord {}
+#[cfg(feature = "bytemuck")]
 #[allow(unsafe_code)]
 unsafe impl Zeroable for MasterBootRecord {}
 

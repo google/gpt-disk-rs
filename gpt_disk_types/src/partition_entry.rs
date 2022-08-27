@@ -9,25 +9,16 @@
 use crate::{
     guid, Guid, GuidFromStrError, LbaLe, LbaRangeInclusive, U16Le, U64Le,
 };
-use bytemuck::{Pod, Zeroable};
 use core::fmt::{self, Display, Formatter};
 use core::num::NonZeroU32;
 use core::str::FromStr;
 
+#[cfg(feature = "bytemuck")]
+use bytemuck::{Pod, Zeroable};
+
 /// Unique ID representing the type of a partition.
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    PartialEq,
-    Hash,
-    Ord,
-    PartialOrd,
-    Pod,
-    Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct GptPartitionType(pub Guid);
 
@@ -86,19 +77,8 @@ impl FromStr for GptPartitionType {
 }
 
 /// Partition attribute bits.
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    PartialEq,
-    Hash,
-    Ord,
-    PartialOrd,
-    Pod,
-    Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct GptPartitionAttributes(pub U64Le);
 
@@ -292,8 +272,10 @@ impl Display for GptPartitionNameSetCharError {
 pub struct GptPartitionName(pub [u8; 72]);
 
 // Manual implementation needed because of the large array.
+#[cfg(feature = "bytemuck")]
 #[allow(unsafe_code)]
 unsafe impl Pod for GptPartitionName {}
+#[cfg(feature = "bytemuck")]
 #[allow(unsafe_code)]
 unsafe impl Zeroable for GptPartitionName {}
 
@@ -411,19 +393,8 @@ impl FromStr for GptPartitionName {
 }
 
 /// An entry within the GPT partition array.
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Eq,
-    PartialEq,
-    Hash,
-    Ord,
-    PartialOrd,
-    Pod,
-    Zeroable,
-)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(C)]
 pub struct GptPartitionEntry {
     /// Unique ID representing the partition's type. If the type is

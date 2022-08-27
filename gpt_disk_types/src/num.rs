@@ -6,13 +6,14 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use bytemuck::{Pod, Zeroable};
 use core::fmt::{self, Debug, Display, Formatter, LowerHex};
 
+#[cfg(feature = "bytemuck")]
+use bytemuck::{Pod, Zeroable};
+
 /// 16-bit unsigned integer stored as a little-endian.
-#[derive(
-    Clone, Copy, Default, Eq, PartialEq, Hash, Ord, PartialOrd, Pod, Zeroable,
-)]
+#[derive(Clone, Copy, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct U16Le(pub [u8; 2]);
 
@@ -54,9 +55,8 @@ impl LowerHex for U16Le {
 }
 
 /// 32-bit unsigned integer stored as a little-endian.
-#[derive(
-    Clone, Copy, Default, Eq, PartialEq, Hash, Ord, PartialOrd, Pod, Zeroable,
-)]
+#[derive(Clone, Copy, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct U32Le(pub [u8; 4]);
 
@@ -98,9 +98,8 @@ impl LowerHex for U32Le {
 }
 
 /// 64-bit unsigned integer stored as a little-endian.
-#[derive(
-    Clone, Copy, Default, Eq, PartialEq, Hash, Ord, PartialOrd, Pod, Zeroable,
-)]
+#[derive(Clone, Copy, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(transparent)]
 pub struct U64Le(pub [u8; 8]);
 
