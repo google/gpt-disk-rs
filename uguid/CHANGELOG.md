@@ -1,4 +1,4 @@
-# Unreleased
+# 1.0.4
 
 * Relax version requirements for `bytemuck` and `serde`.
 * Enable `doc_auto_cfg` on docs.rs.
