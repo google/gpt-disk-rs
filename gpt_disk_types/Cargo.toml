@@ -24,6 +24,7 @@ uguid = { version = "1.0.0", path = "../uguid" }
 ucs2 = "0.3.2"
 
 [features]
+# See module docstring in src/lib.rs for details of what these features do.
 bytemuck = ["dep:bytemuck", "uguid/bytemuck"]
 std = ["uguid/std"]
 

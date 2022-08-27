@@ -25,6 +25,7 @@ serde = { version = "1.0.0", default-features = false, features = ["derive"], op
 serde_test = "1.0.0"
 
 [features]
+# See module docstring in src/lib.rs for details of what these features do.
 bytemuck = ["dep:bytemuck"]
 serde = ["dep:serde"]
 std = []
