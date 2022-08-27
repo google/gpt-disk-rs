@@ -15,11 +15,13 @@ See also the [`gpt_disk_io`] package.
 
 ## Features
 
+No features are enabled by default.
+
 * `bytemuck`: Implements bytemuck's `Pod` and `Zeroable` traits for many
   of the types in this crate. Also enables some methods that rely on
   byte access.
 * `std`: Provides `std::error::Error` implementations for all of the
-  error types. Off by default.
+  error types.
 
 ## License
 
