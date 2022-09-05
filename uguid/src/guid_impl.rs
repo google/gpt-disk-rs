@@ -99,7 +99,7 @@ macro_rules! guid_impl {
 
             /// Parse a GUID from a string.
             ///
-            /// This is functionally the same as [`Guid::from_str`], but is
+            /// This is functionally the same as [`Self::from_str`], but is
             /// exposed separately to provide a `const` method for parsing.
             pub const fn try_parse(s: &str) -> Result<Self, GuidFromStrError> {
                 // Treat input as ASCII.
@@ -298,7 +298,7 @@ guid_impl!(
     Guid,
     1,
     GuidDeserializeVisitor,
-    "Globally-unique identifier (byte aligned).
+    "Globally-unique identifier (1-byte aligned).
 
 The format is described in Appendix A of the UEFI
 Specification. Note that the first three fields are little-endian."
@@ -311,5 +311,8 @@ guid_impl!(
     "Globally-unique identifier (8-byte aligned).
 
 The format is described in Appendix A of the UEFI
-Specification. Note that the first three fields are little-endian."
+Specification. Note that the first three fields are little-endian.
+
+This type is compatible with the `EFI_GUID` type, which is specified
+to be 8-byte aligned."
 );
