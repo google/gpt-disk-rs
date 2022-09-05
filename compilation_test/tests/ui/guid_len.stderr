@@ -1,0 +1,21 @@
+error[E0080]: evaluation of constant value failed
+   --> $WORKSPACE/uguid/src/guid_impl.rs
+    |
+    | / guid_impl!(
+    | |     Guid,
+    | |     repr(C),
+    | |     AlignedGuid,
+...   |
+    | | Specification. Note that the first three fields are little-endian."
+    | | );
+    | | ^
+    | | |
+    | |_the evaluated program panicked at 'GUID string has wrong length (expected 36 bytes)', $WORKSPACE/uguid/src/guid_impl.rs:328:1
+    |   inside `Guid::parse_or_panic` at /var/home/nbishop/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic.rs:57:9
+    |
+   ::: tests/ui/guid_len.rs:12:14
+    |
+12  |       let _g = guid!("1234");
+    |                ------------- inside `g` at $WORKSPACE/uguid/src/lib.rs:128:33
+    |
+    = note: this error originates in the macro `$crate::panic::panic_2021` (in Nightly builds, run with -Z macro-backtrace for more info)

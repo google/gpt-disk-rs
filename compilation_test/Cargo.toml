@@ -6,11 +6,12 @@
 # option. This file may not be copied, modified, or distributed
 # except according to those terms.
 
-[workspace]
-members = [
-  "gpt_disk_io",
-  "gpt_disk_types",
-  "uguid",
-  "compilation_test",
-  "xtask",
-]
+[package]
+name = "compilation_test"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dev-dependencies]
+trybuild = "1.0.64"
+uguid = { path = "../uguid" }

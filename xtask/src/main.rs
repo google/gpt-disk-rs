@@ -109,17 +109,23 @@ fn test_gpt_disk_io() {
     }
 }
 
+fn test_ui() {
+    run_cmd(get_cargo_cmd(CargoAction::Test, "compilation_test", &[]));
+}
+
 fn main() {
     let args: Vec<_> = env::args().collect();
     let arg_test_all = "test_all";
     let arg_test_uguid = "test_uguid";
     let arg_test_gpt_disk_types = "test_gpt_disk_types";
     let arg_test_gpt_disk_io = "test_gpt_disk_io";
+    let arg_test_ui = "test_ui";
     let actions = &[
         arg_test_all,
         arg_test_uguid,
         arg_test_gpt_disk_types,
         arg_test_gpt_disk_io,
+        arg_test_ui,
     ];
     if args.len() != 2 || !actions.contains(&args[1].as_ref()) {
         println!("usage: cargo xtask [{}]", actions.join("|"));
@@ -135,5 +141,8 @@ fn main() {
     }
     if action == arg_test_all || action == arg_test_gpt_disk_io {
         test_gpt_disk_io();
+    }
+    if action == arg_test_all || action == arg_test_ui {
+        test_ui();
     }
 }
