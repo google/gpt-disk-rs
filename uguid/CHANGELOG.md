@@ -2,6 +2,8 @@
 
 * Add `AlignedGuid`, which is identical to `Guid` except the struct is
   8-byte aligned instead of 1-byte aligned.
+* The `Guid` and `AlignedGuid` types implement `From` for each other to
+  convert between them.
 * Add `aligned_guid!` macro, which is identical to the `guid!` macro
   except it creates an `AlignedGuid` instead of a `Guid`.
 

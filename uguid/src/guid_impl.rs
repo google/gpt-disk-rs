@@ -41,6 +41,8 @@ macro_rules! guid_impl {
         $struct_name:ident,
         // Struct alignment.
         $struct_alignment:literal,
+        // Name of the other GUID struct, used for From conversions.
+        $other_struct_name:ident,
         // Internal name of the struct for implementing deserialization.
         $deserializer_name:ident,
         // Struct docstring.
@@ -248,6 +250,19 @@ macro_rules! guid_impl {
             }
         }
 
+        impl From<$other_struct_name> for $struct_name {
+            fn from(g: $other_struct_name) -> Self {
+                Self {
+                    time_low: g.time_low,
+                    time_mid: g.time_mid,
+                    time_high_and_version: g.time_high_and_version,
+                    clock_seq_high_and_reserved: g.clock_seq_high_and_reserved,
+                    clock_seq_low: g.clock_seq_low,
+                    node: g.node,
+                }
+            }
+        }
+
         #[cfg(feature = "serde")]
         impl Serialize for $struct_name {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -297,6 +312,7 @@ macro_rules! guid_impl {
 guid_impl!(
     Guid,
     1,
+    AlignedGuid,
     GuidDeserializeVisitor,
     "Globally-unique identifier (1-byte aligned).
 
@@ -307,6 +323,7 @@ Specification. Note that the first three fields are little-endian."
 guid_impl!(
     AlignedGuid,
     8,
+    Guid,
     AlignedGuidDeserializeVisitor,
     "Globally-unique identifier (8-byte aligned).
 
