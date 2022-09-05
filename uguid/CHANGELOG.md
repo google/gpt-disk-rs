@@ -1,3 +1,10 @@
+# 1.1.0 (unreleased)
+
+* Add `AlignedGuid`, which is identical to `Guid` except the struct is
+  8-byte aligned instead of 1-byte aligned.
+* Add `aligned_guid!` macro, which is identical to the `guid!` macro
+  except it creates an `AlignedGuid` instead of a `Guid`.
+
 # 1.0.4
 
 * Relax version requirements for `bytemuck` and `serde`.
