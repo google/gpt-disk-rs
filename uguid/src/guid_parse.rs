@@ -9,19 +9,6 @@
 use crate::util::parse_byte_from_ascii_str_at;
 use crate::{Guid, GuidFromStrError};
 
-/// Macro replacement for the `?` operator, which cannot be used in
-/// const functions.
-macro_rules! mtry {
-    ($expr:expr $(,)?) => {
-        match $expr {
-            Ok(val) => val,
-            Err(err) => {
-                return Err(err);
-            }
-        }
-    };
-}
-
 pub(crate) const fn try_parse_guid(s: &str) -> Result<Guid, GuidFromStrError> {
     // Treat input as ASCII.
     let s = s.as_bytes();
