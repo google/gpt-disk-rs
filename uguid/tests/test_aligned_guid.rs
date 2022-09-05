@@ -115,12 +115,12 @@ fn test_guid_error() {
 
 /// Inner module that only imports the `guid!` macro.
 mod inner {
-    use uguid::guid;
+    use uguid::aligned_guid;
 
     /// Test that the `guid!` macro works without importing anything
     /// else.
     #[test]
     fn test_guid_macro_paths() {
-        guid!("01234567-89ab-cdef-0123-456789abcdef");
+        aligned_guid!("01234567-89ab-cdef-0123-456789abcdef");
     }
 }
