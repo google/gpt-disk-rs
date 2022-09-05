@@ -48,9 +48,10 @@ case that requires an older version.
 ## Code layout
 
 [`uguid/src`](uguid/src):
-* `guid_parse`: GUID-parsing functions and types.
-* `guid_serde.rs`: Provides `serde` trait impls when the `serde` feature is enabled.
-* `lib.rs`: Defines the GUID type.
+* `error.rs`: Parse error type.
+* `guid_impl.rs`: Big macro that defines a GUID type.
+* `lib.rs`: Contains the public GUID-creation macros.
+* `util.rs`: ASCII conversion utilities.
 
 [`gpt_disk_types/src`](gpt_disk_types/src):
 * `block.rs`: Numeric types for addressing blocks.
