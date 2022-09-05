@@ -1,3 +1,10 @@
+# 1.2.0 (unreleased)
+
+* Add `Guid::parse_or_panic` and `AlignedGuid::parse_or_panic`. These
+  have the same functionality as the corresponding `try_parse` methods,
+  except they will panic on failure. This is useful in `const` contexts
+  where the panic is used as a compilation error.
+
 # 1.1.1
 
 * Change `Guid` back to `repr(C)` instead of `repr(C, align(1))`. Even

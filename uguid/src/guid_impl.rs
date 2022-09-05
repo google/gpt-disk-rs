@@ -154,6 +154,23 @@ macro_rules! guid_impl {
                 })
             }
 
+            /// Parse a GUID from a string, panicking on failure.
+            #[must_use]
+            pub const fn parse_or_panic(s: &str) -> Self {
+                match Self::try_parse(s) {
+                    Ok(g) => g,
+                    Err(GuidFromStrError::Length) => {
+                        panic!("GUID string has wrong length (expected 36 bytes)");
+                    },
+                    Err(GuidFromStrError::Separator(_)) => {
+                        panic!("GUID string is missing one or more separators (`-`)");
+                    },
+                    Err(GuidFromStrError::Hex(_)) => {
+                        panic!("GUID string contains one or more invalid characters");
+                    },
+                }
+            }
+
             /// Create a GUID from a 16-byte array. No changes to byte order are made.
             #[must_use]
             pub const fn from_bytes(bytes: [u8; 16]) -> Self {
