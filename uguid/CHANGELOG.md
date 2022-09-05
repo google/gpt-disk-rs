@@ -4,6 +4,10 @@
   have the same functionality as the corresponding `try_parse` methods,
   except they will panic on failure. This is useful in `const` contexts
   where the panic is used as a compilation error.
+* The `guid!` and `aligned_guid!` macros now force const evaluation of
+  the input. This was the intended behavior before, but it was not
+  implemented correctly. Any new compilation failures caused by this
+  change indicate a bug in the calling code.
 
 # 1.1.1
 
