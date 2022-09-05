@@ -87,6 +87,19 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::module_name_repetitions)]
 
+/// Macro replacement for the `?` operator, which cannot be used in
+/// const functions.
+macro_rules! mtry {
+    ($expr:expr $(,)?) => {
+        match $expr {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            }
+        }
+    };
+}
+
 mod error;
 mod util;
 
