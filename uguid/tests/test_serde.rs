@@ -39,12 +39,12 @@ fn test_serde_aligned() {
         &[Token::Str("01234567-89ab-cdef-0123-456789abcdef")],
     );
 
-    serde_test::assert_de_tokens_error::<Guid>(
+    serde_test::assert_de_tokens_error::<AlignedGuid>(
         &[Token::Str("1234")],
         "GUID string has wrong length (expected 36 bytes)",
     );
 
-    serde_test::assert_de_tokens_error::<Guid>(
+    serde_test::assert_de_tokens_error::<AlignedGuid>(
         &[Token::U64(1234)],
         "invalid type: integer `1234`, expected a string in the format \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"");
 }
