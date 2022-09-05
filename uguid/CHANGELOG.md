@@ -1,4 +1,11 @@
-# 1.1.0
+# 1.1.1
+
+* Change `Guid` back to `repr(C)` instead of `repr(C, align(1))`. Even
+  though the alignment of the struct is 1-byte either way, structs with
+  any alignment set are not allowed in packed structures so this was a
+  breaking change.
+
+# 1.1.0 (yanked)
 
 * Add `AlignedGuid`, which is identical to `Guid` except the struct is
   8-byte aligned instead of 1-byte aligned.
@@ -6,6 +13,8 @@
   convert between them.
 * Add `aligned_guid!` macro, which is identical to the `guid!` macro
   except it creates an `AlignedGuid` instead of a `Guid`.
+  
+This release was yanked due to accidentally changing the repr of `Guid`.
 
 # 1.0.4
 
