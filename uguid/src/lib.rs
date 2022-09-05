@@ -100,6 +100,7 @@ macro_rules! mtry {
     };
 }
 
+pub mod aligned;
 mod error;
 mod unaligned;
 mod util;
@@ -107,13 +108,10 @@ mod util;
 pub use error::GuidFromStrError;
 pub use unaligned::Guid;
 
-#[cfg(feature = "bytemuck")]
-use bytemuck::{Pod, Zeroable};
-
 #[cfg(feature = "std")]
 impl std::error::Error for GuidFromStrError {}
 
-/// Create a [`Guid`] from a string at compile time.
+/// Create an unaligned [`Guid`] from a string at compile time.
 ///
 /// # Examples
 ///
@@ -135,6 +133,35 @@ impl std::error::Error for GuidFromStrError {}
 macro_rules! guid {
     ($s:literal) => {
         match $crate::Guid::try_parse($s) {
+            Ok(g) => g,
+            Err(_) => panic!("invalid GUID string"),
+        }
+    };
+}
+
+/// Create an [`aligned::Guid`] from a string at compile time.
+///
+/// # Examples
+///
+/// ```
+/// use uguid::aligned::Guid;
+/// use uguid::aligned_guid;
+/// assert_eq!(
+///     aligned_guid!("01234567-89ab-cdef-0123-456789abcdef"),
+///     Guid::new(
+///         0x01234567_u32.to_le_bytes(),
+///         0x89ab_u16.to_le_bytes(),
+///         0xcdef_u16.to_le_bytes(),
+///         0x01,
+///         0x23,
+///         [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
+///     )
+/// );
+/// ```
+#[macro_export]
+macro_rules! aligned_guid {
+    ($s:literal) => {
+        match $crate::aligned::Guid::try_parse($s) {
             Ok(g) => g,
             Err(_) => panic!("invalid GUID string"),
         }
