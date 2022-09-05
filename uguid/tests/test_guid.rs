@@ -109,6 +109,6 @@ mod inner {
     /// else.
     #[test]
     fn test_guid_macro_paths() {
-        guid!("01234567-89ab-cdef-0123-456789abcdef");
+        let _g = guid!("01234567-89ab-cdef-0123-456789abcdef");
     }
 }
