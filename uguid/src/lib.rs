@@ -104,9 +104,6 @@ mod error;
 mod unaligned;
 mod util;
 
-#[cfg(feature = "serde")]
-mod guid_serde;
-
 pub use error::GuidFromStrError;
 pub use unaligned::Guid;
 
