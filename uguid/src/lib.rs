@@ -85,14 +85,17 @@
 #![warn(clippy::pedantic)]
 #![warn(clippy::as_conversions)]
 #![allow(clippy::missing_errors_doc)]
+#![allow(clippy::module_name_repetitions)]
 
+mod error;
 mod util;
 
 mod guid_parse;
-pub use guid_parse::GuidFromStrError;
 
 #[cfg(feature = "serde")]
 mod guid_serde;
+
+pub use error::GuidFromStrError;
 
 #[cfg(feature = "bytemuck")]
 use bytemuck::{Pod, Zeroable};
