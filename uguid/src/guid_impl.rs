@@ -36,14 +36,16 @@ macro_rules! mtry {
 /// Define a GUID struct and its impls. This is used to create structs
 /// that are the same but for alignment.
 macro_rules! guid_impl {
-    ($struct_name:ident,
-     // Struct alignment.
-     $struct_alignment:literal,
-     $deserializer_name:ident) => {
-        /// Globally-unique identifier.
-        ///
-        /// The format is described in Appendix A of the UEFI
-        /// Specification. Note that the first three fields are little-endian.
+    (
+        // Name of the GUID struct.
+        $struct_name:ident,
+        // Struct alignment.
+        $struct_alignment:literal,
+        // Internal name of the struct for implementing deserialization.
+        $deserializer_name:ident,
+        // Struct docstring.
+        $struct_doc:literal) => {
+        #[doc = $struct_doc]
         #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
         #[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
         #[repr(C)]
@@ -292,5 +294,22 @@ macro_rules! guid_impl {
     }
 }
 
-guid_impl!(Guid, 1, GuidDeserializeVisitor);
-guid_impl!(AlignedGuid, 8, AlignedGuidDeserializeVisitor);
+guid_impl!(
+    Guid,
+    1,
+    GuidDeserializeVisitor,
+    "Globally-unique identifier (byte aligned).
+
+The format is described in Appendix A of the UEFI
+Specification. Note that the first three fields are little-endian."
+);
+
+guid_impl!(
+    AlignedGuid,
+    8,
+    AlignedGuidDeserializeVisitor,
+    "Globally-unique identifier (8-byte aligned).
+
+The format is described in Appendix A of the UEFI
+Specification. Note that the first three fields are little-endian."
+);
