@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! TODO
+
 use crate::util::{byte_to_ascii_hex_lower, parse_byte_from_ascii_str_at};
 use crate::GuidFromStrError;
 use core::fmt::{self, Display, Formatter};
@@ -20,7 +22,7 @@ use bytemuck::{Pod, Zeroable};
 /// Specification. Note that the first three fields are little-endian.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
-#[repr(C)]
+#[repr(C, align(8))]
 pub struct Guid {
     /// The little-endian low field of the timestamp.
     pub time_low: [u8; 4],
