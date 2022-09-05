@@ -92,12 +92,27 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::module_name_repetitions)]
 
+/// Macro replacement for the `?` operator, which cannot be used in
+/// const functions.
+macro_rules! mtry {
+    ($expr:expr $(,)?) => {
+        match $expr {
+            Ok(val) => val,
+            Err(err) => {
+                return Err(err);
+            }
+        }
+    };
+}
+
+mod aligned_guid;
 mod error;
-mod guid_impl;
+mod unaligned_guid;
 mod util;
 
+pub use aligned_guid::AlignedGuid;
 pub use error::GuidFromStrError;
-pub use guid_impl::{AlignedGuid, Guid};
+pub use unaligned_guid::Guid;
 
 #[cfg(feature = "std")]
 impl std::error::Error for GuidFromStrError {}

@@ -13,5 +13,5 @@ edition = "2021"
 publish = false
 
 [dev-dependencies]
-trybuild = "1.0.64"
+trybuild = "1.0.0"
 uguid = { path = "../uguid" }

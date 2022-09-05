@@ -45,6 +45,7 @@ jobs:
       - run: |
           cargo xtask test_uguid
           cargo xtask test_ui
+          cargo xtask gen_guids
 
   test-gpt-disk-types:
     name: Test gpt_disk_types
