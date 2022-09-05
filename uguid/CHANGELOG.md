@@ -1,4 +1,4 @@
-# 1.1.0 (unreleased)
+# 1.1.0
 
 * Add `AlignedGuid`, which is identical to `Guid` except the struct is
   8-byte aligned instead of 1-byte aligned.
