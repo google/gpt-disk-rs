@@ -100,11 +100,12 @@ macro_rules! mtry {
     };
 }
 
-pub mod aligned;
+mod aligned;
 mod error;
 mod unaligned;
 mod util;
 
+pub use aligned::Guid as AlignedGuid;
 pub use error::GuidFromStrError;
 pub use unaligned::Guid;
 
@@ -139,16 +140,15 @@ macro_rules! guid {
     };
 }
 
-/// Create an [`aligned::Guid`] from a string at compile time.
+/// Create an [`AlignedGuid`] from a string at compile time.
 ///
 /// # Examples
 ///
 /// ```
-/// use uguid::aligned::Guid;
-/// use uguid::aligned_guid;
+/// use uguid::{AlignedGuid, aligned_guid};
 /// assert_eq!(
 ///     aligned_guid!("01234567-89ab-cdef-0123-456789abcdef"),
-///     Guid::new(
+///     AlignedGuid::new(
 ///         0x01234567_u32.to_le_bytes(),
 ///         0x89ab_u16.to_le_bytes(),
 ///         0xcdef_u16.to_le_bytes(),
@@ -161,7 +161,7 @@ macro_rules! guid {
 #[macro_export]
 macro_rules! aligned_guid {
     ($s:literal) => {
-        match $crate::aligned::Guid::try_parse($s) {
+        match $crate::AlignedGuid::try_parse($s) {
             Ok(g) => g,
             Err(_) => panic!("invalid GUID string"),
         }
