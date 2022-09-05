@@ -122,12 +122,12 @@ impl std::error::Error for GuidFromStrError {}
 /// ```
 #[macro_export]
 macro_rules! guid {
-    ($s:literal) => {
-        match $crate::Guid::try_parse($s) {
-            Ok(g) => g,
-            Err(_) => panic!("invalid GUID string"),
-        }
-    };
+    ($s:literal) => {{
+        // Create a temporary const value to force an error in the input
+        // to fail at compile time.
+        const g: $crate::Guid = $crate::Guid::parse_or_panic($s);
+        g
+    }};
 }
 
 /// Create an [`AlignedGuid`] from a string at compile time.
@@ -150,10 +150,10 @@ macro_rules! guid {
 /// ```
 #[macro_export]
 macro_rules! aligned_guid {
-    ($s:literal) => {
-        match $crate::AlignedGuid::try_parse($s) {
-            Ok(g) => g,
-            Err(_) => panic!("invalid GUID string"),
-        }
-    };
+    ($s:literal) => {{
+        // Create a temporary const value to force an error in the input
+        // to fail at compile time.
+        const g: $crate::AlignedGuid = $crate::AlignedGuid::parse_or_panic($s);
+        g
+    }};
 }
