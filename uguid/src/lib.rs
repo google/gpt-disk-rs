@@ -11,6 +11,11 @@
 //! Specification. This format of GUID is also used in Microsoft
 //! Windows.
 //!
+//! Two versions of the GUID struct are provided that are identical
+//! except for the struct alignment. [`Guid`] is 1-byte aligned, and
+//! [`AlignedGuid`] is 8-byte aligned. These types can be conveniently
+//! constructed with the [`guid!`] and [`aligned_guid!`] macros.
+//!
 //! # Features
 //!
 //! No features are enabled by default.
@@ -130,7 +135,7 @@ macro_rules! guid {
 /// # Examples
 ///
 /// ```
-/// use uguid::{AlignedGuid, aligned_guid};
+/// use uguid::{aligned_guid, AlignedGuid};
 /// assert_eq!(
 ///     aligned_guid!("01234567-89ab-cdef-0123-456789abcdef"),
 ///     AlignedGuid::new(
