@@ -6,55 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use crate::Guid;
-use core::fmt::{self, Display, Formatter};
-
-/// Error type for [`Guid::try_parse`] and [`Guid::from_str`].
-///
-/// If the `std` feature is enabled, this type implements the [`Error`]
-/// trait.
-///
-/// [`Error`]: std::error::Error
-/// [`Guid::from_str`]: core::str::FromStr::from_str
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
-pub enum GuidFromStrError {
-    /// Input has the wrong length, expected 36 bytes.
-    Length,
-
-    /// Input is missing a separator (`-`) at this byte index.
-    Separator(u8),
-
-    /// Input contains invalid ASCII hex at this byte index.
-    Hex(u8),
-}
-
-impl Default for GuidFromStrError {
-    fn default() -> Self {
-        Self::Length
-    }
-}
-
-impl Display for GuidFromStrError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Length => {
-                f.write_str("GUID string has wrong length (expected 36 bytes)")
-            }
-            Self::Separator(index) => write!(
-                f,
-                "GUID string is missing a separator (`-`) at index {}",
-                index,
-            ),
-            Self::Hex(index) => {
-                write!(
-                    f,
-                    "GUID string contains invalid ASCII hex at index {}",
-                    index,
-                )
-            }
-        }
-    }
-}
+use crate::{Guid, GuidFromStrError};
 
 /// Parse a hexadecimal ASCII character as a `u8`.
 const fn parse_byte_from_ascii_char(c: u8) -> Option<u8> {
