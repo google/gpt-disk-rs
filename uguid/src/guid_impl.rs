@@ -39,8 +39,8 @@ macro_rules! guid_impl {
     (
         // Name of the GUID struct.
         $struct_name:ident,
-        // Struct alignment.
-        $struct_alignment:literal,
+        // Struct repr.
+        $struct_repr:meta,
         // Name of the other GUID struct, used for From conversions.
         $other_struct_name:ident,
         // Internal name of the struct for implementing deserialization.
@@ -50,8 +50,7 @@ macro_rules! guid_impl {
         #[doc = $struct_doc]
         #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
         #[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
-        #[repr(C)]
-        #[repr(align($struct_alignment))]
+        #[$struct_repr]
         pub struct $struct_name {
             /// The little-endian low field of the timestamp.
             pub time_low: [u8; 4],
@@ -311,7 +310,7 @@ macro_rules! guid_impl {
 
 guid_impl!(
     Guid,
-    1,
+    repr(C),
     AlignedGuid,
     GuidDeserializeVisitor,
     "Globally-unique identifier (1-byte aligned).
@@ -322,7 +321,7 @@ Specification. Note that the first three fields are little-endian."
 
 guid_impl!(
     AlignedGuid,
-    8,
+    repr(C, align(8)),
     Guid,
     AlignedGuidDeserializeVisitor,
     "Globally-unique identifier (8-byte aligned).
