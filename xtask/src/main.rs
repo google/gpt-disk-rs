@@ -109,10 +109,6 @@ fn test_gpt_disk_io() {
     }
 }
 
-fn test_ui() {
-    run_cmd(get_cargo_cmd(CargoAction::Test, "compilation_test", &[]));
-}
-
 fn gen_guids() {
     let template = fs::read_to_string("uguid/src/guid_template.rs").unwrap();
 
@@ -183,14 +179,12 @@ fn main() {
     let arg_test_uguid = "test_uguid";
     let arg_test_gpt_disk_types = "test_gpt_disk_types";
     let arg_test_gpt_disk_io = "test_gpt_disk_io";
-    let arg_test_ui = "test_ui";
     let arg_gen_guids = "gen_guids";
     let actions = &[
         arg_test_all,
         arg_test_uguid,
         arg_test_gpt_disk_types,
         arg_test_gpt_disk_io,
-        arg_test_ui,
         arg_gen_guids,
     ];
     if args.len() != 2 || !actions.contains(&args[1].as_ref()) {
@@ -207,9 +201,6 @@ fn main() {
     }
     if action == arg_test_all || action == arg_test_gpt_disk_io {
         test_gpt_disk_io();
-    }
-    if action == arg_test_all || action == arg_test_ui {
-        test_ui();
     }
     if action == arg_gen_guids {
         gen_guids();

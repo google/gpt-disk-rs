@@ -44,7 +44,6 @@ jobs:
       - uses: Swatinem/rust-cache@v1
       - run: |
           cargo xtask test_uguid
-          cargo xtask test_ui
           cargo xtask gen_guids
 
   test-gpt-disk-types:

@@ -1,0 +1,18 @@
+error[E0080]: evaluation of constant value failed
+   --> IGNORE_REST
+    |
+153 |                 panic!("GUID string has wrong length (expected 36 bytes)");
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |                 |
+    |                 the evaluated program panicked at 'GUID string has wrong length (expected 36 bytes)', IGNORE_REST
+    |                 inside `Guid::parse_or_panic` at IGNORE_REST
+    |
+   ::: src/lib.rs:12:14
+    |
+12  |     let _g = guid!("1234");
+    |              ------------- inside `g` at IGNORE_REST
+    |
+    = note: this error originates in the macro `$crate::panic::panic_2021` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+For more information about this error, try `rustc --explain E0080`.
+error: could not compile `uguid_compilation_test` due to previous error
