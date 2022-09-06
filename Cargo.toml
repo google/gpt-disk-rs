@@ -11,6 +11,5 @@ members = [
   "gpt_disk_io",
   "gpt_disk_types",
   "uguid",
-  "compilation_test",
   "xtask",
 ]
