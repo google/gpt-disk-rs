@@ -121,14 +121,20 @@ fn print_mismatch(actual: &str, expected: &str, modified_actual: &str) {
     println!("{sep}");
 }
 
-#[test]
-fn test_compilation_errors() {
-    // TODO: generalize this and test some more error cases.
-    let actual = compile_and_capture("tests/ui/guid_len.rs");
-    let expected = fs::read_to_string("tests/ui/guid_len.stderr").unwrap();
+fn check_compilation_output(src_path: &str) {
+    let actual = compile_and_capture(src_path);
+    let expected_path = src_path.replace(".rs", ".stderr");
+    let expected = fs::read_to_string(expected_path).unwrap();
     let modified_actual = modify_actual(&actual, &expected);
     if modified_actual != expected {
         print_mismatch(&actual, &expected, &modified_actual);
-        panic!("mismatch in {}", "todo");
+        panic!("mismatch in {src_path}");
     }
+}
+
+#[test]
+fn test_compilation_errors() {
+    check_compilation_output("tests/ui/guid_len.rs");
+    check_compilation_output("tests/ui/guid_sep.rs");
+    check_compilation_output("tests/ui/guid_hex.rs");
 }
