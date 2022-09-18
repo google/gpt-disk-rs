@@ -1,4 +1,4 @@
-# 1.2.0 (unreleased)
+# 1.2.0
 
 * Add `Guid::parse_or_panic` and `AlignedGuid::parse_or_panic`. These
   have the same functionality as the corresponding `try_parse` methods,
