@@ -43,14 +43,14 @@ fn get_cargo_cmd(
     features: &[&str],
 ) -> Command {
     let mut cmd = Command::new("cargo");
-    cmd.args(&[action.as_str(), "--package", package]);
+    cmd.args([action.as_str(), "--package", package]);
     if !features.is_empty() {
-        cmd.args(&["--features", &features.join(",")]);
+        cmd.args(["--features", &features.join(",")]);
     }
     match action {
         CargoAction::Test => {}
         CargoAction::Lint => {
-            cmd.args(&["--", "-D", "warnings"]);
+            cmd.args(["--", "-D", "warnings"]);
         }
     }
     cmd
