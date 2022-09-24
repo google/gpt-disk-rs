@@ -12,7 +12,7 @@ error[E0080]: evaluation of constant value failed
 12  |     let _g = guid!("01234567089ab-cdef-0123-456789abcdef");
     |              --------------------------------------------- inside `g` at IGNORE_REST
     |
-    = note: this error originates in the macro `$crate::panic::panic_2021` (in Nightly builds, run with -Z macro-backtrace for more info)
+    = note: this error originates in the macro `$crate::panic::panic_2021` which comes from the expansion of the macro `panic` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 For more information about this error, try `rustc --explain E0080`.
 error: could not compile `uguid_compilation_test` due to previous error
