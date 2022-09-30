@@ -1,3 +1,8 @@
+# Unreleased
+
+* Copied the license files into each package so that the archives on
+  crates.io include them.
+
 # 0.14.0
 
 * Relax version requirement for `bytemuck`.
