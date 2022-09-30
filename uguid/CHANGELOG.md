@@ -1,4 +1,4 @@
-# Unreleased
+# 1.2.1
 
 * Copied the license files into each package so that the archives on
   crates.io include them.
