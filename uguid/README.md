@@ -7,7 +7,6 @@
 used in GPT disks, UEFI, and Microsoft Windows.
 
 [GPT]: https://en.wikipedia.org/wiki/GUID_Partition_Table
-[`gpt_disk_io`]: https://crates.io/crates/gpt_disk_io
 
 ## Features
 
@@ -27,11 +26,8 @@ case that requires an older version.
 
 ## License
 
-Licensed under either of [Apache License, Version 2.0] or [MIT license]
-at your option.
-
-[Apache License, Version 2.0]: https://github.com/google/gpt-disk-rs/blob/HEAD/LICENSE-APACHE
-[MIT license]: https://github.com/google/gpt-disk-rs/blob/HEAD/LICENSE-MIT
+Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE)
+or [MIT license](LICENSE-MIT) at your option.
 
 ## Disclaimer
 
