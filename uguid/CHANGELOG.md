@@ -1,3 +1,8 @@
+# Unreleased
+
+* Copied the license files into each package so that the archives on
+  crates.io include them.
+
 # 1.2.0
 
 * Add `Guid::parse_or_panic` and `AlignedGuid::parse_or_panic`. These
