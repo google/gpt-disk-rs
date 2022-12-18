@@ -148,7 +148,7 @@ pub(crate) fn format_u8_slice_lower_hex_le(
         f.write_str("0x")?;
     }
     for byte in s.iter().rev() {
-        write!(f, "{:02x}", byte)?;
+        write!(f, "{byte:02x}")?;
     }
     Ok(())
 }
