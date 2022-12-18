@@ -323,7 +323,7 @@ impl GptPartitionName {
 impl Display for GptPartitionName {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         for c in self.chars() {
-            write!(f, "{}", c)?;
+            write!(f, "{c}")?;
         }
         Ok(())
     }
