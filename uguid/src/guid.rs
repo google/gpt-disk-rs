@@ -22,10 +22,10 @@ use {
 #[cfg(feature = "bytemuck")]
 use bytemuck::{Pod, Zeroable};
 
-#[doc = "Globally-unique identifier (1-byte aligned).
-
-The format is described in Appendix A of the UEFI
-Specification. Note that the first three fields are little-endian."]
+/// Globally-unique identifier.
+///
+/// The format is described in Appendix A of the UEFI
+/// Specification. Note that the first three fields are little-endian.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(C)]
@@ -257,19 +257,6 @@ impl FromStr for Guid {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Self::try_parse(s)
-    }
-}
-
-impl From<crate::AlignedGuid> for Guid {
-    fn from(g: crate::AlignedGuid) -> Self {
-        Self {
-            time_low: g.time_low,
-            time_mid: g.time_mid,
-            time_high_and_version: g.time_high_and_version,
-            clock_seq_high_and_reserved: g.clock_seq_high_and_reserved,
-            clock_seq_low: g.clock_seq_low,
-            node: g.node,
-        }
     }
 }
 

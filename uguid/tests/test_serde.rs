@@ -9,10 +9,10 @@
 #![cfg(feature = "serde")]
 
 use serde_test::Token;
-use uguid::{aligned_guid, guid, AlignedGuid, Guid};
+use uguid::{guid, Guid};
 
 #[test]
-fn test_serde_unaligned() {
+fn test_serde() {
     let guid = guid!("01234567-89ab-cdef-0123-456789abcdef");
 
     serde_test::assert_tokens(
@@ -26,25 +26,6 @@ fn test_serde_unaligned() {
     );
 
     serde_test::assert_de_tokens_error::<Guid>(
-        &[Token::U64(1234)],
-        "invalid type: integer `1234`, expected a string in the format \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"");
-}
-
-#[test]
-fn test_serde_aligned() {
-    let guid = aligned_guid!("01234567-89ab-cdef-0123-456789abcdef");
-
-    serde_test::assert_tokens(
-        &guid,
-        &[Token::Str("01234567-89ab-cdef-0123-456789abcdef")],
-    );
-
-    serde_test::assert_de_tokens_error::<AlignedGuid>(
-        &[Token::Str("1234")],
-        "GUID string has wrong length (expected 36 bytes)",
-    );
-
-    serde_test::assert_de_tokens_error::<AlignedGuid>(
         &[Token::U64(1234)],
         "invalid type: integer `1234`, expected a string in the format \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"");
 }

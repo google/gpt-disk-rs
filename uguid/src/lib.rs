@@ -11,11 +11,6 @@
 //! Specification. This format of GUID is also used in Microsoft
 //! Windows.
 //!
-//! Two versions of the GUID struct are provided that are identical
-//! except for the struct alignment. [`Guid`] is 1-byte aligned, and
-//! [`AlignedGuid`] is 8-byte aligned. These types can be conveniently
-//! constructed with the [`guid!`] and [`aligned_guid!`] macros.
-//!
 //! # Features
 //!
 //! No features are enabled by default.
@@ -109,19 +104,17 @@ macro_rules! mtry {
     };
 }
 
-mod aligned_guid;
 mod error;
-mod unaligned_guid;
+mod guid;
 mod util;
 
-pub use aligned_guid::AlignedGuid;
 pub use error::GuidFromStrError;
-pub use unaligned_guid::Guid;
+pub use guid::Guid;
 
 #[cfg(feature = "std")]
 impl std::error::Error for GuidFromStrError {}
 
-/// Create an unaligned [`Guid`] from a string at compile time.
+/// Create a [`Guid`] from a string at compile time.
 ///
 /// # Examples
 ///
@@ -145,34 +138,6 @@ macro_rules! guid {
         // Create a temporary const value to force an error in the input
         // to fail at compile time.
         const g: $crate::Guid = $crate::Guid::parse_or_panic($s);
-        g
-    }};
-}
-
-/// Create an [`AlignedGuid`] from a string at compile time.
-///
-/// # Examples
-///
-/// ```
-/// use uguid::{aligned_guid, AlignedGuid};
-/// assert_eq!(
-///     aligned_guid!("01234567-89ab-cdef-0123-456789abcdef"),
-///     AlignedGuid::new(
-///         0x01234567_u32.to_le_bytes(),
-///         0x89ab_u16.to_le_bytes(),
-///         0xcdef_u16.to_le_bytes(),
-///         0x01,
-///         0x23,
-///         [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
-///     )
-/// );
-/// ```
-#[macro_export]
-macro_rules! aligned_guid {
-    ($s:literal) => {{
-        // Create a temporary const value to force an error in the input
-        // to fail at compile time.
-        const g: $crate::AlignedGuid = $crate::AlignedGuid::parse_or_panic($s);
         g
     }};
 }
