@@ -55,7 +55,7 @@ fn compile_and_capture(src_path: &str) -> String {
     .unwrap();
     fs::copy(src_path, src_dir.join("lib.rs")).unwrap();
     let output = Command::new("cargo")
-        .args(&[
+        .args([
             // Disable color so that the output doesn't can't get
             // polluted with terminal control codes.
             "--color=never",
