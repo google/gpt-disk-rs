@@ -55,8 +55,7 @@ impl Display for SliceBlockIoError {
             } => {
                 write!(
                     f,
-                    "out of bounds: start_lba={}, length_in_bytes={}",
-                    start_lba, length_in_bytes
+                    "out of bounds: start_lba={start_lba}, length_in_bytes={length_in_bytes}"
                 )
             }
         }
