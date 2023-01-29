@@ -38,7 +38,7 @@ where
     assert_eq!(a, c);
 
     // PartialOrd
-    assert!(!(a < a));
+    assert!(a >= a);
 
     // Debug/Display
     assert!(!format!("{a:?}").is_empty());
