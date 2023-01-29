@@ -42,14 +42,12 @@ impl Display for GuidFromStrError {
             }
             Self::Separator(index) => write!(
                 f,
-                "GUID string is missing a separator (`-`) at index {}",
-                index,
+                "GUID string is missing a separator (`-`) at index {index}",
             ),
             Self::Hex(index) => {
                 write!(
                     f,
-                    "GUID string contains invalid ASCII hex at index {}",
-                    index,
+                    "GUID string contains invalid ASCII hex at index {index}",
                 )
             }
         }

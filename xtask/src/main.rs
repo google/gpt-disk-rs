@@ -15,10 +15,10 @@ const FEAT_SERDE: &str = "serde";
 const FEAT_STD: &str = "std";
 
 fn run_cmd(mut cmd: Command) {
-    println!("Running: {}", format!("{:?}", cmd).replace('"', ""));
+    println!("Running: {}", format!("{cmd:?}").replace('"', ""));
     let status = cmd.status().expect("failed to launch");
     if !status.success() {
-        panic!("command failed: {}", status);
+        panic!("command failed: {status}");
     }
 }
 

@@ -41,8 +41,8 @@ where
     assert!(!(a < a));
 
     // Debug/Display
-    assert!(!format!("{:?}", a).is_empty());
-    format!("{}", a);
+    assert!(!format!("{a:?}").is_empty());
+    format!("{a}");
 
     // Hash
     let mut hasher = DefaultHasher::new();
