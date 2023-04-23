@@ -99,6 +99,8 @@
 #![warn(clippy::as_conversions)]
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::module_name_repetitions)]
+// Silence a warning from the bytemuck derives.
+#![allow(clippy::let_underscore_untyped)]
 
 mod block;
 mod crc32;
