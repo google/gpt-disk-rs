@@ -1,4 +1,4 @@
-# Unreleased
+# 2.0.0
 
 * Error messages from `guid!` and `aligned_guid!` have been improved by
   marking the `parse_or_panic` method `track_caller`.
