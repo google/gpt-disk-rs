@@ -105,7 +105,7 @@ fn test_gpt_disk_io() {
             features.push("std");
         }
 
-        test_package("gpt_disk_types", &features);
+        test_package("gpt_disk_io", &features);
     }
 }
 
