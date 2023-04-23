@@ -21,7 +21,7 @@ repository = "https://github.com/google/gpt-disk-rs"
 [dependencies]
 bytemuck = { version = "1.4.0", features = ["derive"], optional = true }
 crc = "3.0.0"
-uguid = { version = "1.0.0", path = "../uguid" }
+uguid = { version = "2.0.0", path = "../uguid" }
 ucs2 = "0.3.2"
 
 [features]
