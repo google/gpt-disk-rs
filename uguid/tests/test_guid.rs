@@ -70,6 +70,11 @@ fn test_guid() {
 }
 
 #[test]
+fn test_parse_or_panic_success() {
+    let _g = Guid::parse_or_panic("01234567-89ab-cdef-0123-456789abcdef");
+}
+
+#[test]
 #[should_panic]
 fn test_parse_or_panic_len() {
     let _g = Guid::parse_or_panic("01234567-89ab-cdef-0123-456789abcdef0");
