@@ -1,3 +1,8 @@
+# Unreleased
+
+* Error messages from `guid!` and `aligned_guid!` have been improved by
+  marking the `parse_or_panic` method `track_caller`.
+
 # 1.2.1
 
 * Copied the license files into each package so that the archives on

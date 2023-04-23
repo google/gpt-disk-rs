@@ -138,6 +138,9 @@ impl Guid {
     /// format, where each `x` is a hex digit (any of `0-9`, `a-f`, or
     /// `A-F`]).
     ///
+    /// This function is marked `track_caller` so that error messages
+    /// point directly to the invalid GUID string.
+    ///
     /// # Panics
     ///
     /// This function will panic if the input is not in the format shown
@@ -146,6 +149,7 @@ impl Guid {
     /// expected positions, or if any of the remaining characters are
     /// not valid hex digits.
     #[must_use]
+    #[track_caller]
     pub const fn parse_or_panic(s: &str) -> Self {
         match Self::try_parse(s) {
             Ok(g) => g,

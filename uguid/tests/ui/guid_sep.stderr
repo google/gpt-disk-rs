@@ -1,20 +1,10 @@
 error[E0080]: evaluation of constant value failed
-   --> IGNORE_REST
-    |
-156 |                 panic!("GUID string is missing one or more separators (`-`)");
-    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the evaluated program panicked at 'GUID string is missing one or more separators (`-`)', IGNORE_REST
-    |
-note: inside `Guid::parse_or_panic`
-   --> IGNORE_REST
-    |
-156 |                 panic!("GUID string is missing one or more separators (`-`)");
-    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-note: inside `g`
-   --> IGNORE_REST
-    |
-12  |     let _g = guid!("01234567089ab-cdef-0123-456789abcdef");
-    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    = note: this error originates in the macro `$crate::panic::panic_2021` which comes from the expansion of the macro `guid` (in Nightly builds, run with -Z macro-backtrace for more info)
+  --> src/lib.rs:12:14
+   |
+12 |     let _g = guid!("01234567089ab-cdef-0123-456789abcdef");
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the evaluated program panicked at 'GUID string is missing one or more separators (`-`)', src/lib.rs:12:14
+   |
+   = note: this error originates in the macro `guid` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 For more information about this error, try `rustc --explain E0080`.
 error: could not compile `uguid_compilation_test` due to previous error
