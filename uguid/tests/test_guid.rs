@@ -6,20 +6,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use core::mem;
 use uguid::{guid, Guid, GuidFromStrError};
 
 #[test]
 fn test_guid() {
+    assert_eq!(mem::size_of::<Guid>(), 16);
+    assert_eq!(mem::align_of::<Guid>(), 4);
+
     // Constructors.
-    let guid = Guid {
-        time_low: 0x01234567_u32.to_le_bytes(),
-        time_mid: 0x89ab_u16.to_le_bytes(),
-        time_high_and_version: 0xcdef_u16.to_le_bytes(),
-        clock_seq_high_and_reserved: 0x01,
-        clock_seq_low: 0x23,
-        node: [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
-    };
-    let guid2 = Guid::new(
+    let guid = Guid::new(
         0x01234567_u32.to_le_bytes(),
         0x89ab_u16.to_le_bytes(),
         0xcdef_u16.to_le_bytes(),
@@ -27,12 +23,19 @@ fn test_guid() {
         0x23,
         [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef],
     );
-    let guid3 = Guid::from_bytes([
+    let guid2 = Guid::from_bytes([
         0x67, 0x45, 0x23, 0x01, 0xab, 0x89, 0xef, 0xcd, 0x01, 0x23, 0x45, 0x67,
         0x89, 0xab, 0xcd, 0xef,
     ]);
     assert_eq!(guid, guid2);
-    assert_eq!(guid, guid3);
+
+    // Accessors.
+    assert_eq!(guid.time_low(), [0x67, 0x45, 0x23, 0x01]);
+    assert_eq!(guid.time_mid(), [0xab, 0x89]);
+    assert_eq!(guid.time_high_and_version(), [0xef, 0xcd]);
+    assert_eq!(guid.clock_seq_high_and_reserved(), 0x01);
+    assert_eq!(guid.clock_seq_low(), 0x23);
+    assert_eq!(guid.node(), [0x45, 0x67, 0x89, 0xab, 0xcd, 0xef]);
 
     // To byte array.
     assert_eq!(
