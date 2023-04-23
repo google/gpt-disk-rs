@@ -10,6 +10,7 @@
 name = "uguid"
 version = "1.2.1"
 edition = "2021"
+rust-version = "1.60"
 
 categories = ["data-structures", "embedded", "no-std"]
 description = "GUID (Globally Unique Identifier) no_std library"

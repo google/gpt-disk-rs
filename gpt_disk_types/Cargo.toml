@@ -10,6 +10,7 @@
 name = "gpt_disk_types"
 version = "0.14.0"
 edition = "2021"
+rust-version = "1.60"
 
 categories = ["data-structures", "embedded", "no-std"]
 description = "GPT (GUID Partition Table) disk data types no_std library"
