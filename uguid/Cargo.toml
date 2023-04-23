@@ -24,6 +24,7 @@ serde = { version = "1.0.0", default-features = false, features = ["derive"], op
 
 [dev-dependencies]
 serde_test = "1.0.0"
+trybuild = "1.0.80"
 
 [features]
 # See module docstring in src/lib.rs for details of what these features do.

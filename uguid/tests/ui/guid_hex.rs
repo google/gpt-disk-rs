@@ -8,6 +8,6 @@
 
 use uguid::guid;
 
-pub fn f() {
+fn main() {
     let _g = guid!("g1234567-89ab-cdef-0123-456789abcdef");
 }
