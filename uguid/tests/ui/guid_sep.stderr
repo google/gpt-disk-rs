@@ -1,10 +1,7 @@
 error[E0080]: evaluation of constant value failed
-  --> src/lib.rs:12:14
+  --> tests/ui/guid_sep.rs:12:14
    |
 12 |     let _g = guid!("01234567089ab-cdef-0123-456789abcdef");
-   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the evaluated program panicked at 'GUID string is missing one or more separators (`-`)', src/lib.rs:12:14
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the evaluated program panicked at 'GUID string is missing one or more separators (`-`)', $DIR/tests/ui/guid_sep.rs:12:14
    |
    = note: this error originates in the macro `guid` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-For more information about this error, try `rustc --explain E0080`.
-error: could not compile `uguid_compilation_test` due to previous error
