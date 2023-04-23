@@ -395,7 +395,7 @@ impl FromStr for GptPartitionName {
 /// An entry within the GPT partition array.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
-#[repr(C)]
+#[repr(C, packed)]
 pub struct GptPartitionEntry {
     /// Unique ID representing the partition's type. If the type is
     /// [`GptPartitionType::UNUSED`], this entry in the partition array
@@ -434,15 +434,18 @@ impl GptPartitionEntry {
     /// [`partition_type_guid`]: Self::partition_type_guid
     #[must_use]
     pub fn is_used(&self) -> bool {
-        self.partition_type_guid != GptPartitionType::UNUSED
+        let partition_type_guid = self.partition_type_guid;
+        partition_type_guid != GptPartitionType::UNUSED
     }
 }
 
 impl Display for GptPartitionEntry {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.write_str("GptPartitionEntry { ")?;
-        write!(f, "partition_type_guid: {}", self.partition_type_guid)?;
-        write!(f, ", unique_partition_guid: {}", self.unique_partition_guid)?;
+        write!(f, "partition_type_guid: {}", &{ self.partition_type_guid })?;
+        write!(f, ", unique_partition_guid: {}", &{
+            self.unique_partition_guid
+        })?;
         write!(f, ", starting_lba: {}", self.starting_lba)?;
         write!(f, ", ending_lba: {}", self.ending_lba)?;
         write!(f, ", attributes: {}", self.attributes)?;

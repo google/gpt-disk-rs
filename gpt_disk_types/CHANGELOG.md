@@ -1,5 +1,9 @@
 # Unreleased
 
+* Updated to latest `uguid`.
+* The `GptHeader` and `GptPartitionEntry` structs are now `repr(C,
+  packed)` instead of just `repr(C)`. This is due to the alignment of
+  `Guid` changing from 1 to 4.
 * Copied the license files into each package so that the archives on
   crates.io include them.
 

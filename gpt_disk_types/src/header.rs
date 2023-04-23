@@ -94,7 +94,7 @@ impl Display for GptHeaderRevision {
 /// GPT header that appears near the start and end of a GPT-formatted disk.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
-#[repr(C)]
+#[repr(C, packed)]
 pub struct GptHeader {
     /// Magic signature for the header. In a valid header this must be
     /// [`GptHeaderSignature::EFI_COMPATIBLE_PARTITION_TABLE_HEADER`].
@@ -172,7 +172,7 @@ impl GptHeader {
         digest.update(bytes_of(&self.alternate_lba));
         digest.update(bytes_of(&self.first_usable_lba));
         digest.update(bytes_of(&self.last_usable_lba));
-        digest.update(bytes_of(&self.disk_guid));
+        digest.update(bytes_of(&{ self.disk_guid }));
         digest.update(bytes_of(&self.partition_entry_lba));
         digest.update(bytes_of(&self.number_of_partition_entries));
         digest.update(bytes_of(&self.size_of_partition_entry));
@@ -235,7 +235,7 @@ impl Display for GptHeader {
         write!(f, ", alternate_lba: {}", self.alternate_lba)?;
         write!(f, ", first_usable_lba: {}", self.first_usable_lba)?;
         write!(f, ", last_usable_lba: {}", self.last_usable_lba)?;
-        write!(f, ", disk_guid: {}", self.disk_guid)?;
+        write!(f, ", disk_guid: {}", &{ self.disk_guid })?;
         write!(f, ", partition_entry_lba: {}", self.partition_entry_lba)?;
         write!(
             f,
