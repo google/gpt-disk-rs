@@ -1,5 +1,6 @@
-# Unreleased
+# 0.15.0
 
+* Update to latest `gpt_disk_types`.
 * Copied the license files into each package so that the archives on
   crates.io include them.
 
