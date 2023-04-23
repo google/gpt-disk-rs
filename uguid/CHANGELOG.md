@@ -2,6 +2,12 @@
 
 * Error messages from `guid!` and `aligned_guid!` have been improved by
   marking the `parse_or_panic` method `track_caller`.
+* `AlignedGuid` has been removed.
+* `Guid` is now 4-byte aligned.
+* The fields of `Guid` are now private. It is no longer possible to
+  directly construct `Guid`; one of the constructors such as `guid!`,
+  `Guid::new`, or `Guid::from_bytes` must be used instead. New accessor
+  methods have been added for each of the internal fields.
 
 # 1.2.1
 

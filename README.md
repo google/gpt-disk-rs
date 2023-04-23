@@ -49,6 +49,7 @@ case that requires an older version.
 
 [`uguid/src`](uguid/src):
 * `error.rs`: Parse error type.
+* `guid.rs`: Provides the `Guid` type.
 * `lib.rs`: Contains the public GUID-creation macros.
 * `util.rs`: ASCII conversion utilities.
 

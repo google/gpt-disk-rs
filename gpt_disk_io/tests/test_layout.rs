@@ -12,7 +12,7 @@ use std::mem;
 #[test]
 fn test_layouts() {
     assert_eq!(mem::size_of::<Guid>(), 16);
-    assert_eq!(mem::align_of::<Guid>(), 1);
+    assert_eq!(mem::align_of::<Guid>(), 4);
 
     assert_eq!(mem::size_of::<GptHeader>(), 92);
     assert_eq!(mem::align_of::<GptHeader>(), 1);
