@@ -16,25 +16,61 @@ use common::{
 use gpt_disk_io::StdBlockIo;
 use gpt_disk_io::{BlockIo, Disk, DiskError, MutSliceBlockIo, SliceBlockIo};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
-use std::io::{Cursor, Read};
+use std::io::{Cursor, Read, Seek, SeekFrom, Write};
+
+struct Data {
+    off: u64,
+    v: [u8; 16],
+}
+
+#[rustfmt::skip]
+const SPARSE_DISK: &'static [Data] = &[
+// Test data generated as follows:
+//
+// truncate --size 4MiB disk.bin
+// sgdisk disk.bin \
+//   --disk-guid=57a7feb6-8cd5-4922-b7bd-c78b0914e870 \
+//   --new=1:2048:4096 \
+//   --change-name='1:hello world!' \
+//   --partition-guid=1:37c75ffd-8932-467a-9c56-8cf1f0456b12 \
+//   --typecode=1:ccf0994f-f7e0-4e26-a011-843e38aa2eac
+// hexdump -ve '"Data{off:0x%_ax,v:[" 16/1 "%u," "]},\n"' disk.bin \
+//   | grep -v 'v:\[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,\]'
+Data{off:0x1c0,v:[2,0,238,130,2,0,1,0,0,0,255,31,0,0,0,0,]},
+Data{off:0x1f0,v:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,85,170,]},
+Data{off:0x200,v:[69,70,73,32,80,65,82,84,0,0,1,0,92,0,0,0,]},
+Data{off:0x210,v:[67,120,135,164,0,0,0,0,1,0,0,0,0,0,0,0,]},
+Data{off:0x220,v:[255,31,0,0,0,0,0,0,34,0,0,0,0,0,0,0,]},
+Data{off:0x230,v:[222,31,0,0,0,0,0,0,182,254,167,87,213,140,34,73,]},
+Data{off:0x240,v:[183,189,199,139,9,20,232,112,2,0,0,0,0,0,0,0,]},
+Data{off:0x250,v:[128,0,0,0,128,0,0,0,255,173,6,146,0,0,0,0,]},
+Data{off:0x400,v:[79,153,240,204,224,247,38,78,160,17,132,62,56,170,46,172,]},
+Data{off:0x410,v:[253,95,199,55,50,137,122,70,156,86,140,241,240,69,107,18,]},
+Data{off:0x420,v:[0,8,0,0,0,0,0,0,0,16,0,0,0,0,0,0,]},
+Data{off:0x430,v:[0,0,0,0,0,0,0,0,104,0,101,0,108,0,108,0,]},
+Data{off:0x440,v:[111,0,32,0,119,0,111,0,114,0,108,0,100,0,33,0,]},
+Data{off:0x3fbe00,v:[79,153,240,204,224,247,38,78,160,17,132,62,56,170,46,172,]},
+Data{off:0x3fbe10,v:[253,95,199,55,50,137,122,70,156,86,140,241,240,69,107,18,]},
+Data{off:0x3fbe20,v:[0,8,0,0,0,0,0,0,0,16,0,0,0,0,0,0,]},
+Data{off:0x3fbe30,v:[0,0,0,0,0,0,0,0,104,0,101,0,108,0,108,0,]},
+Data{off:0x3fbe40,v:[111,0,32,0,119,0,111,0,114,0,108,0,100,0,33,0,]},
+Data{off:0x3ffe00,v:[69,70,73,32,80,65,82,84,0,0,1,0,92,0,0,0,]},
+Data{off:0x3ffe10,v:[19,76,235,219,0,0,0,0,255,31,0,0,0,0,0,0,]},
+Data{off:0x3ffe20,v:[1,0,0,0,0,0,0,0,34,0,0,0,0,0,0,0,]},
+Data{off:0x3ffe30,v:[222,31,0,0,0,0,0,0,182,254,167,87,213,140,34,73,]},
+Data{off:0x3ffe40,v:[183,189,199,139,9,20,232,112,223,31,0,0,0,0,0,0,]},
+Data{off:0x3ffe50,v:[128,0,0,0,128,0,0,0,255,173,6,146,0,0,0,0,]},
+];
 
 fn load_test_disk() -> Vec<u8> {
-    // Test data generated as follows:
-    //
-    // truncate --size 4MiB disk.bin
-    // sgdisk disk.bin \
-    //   --disk-guid=57a7feb6-8cd5-4922-b7bd-c78b0914e870 \
-    //   --new=1:2048:4096 \
-    //   --change-name='1:hello world!' \
-    //   --partition-guid=1:37c75ffd-8932-467a-9c56-8cf1f0456b12 \
-    //   --typecode=1:ccf0994f-f7e0-4e26-a011-843e38aa2eac
-    // bzip2 disk.bin
-    // mv disk.bin.bz2 gpt_disk_io/tests/
-    let compressed_data = Cursor::new(include_bytes!("disk.bin.bz2"));
-
-    let mut reader = bzip2_rs::DecoderReader::new(compressed_data);
-    let mut disk = Vec::new();
-    reader.read_to_end(&mut disk).unwrap();
+    let mut disk = vec![0; 4 * 1024 * 1024];
+    let mut disk_cursor = Cursor::new(&mut disk);
+    for i in SPARSE_DISK {
+        disk_cursor
+            .seek(SeekFrom::Start(i.off))
+            .expect("seek failed");
+        disk_cursor.write(&i.v).expect("write failed");
+    }
     disk
 }
 
