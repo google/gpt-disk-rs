@@ -24,7 +24,6 @@ gpt_disk_types = { version = "0.15.0", path = "../gpt_disk_types", features = ["
 
 [dev-dependencies]
 anyhow = "1.0.0"
-bzip2-rs = "0.1.2"
 
 [features]
 # See module docstring in src/lib.rs for details of what this feature does.
