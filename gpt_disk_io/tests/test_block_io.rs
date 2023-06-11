@@ -8,26 +8,27 @@
 
 mod common;
 
-use anyhow::Result;
 use common::check_derives;
 use gpt_disk_io::{BlockIo, MutSliceBlockIo, SliceBlockIo, SliceBlockIoError};
 use gpt_disk_types::{BlockSize, Lba};
 #[cfg(feature = "std")]
 use {gpt_disk_io::StdBlockIo, std::io::Cursor};
 
-fn test_block_io_read<Io>(mut bio: Io) -> Result<(), Io::Error>
+fn test_block_io_read<Io>(mut bio: Io)
 where
     Io: BlockIo,
 {
     let mut buf = vec![0; 512];
 
     // Read first block.
-    bio.read_blocks(Lba(0), &mut buf)?;
+    bio.read_blocks(Lba(0), &mut buf)
+        .expect("read_blocks failed");
     assert_eq!(buf[0], 1);
     assert_eq!(buf[511], 2);
 
     // Read second block.
-    bio.read_blocks(Lba(1), &mut buf)?;
+    bio.read_blocks(Lba(1), &mut buf)
+        .expect("read_blocks failed");
     assert_eq!(buf[0], 3);
     assert_eq!(buf[511], 4);
 
@@ -36,13 +37,12 @@ where
 
     // Read two blocks at once.
     let mut buf = vec![0; 1024];
-    bio.read_blocks(Lba(0), &mut buf)?;
+    bio.read_blocks(Lba(0), &mut buf)
+        .expect("read_blocks failed");
     assert_eq!(buf[0], 1);
     assert_eq!(buf[511], 2);
     assert_eq!(buf[512], 3);
     assert_eq!(buf[1023], 4);
-
-    Ok(())
 }
 
 fn test_block_io_write1<Io>(mut bio: Io) -> Result<(), Io::Error>
@@ -66,7 +66,7 @@ where
     Ok(())
 }
 
-fn test_block_io_write2<Io>(mut bio: Io) -> Result<(), Io::Error>
+fn test_block_io_write2<Io>(mut bio: Io)
 where
     Io: BlockIo,
 {
@@ -77,11 +77,9 @@ where
     buf[511] = 10;
     buf[512] = 11;
     buf[1023] = 12;
-    bio.write_blocks(Lba(1), &buf)?;
+    bio.write_blocks(Lba(1), &buf).expect("write_blocks failed");
 
-    bio.flush()?;
-
-    Ok(())
+    bio.flush().expect("flush failed");
 }
 
 #[test]
@@ -106,7 +104,7 @@ fn test_slice_block_io_error() {
     );
 }
 
-fn test_slice_block_io() -> Result<()> {
+fn test_slice_block_io() {
     let mut data = vec![0; 512 * 3];
 
     // Write data to the beginning and end of the first two blocks.
@@ -115,8 +113,7 @@ fn test_slice_block_io() -> Result<()> {
     data[512] = 3;
     data[1023] = 4;
 
-    test_block_io_read(SliceBlockIo::new(&mut data, BlockSize::BS_512))
-        .unwrap();
+    test_block_io_read(SliceBlockIo::new(&mut data, BlockSize::BS_512));
     // Test that writes to a read-only slice fail.
     assert_eq!(
         test_block_io_write1(SliceBlockIo::new(&mut data, BlockSize::BS_512)),
@@ -124,7 +121,7 @@ fn test_slice_block_io() -> Result<()> {
     );
 
     let bio = MutSliceBlockIo::new(&mut data, BlockSize::BS_512);
-    test_block_io_read(bio).unwrap();
+    test_block_io_read(bio);
 
     test_block_io_write1(MutSliceBlockIo::new(&mut data, BlockSize::BS_512))
         .unwrap();
@@ -133,18 +130,15 @@ fn test_slice_block_io() -> Result<()> {
     assert_eq!(data[512], 7);
     assert_eq!(data[1023], 8);
 
-    test_block_io_write2(MutSliceBlockIo::new(&mut data, BlockSize::BS_512))
-        .unwrap();
+    test_block_io_write2(MutSliceBlockIo::new(&mut data, BlockSize::BS_512));
     assert_eq!(data[512], 9);
     assert_eq!(data[1023], 10);
     assert_eq!(data[1024], 11);
     assert_eq!(data[1535], 12);
-
-    Ok(())
 }
 
 #[cfg(feature = "std")]
-fn test_std_block_io() -> Result<()> {
+fn test_std_block_io() {
     let empty = vec![0; 512 * 3];
 
     {
@@ -156,8 +150,7 @@ fn test_std_block_io() -> Result<()> {
         data[1023] = 4;
 
         let mut cursor = Cursor::new(data);
-        test_block_io_read(StdBlockIo::new(&mut cursor, BlockSize::BS_512))
-            .unwrap();
+        test_block_io_read(StdBlockIo::new(&mut cursor, BlockSize::BS_512));
     };
 
     {
@@ -174,8 +167,7 @@ fn test_std_block_io() -> Result<()> {
 
     {
         let mut cursor = Cursor::new(empty.clone());
-        test_block_io_write2(StdBlockIo::new(&mut cursor, BlockSize::BS_512))
-            .unwrap();
+        test_block_io_write2(StdBlockIo::new(&mut cursor, BlockSize::BS_512));
         let data = cursor.into_inner();
         assert_eq!(data.len(), 512 * 3);
         assert_eq!(data[512], 9);
@@ -183,16 +175,12 @@ fn test_std_block_io() -> Result<()> {
         assert_eq!(data[1024], 11);
         assert_eq!(data[1535], 12);
     }
-
-    Ok(())
 }
 
 #[test]
-fn test_block_io() -> Result<()> {
-    test_slice_block_io()?;
+fn test_block_io() {
+    test_slice_block_io();
 
     #[cfg(feature = "std")]
-    test_std_block_io()?;
-
-    Ok(())
+    test_std_block_io();
 }
