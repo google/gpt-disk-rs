@@ -8,13 +8,12 @@
 
 mod common;
 
-use anyhow::Result;
 use common::{
     create_partition_entry, create_primary_header, create_secondary_header,
 };
 #[cfg(feature = "std")]
 use gpt_disk_io::StdBlockIo;
-use gpt_disk_io::{BlockIo, Disk, DiskError, MutSliceBlockIo, SliceBlockIo};
+use gpt_disk_io::{BlockIo, Disk, MutSliceBlockIo, SliceBlockIo};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
 use std::io::{Cursor, Read, Seek, SeekFrom, Write};
 
@@ -74,18 +73,19 @@ fn load_test_disk() -> Vec<u8> {
     disk
 }
 
-fn test_disk_read<Io>(block_io: Io) -> Result<(), DiskError<Io::Error>>
+fn test_disk_read<Io>(block_io: Io)
 where
     Io: BlockIo,
 {
     let bs = BlockSize::BS_512;
     let mut block_buf = vec![0u8; bs.to_usize().unwrap()];
-    let mut disk = Disk::new(block_io)?;
+    let mut disk = Disk::new(block_io).unwrap();
 
-    let primary_header = disk.read_primary_gpt_header(&mut block_buf)?;
+    let primary_header = disk.read_primary_gpt_header(&mut block_buf).unwrap();
     assert_eq!(primary_header, create_primary_header());
 
-    let secondary_header = disk.read_secondary_gpt_header(&mut block_buf)?;
+    let secondary_header =
+        disk.read_secondary_gpt_header(&mut block_buf).unwrap();
     assert_eq!(secondary_header, create_secondary_header());
 
     let expected_partition_entry = create_partition_entry();
@@ -129,25 +129,25 @@ where
         &mut disk,
         secondary_header.get_partition_entry_array_layout().unwrap(),
     );
-
-    Ok(())
 }
 
-fn test_disk_write<Io>(block_io: Io) -> Result<(), DiskError<Io::Error>>
+fn test_disk_write<Io>(block_io: Io)
 where
     Io: BlockIo,
 {
     let bs = BlockSize::BS_512;
     let mut block_buf = vec![0u8; bs.to_usize().unwrap()];
-    let mut disk = Disk::new(block_io)?;
+    let mut disk = Disk::new(block_io).unwrap();
 
     let primary_header = create_primary_header();
     let secondary_header = create_secondary_header();
     let partition_entry = create_partition_entry();
 
-    disk.write_protective_mbr(&mut block_buf)?;
-    disk.write_primary_gpt_header(&primary_header, &mut block_buf)?;
-    disk.write_secondary_gpt_header(&secondary_header, &mut block_buf)?;
+    disk.write_protective_mbr(&mut block_buf).unwrap();
+    disk.write_primary_gpt_header(&primary_header, &mut block_buf)
+        .unwrap();
+    disk.write_secondary_gpt_header(&secondary_header, &mut block_buf)
+        .unwrap();
 
     let layout = primary_header.get_partition_entry_array_layout().unwrap();
     let mut bytes =
@@ -155,60 +155,52 @@ where
     let mut entry_array =
         GptPartitionEntryArray::new(layout, bs, &mut bytes).unwrap();
     *entry_array.get_partition_entry_mut(0).unwrap() = partition_entry;
-    disk.write_gpt_partition_entry_array(&entry_array)?;
+    disk.write_gpt_partition_entry_array(&entry_array).unwrap();
 
     entry_array.set_start_lba(secondary_header.partition_entry_lba.into());
-    disk.write_gpt_partition_entry_array(&entry_array)?;
+    disk.write_gpt_partition_entry_array(&entry_array).unwrap();
 
-    disk.flush()?;
-
-    Ok(())
+    disk.flush().unwrap();
 }
 
 fn test_with_slice(test_disk: &[u8]) {
-    test_disk_read(SliceBlockIo::new(test_disk, BlockSize::BS_512)).unwrap();
+    test_disk_read(SliceBlockIo::new(test_disk, BlockSize::BS_512));
 }
 
 fn test_with_mut_slice(test_disk: &[u8]) {
     let mut contents = test_disk.to_vec();
 
     // Test read.
-    test_disk_read(MutSliceBlockIo::new(&mut contents, BlockSize::BS_512))
-        .unwrap();
+    test_disk_read(MutSliceBlockIo::new(&mut contents, BlockSize::BS_512));
 
     // Test write.
     let mut new_contents = vec![0; contents.len()];
-    test_disk_write(MutSliceBlockIo::new(&mut new_contents, BlockSize::BS_512))
-        .unwrap();
+    test_disk_write(MutSliceBlockIo::new(&mut new_contents, BlockSize::BS_512));
     assert_eq!(contents, new_contents);
 }
 
 #[cfg(feature = "std")]
-fn test_with_filelike(test_disk: &[u8]) -> Result<()> {
+fn test_with_filelike(test_disk: &[u8]) {
     let mut test_disk_cursor = Cursor::new(test_disk.to_vec());
 
     // Test read.
-    test_disk_read(StdBlockIo::new(&mut test_disk_cursor, BlockSize::BS_512))?;
+    test_disk_read(StdBlockIo::new(&mut test_disk_cursor, BlockSize::BS_512));
 
     // Test write.
     let mut new_disk = vec![0; 4 * 1024 * 1024];
     let mut new_disk_cursor = Cursor::new(&mut new_disk);
-    test_disk_write(StdBlockIo::new(&mut new_disk_cursor, BlockSize::BS_512))?;
+    test_disk_write(StdBlockIo::new(&mut new_disk_cursor, BlockSize::BS_512));
     assert_eq!(new_disk, test_disk);
-
-    Ok(())
 }
 
 #[test]
 #[cfg_attr(miri, ignore)]
-fn test_disk() -> Result<()> {
+fn test_disk() {
     let test_disk = load_test_disk();
 
     test_with_slice(&test_disk);
     test_with_mut_slice(&test_disk);
 
     #[cfg(feature = "std")]
-    test_with_filelike(&test_disk)?;
-
-    Ok(())
+    test_with_filelike(&test_disk);
 }
