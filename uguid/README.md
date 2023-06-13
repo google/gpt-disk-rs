@@ -3,7 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/uguid)](https://crates.io/crates/uguid) 
 [![Docs.rs](https://docs.rs/uguid/badge.svg)](https://docs.rs/uguid)
 
-`no_std` library providing a GUID (Globally Unique Identifer) type, as
+`no_std` library providing a GUID (Globally Unique Identifier) type, as
 used in GPT disks, UEFI, and Microsoft Windows.
 
 [GPT]: https://en.wikipedia.org/wiki/GUID_Partition_Table
