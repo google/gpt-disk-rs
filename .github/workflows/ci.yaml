@@ -105,3 +105,9 @@ jobs:
         with:
           files: lcov.info
           fail_ci_if_error: true
+
+  spellcheck:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: crate-ci/typos@v1.15.0
