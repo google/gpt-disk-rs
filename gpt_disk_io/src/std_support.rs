@@ -18,7 +18,7 @@ use std::io::{self, Read, Seek, SeekFrom, Write};
 /// # Example
 ///
 /// ```no_run
-/// # fn main() -> anyhow::Result<()> {
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use gpt_disk_io::gpt_disk_types::BlockSize;
 /// use gpt_disk_io::{Disk, StdBlockIo};
 /// use std::fs::File;
