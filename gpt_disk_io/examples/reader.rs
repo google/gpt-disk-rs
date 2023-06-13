@@ -8,10 +8,11 @@
 
 #[cfg(feature = "std")]
 use {
-    anyhow::Result,
     gpt_disk_io::gpt_disk_types::BlockSize,
     gpt_disk_io::{Disk, StdBlockIo},
-    std::{env, fs},
+    // dyn error::Error is used below as a generic error return, but could be
+    // substituted with Result from the 'anyhow' crate if desired.
+    std::{env, error, fs},
 };
 
 // To create a disk to test this you can use truncate and sgdisk. For example:
@@ -21,7 +22,7 @@ use {
 // cargo run --features=std --example reader disk.bin
 
 #[cfg(feature = "std")]
-fn main() -> Result<()> {
+fn main() -> Result<(), Box<dyn error::Error>> {
     let disk_path = env::args().nth(1).expect("one argument is required");
     println!("opening {} for reading", disk_path);
 
