@@ -1,3 +1,7 @@
+# 2.0.1
+
+* Fix typo in readme.
+
 # 2.0.0
 
 * Error messages from `guid!` and `aligned_guid!` have been improved by
