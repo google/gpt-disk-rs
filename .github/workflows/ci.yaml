@@ -16,6 +16,9 @@ on:
 
 name: CI
 
+env:
+  RUSTFLAGS: "-D warnings"
+
 jobs:
   msrv:
     name: MSRV
