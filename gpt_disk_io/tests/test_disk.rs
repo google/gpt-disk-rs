@@ -15,7 +15,7 @@ use common::{
 use gpt_disk_io::StdBlockIo;
 use gpt_disk_io::{BlockIo, Disk, MutSliceBlockIo, SliceBlockIo};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
-use std::io::{Cursor, Read, Seek, SeekFrom, Write};
+use std::io::{Cursor, Seek, SeekFrom, Write};
 
 struct Data {
     off: u64,
