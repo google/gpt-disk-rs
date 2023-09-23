@@ -13,3 +13,4 @@ members = [
   "uguid",
   "xtask",
 ]
+resolver = "2"
