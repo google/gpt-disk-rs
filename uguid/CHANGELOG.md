@@ -1,3 +1,7 @@
+# Unreleased
+
+* Add docstring for `Guid::from_str`.
+
 # 2.0.1
 
 * Fix typo in readme.
