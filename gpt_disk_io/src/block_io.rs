@@ -14,6 +14,17 @@ pub(crate) mod std_block_io;
 use core::fmt::{Debug, Display};
 use gpt_disk_types::{BlockSize, Lba};
 
+// TODO: dedup with Disk, figure out where this really goes.
+/// Clip the size of `block_buf` to a single block. Return
+/// `BufferTooSmall` if the buffer isn't big enough.
+fn clip_block_buf_size<'buf>(
+    block_size: BlockSize,
+    block_buf: &'buf mut [u8],
+) -> Option<&'buf mut [u8]> {
+    let block_size = block_size.to_usize()?;
+    block_buf.get_mut(..block_size)
+}
+
 /// Trait for reading from and writing to a block device.
 ///
 /// See also [`BlockIoAdapter`].
@@ -65,6 +76,39 @@ pub trait BlockIo {
 
     /// Flush any pending writes to the device.
     fn flush(&mut self) -> Result<(), Self::Error>;
+
+    /// Write contiguous data to the disk. Similar to [`write_blocks`],
+    /// but `src` can be of any length.
+    ///
+    /// `block_buf` is a mutable byte buffer with a length of at least one block.
+    ///
+    /// [`write_blocks`]: Self::write_blocks
+    fn write_data(
+        &mut self,
+        lba: Lba,
+        src: &[u8],
+        mut block_buf: &mut [u8],
+    ) -> Result<(), Self::Error> {
+        // TODO: check all these calculations.
+        // TODO: fix unwraps.
+
+        block_buf = clip_block_buf_size(self.block_size(), block_buf).unwrap();
+
+        let block_size = self.block_size().to_usize().unwrap();
+        let rem = src.len() % block_size;
+        let num_even_blocks = u64::try_from(src.len() / block_size).unwrap();
+
+        let (src, rest) = src.split_at(src.len() - rem);
+        self.write_blocks(lba, src)?;
+
+        {
+            let (dst_left, dst_right) = block_buf.split_at_mut(rest.len());
+            dst_left.copy_from_slice(rest);
+            dst_right.fill(0);
+        }
+
+        self.write_blocks(Lba(lba.to_u64() + num_even_blocks), block_buf)
+    }
 }
 
 /// Adapter for types that can act as storage, but don't have a block

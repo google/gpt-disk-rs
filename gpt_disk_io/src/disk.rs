@@ -11,7 +11,7 @@ use bytemuck::{bytes_of, from_bytes};
 use core::fmt::{self, Debug, Display, Formatter};
 use core::mem;
 use gpt_disk_types::{
-    GptHeader, GptPartitionEntry, GptPartitionEntryArray,
+    BlockSize, GptHeader, GptPartitionEntry, GptPartitionEntryArray,
     GptPartitionEntryArrayError, GptPartitionEntryArrayLayout, Lba,
     MasterBootRecord,
 };
@@ -417,14 +417,42 @@ impl<Io: BlockIo> Disk<Io> {
         self.io.write_blocks(lba, block_buf)?;
         Ok(())
     }
+}
+
+impl<Io: BlockIo> BlockIo for Disk<Io> {
+    type Error = Io::Error;
+
+    fn block_size(&self) -> BlockSize {
+        self.io.block_size()
+    }
+
+    fn num_blocks(&mut self) -> Result<u64, Self::Error> {
+        self.io.num_blocks()
+    }
+
+    fn read_blocks(
+        &mut self,
+        start_lba: Lba,
+        dst: &mut [u8],
+    ) -> Result<(), Self::Error> {
+        self.io.read_blocks(start_lba, dst)
+    }
+
+    fn write_blocks(
+        &mut self,
+        start_lba: Lba,
+        src: &[u8],
+    ) -> Result<(), Self::Error> {
+        self.io.write_blocks(start_lba, src)
+    }
 
     /// Flush any pending writes to the disk.
     ///
     /// This is called automatically when the disk is dropped, but if an
     /// error occurs at that point it will be silently ignored. It is
     /// recommended to call this method directly before dropping the disk.
-    pub fn flush(&mut self) -> Result<(), DiskError<Io::Error>> {
-        Ok(self.io.flush()?)
+    fn flush(&mut self) -> Result<(), Self::Error> {
+        self.io.flush()
     }
 }
 

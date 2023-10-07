@@ -138,6 +138,9 @@ mod block_io;
 mod disk;
 #[cfg(feature = "std")]
 mod std_support;
+// TODO: add alloc feature?
+#[cfg(feature = "std")]
+pub mod easy;
 
 // Re-export dependencies.
 pub use gpt_disk_types;

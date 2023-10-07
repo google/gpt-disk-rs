@@ -320,6 +320,18 @@ impl BlockSize {
     pub fn assert_valid_block_buffer(&self, buffer: &[u8]) {
         assert!(self.is_multiple_of_block_size(buffer.len()));
     }
+
+    /// Round `value` up to be an even multiple of the block size.
+    #[must_use]
+    pub const fn round_u64_up(self, value: u64) -> Option<u64> {
+        let block_size = self.to_u64();
+        let r = value % block_size;
+        if r == 0 {
+            Some(value)
+        } else {
+            value.checked_add(block_size - r)
+        }
+    }
 }
 
 impl Default for BlockSize {
