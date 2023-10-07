@@ -310,6 +310,11 @@ impl Display for Guid {
 impl FromStr for Guid {
     type Err = GuidFromStrError;
 
+    /// Parse a GUID from a string, panicking on failure.
+    ///
+    /// The input must be in "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    /// format, where each `x` is a hex digit (any of `0-9`, `a-f`, or
+    /// `A-F`).
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Self::try_parse(s)
     }
