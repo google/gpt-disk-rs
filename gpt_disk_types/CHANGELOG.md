@@ -1,3 +1,7 @@
+# Unreleased
+
+* Documentation improvements.
+
 # 0.15.0
 
 * Updated to latest `uguid`.
