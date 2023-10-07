@@ -71,6 +71,7 @@ impl Display for GptPartitionType {
 impl FromStr for GptPartitionType {
     type Err = GuidFromStrError;
 
+    /// Parse from a GUID string. See [`Guid::from_str`].
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(Self(s.parse()?))
     }
