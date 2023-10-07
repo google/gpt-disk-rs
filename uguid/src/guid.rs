@@ -183,7 +183,7 @@ impl Guid {
     ///
     /// The input must be in "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     /// format, where each `x` is a hex digit (any of `0-9`, `a-f`, or
-    /// `A-F`]).
+    /// `A-F`).
     ///
     /// This function is marked `track_caller` so that error messages
     /// point directly to the invalid GUID string.
