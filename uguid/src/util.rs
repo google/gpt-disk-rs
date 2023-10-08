@@ -49,17 +49,12 @@ const fn parse_byte_from_ascii_char(c: u8) -> Option<u8> {
 
 /// Parse a pair of hexadecimal ASCII characters as a `u8`. For example,
 /// `(b'1', b'a')` is parsed as `0x1a`.
-#[allow(clippy::question_mark)] // `?` is not allowed in const functions.
 const fn parse_byte_from_ascii_char_pair(a: u8, b: u8) -> Option<u8> {
-    let a = if let Some(a) = parse_byte_from_ascii_char(a) {
-        a
-    } else {
+    let Some(a) = parse_byte_from_ascii_char(a) else {
         return None;
     };
 
-    let b = if let Some(b) = parse_byte_from_ascii_char(b) {
-        b
-    } else {
+    let Some(b) = parse_byte_from_ascii_char(b) else {
         return None;
     };
 
