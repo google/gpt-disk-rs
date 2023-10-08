@@ -1,3 +1,7 @@
+# Unreleased
+
+* Bump MSRV to 1.68.
+
 # 0.15.0
 
 * Update to latest `gpt_disk_types`.

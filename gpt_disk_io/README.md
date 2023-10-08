@@ -18,7 +18,7 @@ See also the [`gpt_disk_types`] package.
   
 ## Minimum Supported Rust Version (MSRV)
 
-The current MSRV is 1.60.
+The current MSRV is 1.68.
 
 ## License
 
