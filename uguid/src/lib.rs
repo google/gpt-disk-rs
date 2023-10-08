@@ -86,8 +86,6 @@
 #![warn(clippy::as_conversions)]
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::module_name_repetitions)]
-// Not allowed for our current MSRV.
-#![allow(clippy::manual_let_else)]
 
 /// Macro replacement for the `?` operator, which cannot be used in
 /// const functions.
