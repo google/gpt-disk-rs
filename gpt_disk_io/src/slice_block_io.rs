@@ -156,27 +156,6 @@ impl<'a> MutSliceBlockIo<'a> {
     pub fn new(data: &'a mut [u8], block_size: BlockSize) -> Self {
         Self { data, block_size }
     }
-
-    fn buffer_byte_range_opt(
-        &self,
-        start_lba: Lba,
-        buf: &[u8],
-    ) -> Option<Range<usize>> {
-        let start_lba = usize::try_from(start_lba).ok()?;
-        let start_byte =
-            start_lba.checked_mul(self.block_size().to_usize()?)?;
-        let end_byte = start_byte.checked_add(buf.len())?;
-        Some(start_byte..end_byte)
-    }
-
-    fn buffer_byte_range(
-        &self,
-        start_lba: Lba,
-        buf: &[u8],
-    ) -> Result<Range<usize>, SliceBlockIoError> {
-        self.buffer_byte_range_opt(start_lba, buf)
-            .ok_or(SliceBlockIoError::Overflow)
-    }
 }
 
 impl<'a> BlockIo for MutSliceBlockIo<'a> {
@@ -202,7 +181,7 @@ impl<'a> BlockIo for MutSliceBlockIo<'a> {
 
         let src = self
             .data
-            .get(self.buffer_byte_range(start_lba, dst)?)
+            .get(buffer_byte_range(self.block_size(), start_lba, dst)?)
             .ok_or(Self::Error::OutOfBounds {
                 start_lba,
                 length_in_bytes: dst.len(),
@@ -220,7 +199,7 @@ impl<'a> BlockIo for MutSliceBlockIo<'a> {
 
         let dst = self
             .data
-            .get_mut(self.buffer_byte_range(start_lba, src)?)
+            .get_mut(buffer_byte_range(self.block_size(), start_lba, src)?)
             .ok_or(Self::Error::OutOfBounds {
                 start_lba,
                 length_in_bytes: src.len(),
