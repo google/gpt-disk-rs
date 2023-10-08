@@ -37,14 +37,6 @@ reading and writing GPT data to an abstract disk interface. This
 interface can be implemented for any backend that supports block-level
 IO.
 
-## Minimum Supported Rust Version (MSRV)
-
-The current MSRV is 1.60.0 due to the use of the Cargo [`dep:`]
-feature. Feel free to file an issue or create a PR if you have a use
-case that requires an older version.
-
-[`dep:`]: https://blog.rust-lang.org/2022/04/07/Rust-1.60.0.html#new-syntax-for-cargo-features
-
 ## Code layout
 
 [`uguid/src`](uguid/src):
