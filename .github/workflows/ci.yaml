@@ -32,7 +32,7 @@ jobs:
       - run: rustup default $rust_version
       - uses: Swatinem/rust-cache@v2
       - run: rustc --version
-      - run: cargo build --all-features
+      - run: cargo test --all-features
 
   check:
     name: Check
