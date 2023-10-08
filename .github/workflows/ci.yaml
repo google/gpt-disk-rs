@@ -23,9 +23,12 @@ jobs:
   msrv:
     name: MSRV
     runs-on: ubuntu-latest
+    env:
+      rust_version: "1.60"
     steps:
       - uses: actions/checkout@v4
-      - run: cp .github/workflows/msrv_toolchain.toml rust-toolchain.toml
+      - run: rustup toolchain install $rust_version --profile minimal --no-self-update
+      - run: rustup default $rust_version
       - uses: Swatinem/rust-cache@v2
       - run: rustc --version
       - run: cargo build --all-features
