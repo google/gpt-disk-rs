@@ -25,7 +25,7 @@ No features are enabled by default.
   
 ## Minimum Supported Rust Version (MSRV)
 
-The current MSRV is 1.60.
+The current MSRV is 1.68.
 
 [`dep:`]: https://blog.rust-lang.org/2022/04/07/Rust-1.60.0.html#new-syntax-for-cargo-features
 

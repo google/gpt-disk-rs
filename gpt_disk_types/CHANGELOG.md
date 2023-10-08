@@ -1,5 +1,6 @@
 # Unreleased
 
+* Bump MSRV to 1.68.
 * Documentation improvements.
 
 # 0.15.0

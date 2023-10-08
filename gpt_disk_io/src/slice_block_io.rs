@@ -18,9 +18,10 @@ use gpt_disk_types::{BlockSize, Lba};
 ///
 /// [`Error`]: std::error::Error
 #[allow(clippy::module_name_repetitions)]
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub enum SliceBlockIoError {
     /// Numeric overflow occurred.
+    #[default]
     Overflow,
 
     /// Attempted to write a read-only byte slice.
@@ -34,12 +35,6 @@ pub enum SliceBlockIoError {
         /// Length in bytes.
         length_in_bytes: usize,
     },
-}
-
-impl Default for SliceBlockIoError {
-    fn default() -> Self {
-        SliceBlockIoError::Overflow
-    }
 }
 
 impl Display for SliceBlockIoError {

@@ -1,5 +1,6 @@
 # Unreleased
 
+* Bump MSRV to 1.68.
 * Add docstring for `Guid::from_str`.
 
 # 2.0.1
