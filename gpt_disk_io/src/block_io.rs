@@ -14,8 +14,7 @@ pub trait BlockIo {
     /// IO error type.
     type Error: Debug + Display + Send + Sync + 'static;
 
-    /// Panic if the `buffer` size is zero, or not a multiple of
-    /// [`block_size`].
+    /// Panic if the `buffer` size is not a multiple of [`block_size`].
     ///
     /// [`block_size`]: Self::block_size
     fn assert_valid_buffer(&self, buffer: &[u8]) {
@@ -39,8 +38,8 @@ pub trait BlockIo {
     fn num_blocks(&mut self) -> Result<u64, Self::Error>;
 
     /// Read contiguous blocks from the disk. The `dst` buffer size must
-    /// be a non-zero multiple of [`block_size`]. Implementations can
-    /// use [`assert_valid_buffer`] to check this.
+    /// be a multiple of [`block_size`]. Implementations can use
+    /// [`assert_valid_buffer`] to check this.
     ///
     /// [`assert_valid_buffer`]: Self::assert_valid_buffer
     /// [`block_size`]: Self::block_size
@@ -51,8 +50,8 @@ pub trait BlockIo {
     ) -> Result<(), Self::Error>;
 
     /// Write contiguous block to the disk. The `src` buffer size must
-    /// be a non-zero multiple of [`block_size`]. Implementations can
-    /// use [`assert_valid_buffer`] to check this.
+    /// be a multiple of [`block_size`]. Implementations can use
+    /// [`assert_valid_buffer`] to check this.
     ///
     /// Writes are not guaranteed to be complete until [`flush`] is
     /// called.
