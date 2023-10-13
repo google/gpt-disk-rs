@@ -1,6 +1,9 @@
 # Unreleased
 
 * Bump MSRV to 1.68.
+* Relax the requirements of `BlockIo::read_blocks` and
+  `BlockIo::write_blocks` such that reading/writing zero blocks is
+  allowed.
 
 # 0.15.0
 
