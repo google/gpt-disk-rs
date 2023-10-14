@@ -57,6 +57,7 @@ impl Display for SliceBlockIoError {
     }
 }
 
+#[track_caller]
 fn buffer_byte_range_opt(
     block_size: BlockSize,
     start_lba: Lba,
@@ -68,6 +69,7 @@ fn buffer_byte_range_opt(
     Some(start_byte..end_byte)
 }
 
+#[track_caller]
 fn buffer_byte_range(
     block_size: BlockSize,
     start_lba: Lba,
@@ -75,6 +77,36 @@ fn buffer_byte_range(
 ) -> Result<Range<usize>, SliceBlockIoError> {
     buffer_byte_range_opt(block_size, start_lba, buf)
         .ok_or(SliceBlockIoError::Overflow)
+}
+
+#[track_caller]
+fn num_blocks(
+    data: &[u8],
+    block_size: BlockSize,
+) -> Result<u64, SliceBlockIoError> {
+    let data_len =
+        u64::try_from(data.len()).map_err(|_| SliceBlockIoError::Overflow)?;
+
+    Ok(data_len / block_size.to_u64())
+}
+
+#[track_caller]
+fn read_blocks(
+    data: &[u8],
+    block_size: BlockSize,
+    start_lba: Lba,
+    dst: &mut [u8],
+) -> Result<(), SliceBlockIoError> {
+    block_size.assert_valid_block_buffer(dst);
+
+    let src = data
+        .get(buffer_byte_range(block_size, start_lba, dst)?)
+        .ok_or(SliceBlockIoError::OutOfBounds {
+            start_lba,
+            length_in_bytes: dst.len(),
+        })?;
+    dst.copy_from_slice(src);
+    Ok(())
 }
 
 /// Wrapper type that implements the [`BlockIo`] trait for immutable byte
@@ -101,10 +133,7 @@ impl<'a> BlockIo for SliceBlockIo<'a> {
     }
 
     fn num_blocks(&mut self) -> Result<u64, Self::Error> {
-        let data_len = u64::try_from(self.data.len())
-            .map_err(|_| SliceBlockIoError::Overflow)?;
-
-        Ok(data_len / self.block_size().to_u64())
+        num_blocks(self.data, self.block_size)
     }
 
     fn read_blocks(
@@ -112,17 +141,7 @@ impl<'a> BlockIo for SliceBlockIo<'a> {
         start_lba: Lba,
         dst: &mut [u8],
     ) -> Result<(), Self::Error> {
-        self.block_size().assert_valid_block_buffer(dst);
-
-        let src = self
-            .data
-            .get(buffer_byte_range(self.block_size(), start_lba, dst)?)
-            .ok_or(Self::Error::OutOfBounds {
-                start_lba,
-                length_in_bytes: dst.len(),
-            })?;
-        dst.copy_from_slice(src);
-        Ok(())
+        read_blocks(self.data, self.block_size, start_lba, dst)
     }
 
     fn write_blocks(
@@ -161,10 +180,7 @@ impl<'a> BlockIo for MutSliceBlockIo<'a> {
     }
 
     fn num_blocks(&mut self) -> Result<u64, Self::Error> {
-        let data_len = u64::try_from(self.data.len())
-            .map_err(|_| SliceBlockIoError::Overflow)?;
-
-        Ok(data_len / self.block_size().to_u64())
+        num_blocks(self.data, self.block_size)
     }
 
     fn read_blocks(
@@ -172,17 +188,7 @@ impl<'a> BlockIo for MutSliceBlockIo<'a> {
         start_lba: Lba,
         dst: &mut [u8],
     ) -> Result<(), Self::Error> {
-        self.block_size().assert_valid_block_buffer(dst);
-
-        let src = self
-            .data
-            .get(buffer_byte_range(self.block_size(), start_lba, dst)?)
-            .ok_or(Self::Error::OutOfBounds {
-                start_lba,
-                length_in_bytes: dst.len(),
-            })?;
-        dst.copy_from_slice(src);
-        Ok(())
+        read_blocks(self.data, self.block_size, start_lba, dst)
     }
 
     fn write_blocks(
@@ -190,11 +196,11 @@ impl<'a> BlockIo for MutSliceBlockIo<'a> {
         start_lba: Lba,
         src: &[u8],
     ) -> Result<(), Self::Error> {
-        self.block_size().assert_valid_block_buffer(src);
+        self.block_size.assert_valid_block_buffer(src);
 
         let dst = self
             .data
-            .get_mut(buffer_byte_range(self.block_size(), start_lba, src)?)
+            .get_mut(buffer_byte_range(self.block_size, start_lba, src)?)
             .ok_or(Self::Error::OutOfBounds {
                 start_lba,
                 length_in_bytes: src.len(),
