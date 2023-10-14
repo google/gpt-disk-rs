@@ -141,7 +141,7 @@ pub use gpt_disk_types;
 pub use block_io::slice_block_io::{
     MutSliceBlockIo, SliceBlockIo, SliceBlockIoError,
 };
-pub use block_io::BlockIo;
+pub use block_io::{BlockIo, BlockIoAdapter};
 pub use disk::{Disk, DiskError};
 
 #[cfg(feature = "std")]
