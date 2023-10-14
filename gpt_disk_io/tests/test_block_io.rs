@@ -12,7 +12,10 @@ use common::check_derives;
 use gpt_disk_io::{BlockIo, MutSliceBlockIo, SliceBlockIo, SliceBlockIoError};
 use gpt_disk_types::{BlockSize, Lba};
 #[cfg(feature = "std")]
-use {gpt_disk_io::StdBlockIo, std::io::Cursor};
+use {
+    gpt_disk_io::StdBlockIo,
+    std::fs::{self, OpenOptions},
+};
 
 fn test_block_io_read<Io>(mut bio: Io)
 where
@@ -139,6 +142,7 @@ fn test_slice_block_io() {
 
 #[cfg(feature = "std")]
 fn test_std_block_io() {
+    let path = "tmp_test_block_io_file.bin";
     let empty = vec![0; 512 * 3];
 
     {
@@ -149,31 +153,53 @@ fn test_std_block_io() {
         data[512] = 3;
         data[1023] = 4;
 
-        let mut cursor = Cursor::new(data);
-        test_block_io_read(StdBlockIo::new(&mut cursor, BlockSize::BS_512));
+        fs::write(path, data).unwrap();
+        let mut file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(path)
+            .unwrap();
+
+        test_block_io_read(StdBlockIo::new(&mut file, BlockSize::BS_512));
+        fs::remove_file(path).unwrap();
     };
 
     {
-        let mut cursor = Cursor::new(empty.clone());
-        test_block_io_write1(StdBlockIo::new(&mut cursor, BlockSize::BS_512))
+        fs::write(path, &empty).unwrap();
+        let mut file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(path)
             .unwrap();
-        let data = cursor.into_inner();
+
+        test_block_io_write1(StdBlockIo::new(&mut file, BlockSize::BS_512))
+            .unwrap();
+
+        let data = fs::read(path).unwrap();
         assert_eq!(data.len(), 512 * 3);
         assert_eq!(data[0], 5);
         assert_eq!(data[511], 6);
         assert_eq!(data[512], 7);
         assert_eq!(data[1023], 8);
+        fs::remove_file(path).unwrap();
     }
 
     {
-        let mut cursor = Cursor::new(empty.clone());
-        test_block_io_write2(StdBlockIo::new(&mut cursor, BlockSize::BS_512));
-        let data = cursor.into_inner();
+        fs::write(path, &empty).unwrap();
+        let mut file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(path)
+            .unwrap();
+        test_block_io_write2(StdBlockIo::new(&mut file, BlockSize::BS_512));
+
+        let data = fs::read(path).unwrap();
         assert_eq!(data.len(), 512 * 3);
         assert_eq!(data[512], 9);
         assert_eq!(data[1023], 10);
         assert_eq!(data[1024], 11);
         assert_eq!(data[1535], 12);
+        fs::remove_file(path).unwrap();
     }
 }
 
