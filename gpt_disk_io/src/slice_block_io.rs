@@ -112,7 +112,7 @@ impl<'a> BlockIo for SliceBlockIo<'a> {
         start_lba: Lba,
         dst: &mut [u8],
     ) -> Result<(), Self::Error> {
-        self.assert_valid_buffer(dst);
+        self.block_size().assert_valid_block_buffer(dst);
 
         let src = self
             .data
@@ -172,7 +172,7 @@ impl<'a> BlockIo for MutSliceBlockIo<'a> {
         start_lba: Lba,
         dst: &mut [u8],
     ) -> Result<(), Self::Error> {
-        self.assert_valid_buffer(dst);
+        self.block_size().assert_valid_block_buffer(dst);
 
         let src = self
             .data
@@ -190,7 +190,7 @@ impl<'a> BlockIo for MutSliceBlockIo<'a> {
         start_lba: Lba,
         src: &[u8],
     ) -> Result<(), Self::Error> {
-        self.assert_valid_buffer(src);
+        self.block_size().assert_valid_block_buffer(src);
 
         let dst = self
             .data

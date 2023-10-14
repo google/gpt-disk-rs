@@ -4,6 +4,8 @@
 * Relax the requirements of `BlockIo::read_blocks` and
   `BlockIo::write_blocks` such that reading/writing zero blocks is
   allowed.
+* Remove `BlockIo::assert_valid_buffer`. Use
+  `BlockSize::assert_valid_block_buffer` instead.
 
 # 0.15.0
 
