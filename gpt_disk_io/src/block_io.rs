@@ -8,6 +8,9 @@
 
 pub(crate) mod slice_block_io;
 
+#[cfg(feature = "std")]
+pub(crate) mod std_block_io;
+
 use core::fmt::{Debug, Display};
 use gpt_disk_types::{BlockSize, Lba};
 
