@@ -15,7 +15,10 @@ use gpt_disk_io::{BlockIo, Disk, MutSliceBlockIo, SliceBlockIo};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
 
 #[cfg(feature = "std")]
-use {gpt_disk_io::StdBlockIo, std::io::Cursor};
+use {
+    gpt_disk_io::StdBlockIo,
+    std::fs::{self, OpenOptions},
+};
 
 struct SparseChunk {
     offset: usize,
@@ -183,17 +186,30 @@ fn test_with_mut_slice(test_disk: &[u8]) {
 }
 
 #[cfg(feature = "std")]
-fn test_with_filelike(test_disk: &[u8]) {
-    let mut test_disk_cursor = Cursor::new(test_disk.to_vec());
+fn test_with_file(test_disk: &[u8]) {
+    let path = "tmp_test_disk_file.bin";
+    fs::write(path, test_disk).unwrap();
+
+    let mut test_disk_file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(path)
+        .unwrap();
 
     // Test read.
-    test_disk_read(StdBlockIo::new(&mut test_disk_cursor, BlockSize::BS_512));
+    test_disk_read(StdBlockIo::new(&mut test_disk_file, BlockSize::BS_512));
+    fs::remove_file(path).unwrap();
 
     // Test write.
-    let mut new_disk = vec![0; 4 * 1024 * 1024];
-    let mut new_disk_cursor = Cursor::new(&mut new_disk);
-    test_disk_write(StdBlockIo::new(&mut new_disk_cursor, BlockSize::BS_512));
-    assert_eq!(new_disk, test_disk);
+    fs::write(path, vec![0; 4 * 1024 * 1024]).unwrap();
+    let mut new_disk_file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(path)
+        .unwrap();
+    test_disk_write(StdBlockIo::new(&mut new_disk_file, BlockSize::BS_512));
+    assert_eq!(fs::read(path).unwrap(), test_disk);
+    fs::remove_file(path).unwrap();
 }
 
 #[test]
@@ -205,5 +221,5 @@ fn test_disk() {
     test_with_mut_slice(&test_disk);
 
     #[cfg(feature = "std")]
-    test_with_filelike(&test_disk);
+    test_with_file(&test_disk);
 }
