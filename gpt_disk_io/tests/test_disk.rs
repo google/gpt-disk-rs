@@ -11,14 +11,14 @@ mod common;
 use common::{
     create_partition_entry, create_primary_header, create_secondary_header,
 };
-#[cfg(feature = "std")]
-use gpt_disk_io::StdBlockIo;
 use gpt_disk_io::{BlockIo, Disk, MutSliceBlockIo, SliceBlockIo};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
-use std::io::{Cursor, Seek, SeekFrom, Write};
+
+#[cfg(feature = "std")]
+use {gpt_disk_io::StdBlockIo, std::io::Cursor};
 
 struct Data {
-    off: u64,
+    off: usize,
     v: [u8; 16],
 }
 
@@ -63,12 +63,8 @@ Data{off:0x3ffe50,v:[128,0,0,0,128,0,0,0,255,173,6,146,0,0,0,0,]},
 
 fn load_test_disk() -> Vec<u8> {
     let mut disk = vec![0; 4 * 1024 * 1024];
-    let mut disk_cursor = Cursor::new(&mut disk);
     for i in SPARSE_DISK {
-        disk_cursor
-            .seek(SeekFrom::Start(i.off))
-            .expect("seek failed");
-        disk_cursor.write(&i.v).expect("write failed");
+        disk[i.off..i.off + i.v.len()].copy_from_slice(&i.v);
     }
     disk
 }
