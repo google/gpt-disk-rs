@@ -72,7 +72,7 @@ where
         start_lba: Lba,
         dst: &mut [u8],
     ) -> Result<(), Self::Error> {
-        self.assert_valid_buffer(dst);
+        self.block_size().assert_valid_block_buffer(dst);
 
         self.file.seek(SeekFrom::Start(
             start_lba.to_u64() * self.block_size().to_u64(),
@@ -86,7 +86,7 @@ where
         start_lba: Lba,
         src: &[u8],
     ) -> Result<(), Self::Error> {
-        self.assert_valid_buffer(src);
+        self.block_size().assert_valid_block_buffer(src);
 
         self.file.seek(SeekFrom::Start(
             start_lba.to_u64() * self.block_size().to_u64(),
