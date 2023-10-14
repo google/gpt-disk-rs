@@ -145,4 +145,4 @@ pub use block_io::BlockIo;
 pub use disk::{Disk, DiskError};
 
 #[cfg(feature = "std")]
-pub use std_support::StdBlockIo;
+pub use block_io::std_block_io::StdBlockIo;
