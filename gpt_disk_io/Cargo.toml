@@ -19,7 +19,7 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-bytemuck = { version = "1.4.0", default-features = false }
+bytemuck.workspace = true
 gpt_disk_types = { version = "0.15.0", path = "../gpt_disk_types", features = ["bytemuck"] }
 
 [features]
