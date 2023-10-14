@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+pub(crate) mod slice_block_io;
+
 use core::fmt::{Debug, Display};
 use gpt_disk_types::{BlockSize, Lba};
 
