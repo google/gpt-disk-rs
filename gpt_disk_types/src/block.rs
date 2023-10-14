@@ -294,6 +294,16 @@ impl BlockSize {
             panic!("value does not fit in a u64");
         }
     }
+
+    /// Assert that the `buffer` size is an even multiple of the block size.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `buffer.len()` is not an even multiple of the block size.
+    #[track_caller]
+    pub fn assert_valid_block_buffer(&self, buffer: &[u8]) {
+        assert!(self.is_multiple_of_block_size(buffer.len()));
+    }
 }
 
 impl Default for BlockSize {
