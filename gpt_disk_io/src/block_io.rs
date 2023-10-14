@@ -64,3 +64,48 @@ pub trait BlockIo {
     /// Flush any pending writes to the device.
     fn flush(&mut self) -> Result<(), Self::Error>;
 }
+
+/// Adapter for types that can act as storage, but don't have a block
+/// size. This is used to provide `BlockIo` impls for byte slices,
+/// files, and various other types.
+#[allow(clippy::module_name_repetitions)]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BlockIoAdapter<T> {
+    storage: T,
+    block_size: BlockSize,
+}
+
+impl<T> BlockIoAdapter<T> {
+    /// Create a new `BlockIoAdapter`.
+    #[must_use]
+    pub fn new(storage: T, block_size: BlockSize) -> Self {
+        Self {
+            storage,
+            block_size,
+        }
+    }
+
+    /// Get the [`BlockSize`].
+    #[must_use]
+    pub fn block_size(&self) -> BlockSize {
+        self.block_size
+    }
+
+    /// Get a reference to the underlying storage.
+    #[must_use]
+    pub fn storage(&self) -> &T {
+        &self.storage
+    }
+
+    /// Get a mutable reference to the underlying storage.
+    #[must_use]
+    pub fn storage_mut(&mut self) -> &mut T {
+        &mut self.storage
+    }
+
+    /// Consume the adapter and return the underlying storage.
+    #[must_use]
+    pub fn take_storage(self) -> T {
+        self.storage
+    }
+}
