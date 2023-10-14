@@ -57,7 +57,7 @@ IO.
 
 [`gpt_disk_io/src`](gpt_disk_io/src):
 * `block_io.rs`: BlockIo trait for generic read/write operations.
-* `slice_block_io.rs`: In-memory byte slice implementations of BlockIo.
+* `block_io/slice_block_io.rs`: In-memory byte slice implementations of BlockIo.
 * `disk.rs`: Read and write GPT data from a block device.
 * `std_support.rs`: Provides `std` trait impls when the `std` feature is enabled.
 

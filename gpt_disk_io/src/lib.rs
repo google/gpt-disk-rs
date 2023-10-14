@@ -132,16 +132,17 @@
 
 mod block_io;
 mod disk;
-mod slice_block_io;
 #[cfg(feature = "std")]
 mod std_support;
 
 // Re-export dependencies.
 pub use gpt_disk_types;
 
+pub use block_io::slice_block_io::{
+    MutSliceBlockIo, SliceBlockIo, SliceBlockIoError,
+};
 pub use block_io::BlockIo;
 pub use disk::{Disk, DiskError};
-pub use slice_block_io::{MutSliceBlockIo, SliceBlockIo, SliceBlockIoError};
 
 #[cfg(feature = "std")]
 pub use std_support::StdBlockIo;
