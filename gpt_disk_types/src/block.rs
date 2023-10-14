@@ -276,6 +276,24 @@ impl BlockSize {
     pub fn to_usize(self) -> Option<usize> {
         self.0.get().try_into().ok()
     }
+
+    /// Check if `value` is an even multiple of the block size.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` does not fit in a [`u64`].
+    #[must_use]
+    pub fn is_multiple_of_block_size<T>(&self, value: T) -> bool
+    where
+        T: TryInto<u64>,
+    {
+        if let Ok(value) = value.try_into() {
+            let block_size = self.to_u64();
+            (value % block_size) == 0
+        } else {
+            panic!("value does not fit in a u64");
+        }
+    }
 }
 
 impl Default for BlockSize {
