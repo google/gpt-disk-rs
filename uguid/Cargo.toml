@@ -19,7 +19,7 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-bytemuck = { version = "1.4.0", features = ["derive"], optional = true }
+bytemuck = { workspace = true, features = ["derive"], optional = true }
 serde = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
 
 [dev-dependencies]
