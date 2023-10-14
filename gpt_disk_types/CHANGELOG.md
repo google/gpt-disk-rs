@@ -2,6 +2,7 @@
 
 * Bump MSRV to 1.68.
 * Add `BlockSize::is_multiple_of_block_size`.
+* Add `BlockSize::assert_valid_block_buffer`.
 * Documentation improvements.
 
 # 0.15.0
