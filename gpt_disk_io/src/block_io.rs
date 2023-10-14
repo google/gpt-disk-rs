@@ -18,9 +18,7 @@ pub trait BlockIo {
     ///
     /// [`block_size`]: Self::block_size
     fn assert_valid_buffer(&self, buffer: &[u8]) {
-        let buf_len = u64::try_from(buffer.len()).unwrap();
-        let block_size = self.block_size().to_u64();
-        assert_eq!(buf_len % block_size, 0);
+        assert!(self.block_size().is_multiple_of_block_size(buffer.len()));
     }
 
     /// Get the [`BlockSize`]. The return value is not allowed to

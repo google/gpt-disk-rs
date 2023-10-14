@@ -1,6 +1,7 @@
 # Unreleased
 
 * Bump MSRV to 1.68.
+* Add `BlockSize::is_multiple_of_block_size`.
 * Documentation improvements.
 
 # 0.15.0
