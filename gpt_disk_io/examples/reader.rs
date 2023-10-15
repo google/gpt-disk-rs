@@ -9,9 +9,7 @@
 #[cfg(feature = "std")]
 use {
     gpt_disk_io::gpt_disk_types::BlockSize,
-    gpt_disk_io::{Disk, StdBlockIo},
-    // dyn error::Error is used below as a generic error return, but could be
-    // substituted with Result from the 'anyhow' crate if desired.
+    gpt_disk_io::{BlockIoAdapter, Disk},
     std::{env, error, fs},
 };
 
@@ -26,11 +24,11 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let disk_path = env::args().nth(1).expect("one argument is required");
     println!("opening {} for reading", disk_path);
 
-    let mut file = fs::File::open(disk_path)?;
+    let file = fs::File::open(disk_path)?;
 
     let mut block_buf = vec![0u8; 512];
 
-    let block_io = StdBlockIo::new(&mut file, BlockSize::BS_512);
+    let block_io = BlockIoAdapter::new(file, BlockSize::BS_512);
     let mut disk = Disk::new(block_io)?;
 
     let primary_header = disk.read_primary_gpt_header(&mut block_buf)?;
