@@ -31,7 +31,7 @@
 //! Construct a GPT disk in-memory backed by a `Vec`:
 //!
 //! ```
-//! use gpt_disk_io::{BlockIo, Disk, DiskError, MutSliceBlockIo};
+//! use gpt_disk_io::{BlockIo, BlockIoAdapter, Disk, DiskError};
 //! use gpt_disk_types::{
 //!     guid, BlockSize, Crc32, GptHeader, GptPartitionEntry,
 //!     GptPartitionEntryArray, GptPartitionType, LbaLe, U32Le,
@@ -43,9 +43,9 @@
 //! // Standard 512-byte block size.
 //! let bs = BlockSize::BS_512;
 //!
-//! // `MutSliceBlockIo` implements the `BlockIo` trait which is used by
+//! // `BlockIoAdapter` implements the `BlockIo` trait which is used by
 //! // the `Disk` type for reading and writing.
-//! let block_io = MutSliceBlockIo::new(&mut disk_storage, bs);
+//! let block_io = BlockIoAdapter::new(disk_storage.as_mut_slice(), bs);
 //!
 //! let mut disk = Disk::new(block_io)?;
 //!
@@ -138,9 +138,7 @@ mod std_support;
 // Re-export dependencies.
 pub use gpt_disk_types;
 
-pub use block_io::slice_block_io::{
-    MutSliceBlockIo, SliceBlockIo, SliceBlockIoError,
-};
+pub use block_io::slice_block_io::SliceBlockIoError;
 pub use block_io::{BlockIo, BlockIoAdapter};
 pub use disk::{Disk, DiskError};
 
