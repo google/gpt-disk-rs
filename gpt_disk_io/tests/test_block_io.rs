@@ -9,13 +9,11 @@
 mod common;
 
 use common::check_derives;
-use gpt_disk_io::{BlockIo, MutSliceBlockIo, SliceBlockIo, SliceBlockIoError};
+use gpt_disk_io::{BlockIo, BlockIoAdapter, SliceBlockIoError};
 use gpt_disk_types::{BlockSize, Lba};
+
 #[cfg(feature = "std")]
-use {
-    gpt_disk_io::StdBlockIo,
-    std::fs::{self, OpenOptions},
-};
+use std::fs::{self, File, OpenOptions};
 
 fn test_block_io_read<Io>(mut bio: Io)
 where
@@ -116,24 +114,33 @@ fn test_slice_block_io() {
     data[512] = 3;
     data[1023] = 4;
 
-    test_block_io_read(SliceBlockIo::new(&mut data, BlockSize::BS_512));
+    test_block_io_read(BlockIoAdapter::new(data.as_slice(), BlockSize::BS_512));
     // Test that writes to a read-only slice fail.
     assert_eq!(
-        test_block_io_write1(SliceBlockIo::new(&mut data, BlockSize::BS_512)),
+        test_block_io_write1(BlockIoAdapter::new(
+            data.as_slice(),
+            BlockSize::BS_512
+        )),
         Err(SliceBlockIoError::ReadOnly)
     );
 
-    let bio = MutSliceBlockIo::new(&mut data, BlockSize::BS_512);
+    let bio = BlockIoAdapter::new(data.as_mut_slice(), BlockSize::BS_512);
     test_block_io_read(bio);
 
-    test_block_io_write1(MutSliceBlockIo::new(&mut data, BlockSize::BS_512))
-        .unwrap();
+    test_block_io_write1(BlockIoAdapter::new(
+        data.as_mut_slice(),
+        BlockSize::BS_512,
+    ))
+    .unwrap();
     assert_eq!(data[0], 5);
     assert_eq!(data[511], 6);
     assert_eq!(data[512], 7);
     assert_eq!(data[1023], 8);
 
-    test_block_io_write2(MutSliceBlockIo::new(&mut data, BlockSize::BS_512));
+    test_block_io_write2(BlockIoAdapter::new(
+        data.as_mut_slice(),
+        BlockSize::BS_512,
+    ));
     assert_eq!(data[512], 9);
     assert_eq!(data[1023], 10);
     assert_eq!(data[1024], 11);
@@ -154,25 +161,21 @@ fn test_std_block_io() {
         data[1023] = 4;
 
         fs::write(path, data).unwrap();
-        let mut file = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .open(path)
-            .unwrap();
+        let file = File::open(path).unwrap();
 
-        test_block_io_read(StdBlockIo::new(&mut file, BlockSize::BS_512));
+        test_block_io_read(BlockIoAdapter::new(file, BlockSize::BS_512));
         fs::remove_file(path).unwrap();
     };
 
     {
         fs::write(path, &empty).unwrap();
-        let mut file = OpenOptions::new()
+        let file = OpenOptions::new()
             .read(true)
             .write(true)
             .open(path)
             .unwrap();
 
-        test_block_io_write1(StdBlockIo::new(&mut file, BlockSize::BS_512))
+        test_block_io_write1(BlockIoAdapter::new(file, BlockSize::BS_512))
             .unwrap();
 
         let data = fs::read(path).unwrap();
@@ -186,12 +189,12 @@ fn test_std_block_io() {
 
     {
         fs::write(path, &empty).unwrap();
-        let mut file = OpenOptions::new()
+        let file = OpenOptions::new()
             .read(true)
             .write(true)
             .open(path)
             .unwrap();
-        test_block_io_write2(StdBlockIo::new(&mut file, BlockSize::BS_512));
+        test_block_io_write2(BlockIoAdapter::new(file, BlockSize::BS_512));
 
         let data = fs::read(path).unwrap();
         assert_eq!(data.len(), 512 * 3);
