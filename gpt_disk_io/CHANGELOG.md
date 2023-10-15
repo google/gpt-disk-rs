@@ -5,7 +5,9 @@
   `BlockIo::write_blocks` such that reading/writing zero blocks is
   allowed.
 * Add `BlockIoAdapter<T>`. This struct impls `BlockIo` for types that
-  don't have a block size. For example, `&mut [u8]` and `File`.
+  don't have a block size. For example, `&mut [u8]`, `Vec<u8>`, and
+  `File`.
+* Add `alloc` feature. This enables the `BlockIoAdapter<Vec<u8>>` impl.
 * Remove `SliceBlockIo`, `MutSliceBlockIo`, and `StdBlockIo`. Use
   `BlockIoAdapter` instead.
 * Remove `BlockIo::assert_valid_buffer`. Use

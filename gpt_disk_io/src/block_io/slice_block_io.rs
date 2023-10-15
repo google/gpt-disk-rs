@@ -11,6 +11,9 @@ use core::fmt::{self, Debug, Display, Formatter};
 use core::ops::Range;
 use gpt_disk_types::{BlockSize, Lba};
 
+#[cfg(feature = "alloc")]
+use alloc::vec::Vec;
+
 /// Error type used for `&[u8]` and `&mut [u8]` versions of [`BlockIoAdapter`].
 ///
 /// If the `std` feature is enabled, this type implements the [`Error`]
@@ -109,6 +112,24 @@ fn read_blocks(
     Ok(())
 }
 
+fn write_blocks(
+    storage: &mut [u8],
+    block_size: BlockSize,
+    start_lba: Lba,
+    src: &[u8],
+) -> Result<(), SliceBlockIoError> {
+    block_size.assert_valid_block_buffer(src);
+
+    let dst = storage
+        .get_mut(buffer_byte_range(block_size, start_lba, src)?)
+        .ok_or(SliceBlockIoError::OutOfBounds {
+            start_lba,
+            length_in_bytes: src.len(),
+        })?;
+    dst.copy_from_slice(src);
+    Ok(())
+}
+
 impl BlockIo for BlockIoAdapter<&[u8]> {
     type Error = SliceBlockIoError;
 
@@ -165,17 +186,40 @@ impl BlockIo for BlockIoAdapter<&mut [u8]> {
         start_lba: Lba,
         src: &[u8],
     ) -> Result<(), Self::Error> {
-        self.block_size.assert_valid_block_buffer(src);
+        write_blocks(self.storage, self.block_size, start_lba, src)
+    }
 
-        let dst = self
-            .storage
-            .get_mut(buffer_byte_range(self.block_size, start_lba, src)?)
-            .ok_or(Self::Error::OutOfBounds {
-                start_lba,
-                length_in_bytes: src.len(),
-            })?;
-        dst.copy_from_slice(src);
+    fn flush(&mut self) -> Result<(), Self::Error> {
         Ok(())
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl BlockIo for BlockIoAdapter<Vec<u8>> {
+    type Error = SliceBlockIoError;
+
+    fn block_size(&self) -> BlockSize {
+        self.block_size
+    }
+
+    fn num_blocks(&mut self) -> Result<u64, Self::Error> {
+        num_blocks(&self.storage, self.block_size)
+    }
+
+    fn read_blocks(
+        &mut self,
+        start_lba: Lba,
+        dst: &mut [u8],
+    ) -> Result<(), Self::Error> {
+        read_blocks(&self.storage, self.block_size, start_lba, dst)
+    }
+
+    fn write_blocks(
+        &mut self,
+        start_lba: Lba,
+        src: &[u8],
+    ) -> Result<(), Self::Error> {
+        write_blocks(&mut self.storage, self.block_size, start_lba, src)
     }
 
     fn flush(&mut self) -> Result<(), Self::Error> {

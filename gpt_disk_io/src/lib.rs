@@ -21,6 +21,7 @@
 //!
 //! # Features
 //!
+//! * `alloc`: Enables [`Vec`] implementation of [`BlockIoAdapter`].
 //! * `std`: Enables [`std::io`] implementations of [`BlockIoAdapter`],
 //!   as well as `std::error::Error` implementations for all of the
 //!   error types. Off by default.
@@ -129,6 +130,9 @@
 #![warn(clippy::as_conversions)]
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::missing_panics_doc)]
+
+#[cfg(feature = "alloc")]
+extern crate alloc;
 
 mod block_io;
 mod disk;
