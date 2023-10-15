@@ -12,26 +12,25 @@
 //! This crate adds a convenient interface for reading and writing the
 //! GPT types defined in the [`gpt_disk_types`] crate to a [`Disk`]. The
 //! [`Disk`] is represented by the [`BlockIo`] trait, which allows this
-//! library to be `no_std`. The disk can be backed by:
-//! * [`SliceBlockIo`]: a read-only byte slice
-//! * [`MutSliceBlockIo`]: a mutable byte slice
-//! * [`StdBlockIo`] (only available if the `std` feature is enabled):
-//!   wraps any type that implements [`Read`] + [`Write`] + [`Seek`],
-//!   such as a [`File`].
-//! * A custom implementation of the [`BlockIo`] trait.
+//! library to be `no_std`. The [`BlockIo`] trait is designed to be
+//! compatible with very simple block APIs, such as [`EFI_BLOCK_IO_PROTOCOL`].
+//!
+//! The [`BlockIoAdapter`] type allows the disk to be backed by simple
+//! byte-oriented storage backends, such as `&mut [u8]` and `File` (the
+//! latter requires the `std` feature).
 //!
 //! # Features
 //!
-//! * `std`: Enables the [`StdBlockIo`] type, as well as
-//!   `std::error::Error` implementations for all of the error
-//!   types. Off by default.
+//! * `std`: Enables [`std::io`] implementations of [`BlockIoAdapter`],
+//!   as well as `std::error::Error` implementations for all of the
+//!   error types. Off by default.
 //!
 //! # Examples
 //!
 //! Construct a GPT disk in-memory backed by a `Vec`:
 //!
 //! ```
-//! use gpt_disk_io::{BlockIo, BlockIoAdapter, Disk, DiskError};
+//! use gpt_disk_io::{BlockIoAdapter, BlockIo, Disk, DiskError};
 //! use gpt_disk_types::{
 //!     guid, BlockSize, Crc32, GptHeader, GptPartitionEntry,
 //!     GptPartitionEntryArray, GptPartitionType, LbaLe, U32Le,
@@ -117,6 +116,7 @@
 //! [`Read`]: std::io::Read
 //! [`Seek`]: std::io::Seek
 //! [`Write`]: std::io::Write
+//! [`EFI_BLOCK_IO_PROTOCOL`]: https://uefi.org/specs/UEFI/2.10/13_Protocols_Media_Access.html#block-i-o-protocol
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
@@ -141,9 +141,6 @@ pub use gpt_disk_types;
 pub use block_io::slice_block_io::SliceBlockIoError;
 pub use block_io::{BlockIo, BlockIoAdapter};
 pub use disk::{Disk, DiskError};
-
-#[cfg(feature = "std")]
-pub use block_io::std_block_io::StdBlockIo;
 
 #[cfg(feature = "std")]
 pub use block_io::std_block_io::ReadWriteSeek;
