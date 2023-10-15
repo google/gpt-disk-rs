@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use crate::BlockIo;
+use crate::{BlockIo, BlockIoAdapter};
 use core::fmt::{self, Debug, Display, Formatter};
 use core::ops::Range;
 use gpt_disk_types::{BlockSize, Lba};
@@ -200,6 +200,80 @@ impl<'a> BlockIo for MutSliceBlockIo<'a> {
 
         let dst = self
             .data
+            .get_mut(buffer_byte_range(self.block_size, start_lba, src)?)
+            .ok_or(Self::Error::OutOfBounds {
+                start_lba,
+                length_in_bytes: src.len(),
+            })?;
+        dst.copy_from_slice(src);
+        Ok(())
+    }
+
+    fn flush(&mut self) -> Result<(), Self::Error> {
+        Ok(())
+    }
+}
+
+impl BlockIo for BlockIoAdapter<&[u8]> {
+    type Error = SliceBlockIoError;
+
+    fn block_size(&self) -> BlockSize {
+        self.block_size
+    }
+
+    fn num_blocks(&mut self) -> Result<u64, Self::Error> {
+        num_blocks(self.storage, self.block_size)
+    }
+
+    fn read_blocks(
+        &mut self,
+        start_lba: Lba,
+        dst: &mut [u8],
+    ) -> Result<(), Self::Error> {
+        read_blocks(self.storage, self.block_size, start_lba, dst)
+    }
+
+    fn write_blocks(
+        &mut self,
+        _start_lba: Lba,
+        _src: &[u8],
+    ) -> Result<(), Self::Error> {
+        Err(Self::Error::ReadOnly)
+    }
+
+    fn flush(&mut self) -> Result<(), Self::Error> {
+        Ok(())
+    }
+}
+
+impl BlockIo for BlockIoAdapter<&mut [u8]> {
+    type Error = SliceBlockIoError;
+
+    fn block_size(&self) -> BlockSize {
+        self.block_size
+    }
+
+    fn num_blocks(&mut self) -> Result<u64, Self::Error> {
+        num_blocks(self.storage, self.block_size)
+    }
+
+    fn read_blocks(
+        &mut self,
+        start_lba: Lba,
+        dst: &mut [u8],
+    ) -> Result<(), Self::Error> {
+        read_blocks(self.storage, self.block_size, start_lba, dst)
+    }
+
+    fn write_blocks(
+        &mut self,
+        start_lba: Lba,
+        src: &[u8],
+    ) -> Result<(), Self::Error> {
+        self.block_size.assert_valid_block_buffer(src);
+
+        let dst = self
+            .storage
             .get_mut(buffer_byte_range(self.block_size, start_lba, src)?)
             .ok_or(Self::Error::OutOfBounds {
                 start_lba,
