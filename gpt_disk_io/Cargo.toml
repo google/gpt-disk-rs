@@ -23,8 +23,9 @@ bytemuck.workspace = true
 gpt_disk_types = { version = "0.15.0", path = "../gpt_disk_types", features = ["bytemuck"] }
 
 [features]
-# See module docstring in src/lib.rs for details of what this feature does.
-std = ["gpt_disk_types/std"]
+# See module docstring in src/lib.rs for details of what these feature do.
+alloc = []
+std = ["alloc", "gpt_disk_types/std"]
 
 [package.metadata.docs.rs]
 all-features = true
