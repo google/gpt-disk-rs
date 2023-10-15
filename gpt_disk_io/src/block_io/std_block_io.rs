@@ -8,6 +8,7 @@
 
 use crate::BlockIo;
 use gpt_disk_types::{BlockSize, Lba};
+use std::fs::File;
 use std::io::{self, Read, Seek, SeekFrom, Write};
 
 /// Wrapper type that implements the [`BlockIo`] trait for a file-like
@@ -97,3 +98,48 @@ where
         self.file.flush()
     }
 }
+
+/// Combination trait for types that impl [`Read`], [`Write`], and [`Seek`].
+pub trait ReadWriteSeek: Read + Write + Seek {
+    /// Get the number of blocks for the given `block_size`.
+    ///
+    /// The default implementation seeks to the end to get the number of
+    /// bytes.
+    fn num_blocks(&mut self, block_size: BlockSize) -> Result<u64, io::Error> {
+        let block_size = block_size.to_u64();
+        let num_bytes = self.seek(SeekFrom::End(0))?;
+        Ok(num_bytes / block_size)
+    }
+
+    /// Read contiguous blocks.
+    fn read_blocks(
+        &mut self,
+        block_size: BlockSize,
+        start_lba: Lba,
+        dst: &mut [u8],
+    ) -> Result<(), io::Error> {
+        block_size.assert_valid_block_buffer(dst);
+
+        self.seek(SeekFrom::Start(start_lba.to_u64() * block_size.to_u64()))?;
+        self.read_exact(dst)?;
+        Ok(())
+    }
+
+    /// Write contiguous blocks.
+    fn write_blocks(
+        &mut self,
+        block_size: BlockSize,
+        start_lba: Lba,
+        src: &[u8],
+    ) -> Result<(), io::Error> {
+        block_size.assert_valid_block_buffer(src);
+
+        self.seek(SeekFrom::Start(start_lba.to_u64() * block_size.to_u64()))?;
+        self.write_all(src)?;
+        Ok(())
+    }
+}
+
+impl ReadWriteSeek for File {}
+impl ReadWriteSeek for &File {}
+impl<T> ReadWriteSeek for &mut T where T: Read + Write + Seek {}
