@@ -11,14 +11,11 @@ mod common;
 use common::{
     create_partition_entry, create_primary_header, create_secondary_header,
 };
-use gpt_disk_io::{BlockIo, Disk, MutSliceBlockIo, SliceBlockIo};
+use gpt_disk_io::{BlockIo, BlockIoAdapter, Disk};
 use gpt_disk_types::{BlockSize, GptPartitionEntryArray};
 
 #[cfg(feature = "std")]
-use {
-    gpt_disk_io::StdBlockIo,
-    std::fs::{self, OpenOptions},
-};
+use std::fs::{self, File, OpenOptions};
 
 struct SparseChunk {
     offset: usize,
@@ -170,18 +167,24 @@ where
 }
 
 fn test_with_slice(test_disk: &[u8]) {
-    test_disk_read(SliceBlockIo::new(test_disk, BlockSize::BS_512));
+    test_disk_read(BlockIoAdapter::new(test_disk, BlockSize::BS_512));
 }
 
 fn test_with_mut_slice(test_disk: &[u8]) {
     let mut contents = test_disk.to_vec();
 
     // Test read.
-    test_disk_read(MutSliceBlockIo::new(&mut contents, BlockSize::BS_512));
+    test_disk_read(BlockIoAdapter::new(
+        contents.as_mut_slice(),
+        BlockSize::BS_512,
+    ));
 
     // Test write.
     let mut new_contents = vec![0; contents.len()];
-    test_disk_write(MutSliceBlockIo::new(&mut new_contents, BlockSize::BS_512));
+    test_disk_write(BlockIoAdapter::new(
+        new_contents.as_mut_slice(),
+        BlockSize::BS_512,
+    ));
     assert_eq!(contents, new_contents);
 }
 
@@ -190,24 +193,20 @@ fn test_with_file(test_disk: &[u8]) {
     let path = "tmp_test_disk_file.bin";
     fs::write(path, test_disk).unwrap();
 
-    let mut test_disk_file = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .open(path)
-        .unwrap();
+    let test_disk_file = File::open(path).unwrap();
 
     // Test read.
-    test_disk_read(StdBlockIo::new(&mut test_disk_file, BlockSize::BS_512));
+    test_disk_read(BlockIoAdapter::new(test_disk_file, BlockSize::BS_512));
     fs::remove_file(path).unwrap();
 
     // Test write.
     fs::write(path, vec![0; 4 * 1024 * 1024]).unwrap();
-    let mut new_disk_file = OpenOptions::new()
+    let new_disk_file = OpenOptions::new()
         .read(true)
         .write(true)
         .open(path)
         .unwrap();
-    test_disk_write(StdBlockIo::new(&mut new_disk_file, BlockSize::BS_512));
+    test_disk_write(BlockIoAdapter::new(new_disk_file, BlockSize::BS_512));
     assert_eq!(fs::read(path).unwrap(), test_disk);
     fs::remove_file(path).unwrap();
 }
