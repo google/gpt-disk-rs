@@ -99,12 +99,14 @@ fn test_gpt_disk_types() {
 }
 
 fn test_gpt_disk_io() {
-    for feat_std in FEAT_OPTIONS {
-        let mut features = Vec::new();
-        if feat_std {
-            features.push("std");
-        }
+    let feature_lists = [
+        vec![],
+        vec!["alloc"],
+        // std implicitly enabled alloc, so no need for a separate alloc+std.
+        vec!["std"],
+    ];
 
+    for features in feature_lists {
         test_package("gpt_disk_io", &features);
     }
 }
