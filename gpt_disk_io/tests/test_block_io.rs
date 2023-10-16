@@ -15,6 +15,15 @@ use gpt_disk_types::{BlockSize, Lba};
 #[cfg(feature = "std")]
 use std::fs::{self, File, OpenOptions};
 
+fn test_block_io_adapter() {
+    let mut bio = BlockIoAdapter::new(123, BlockSize::BS_512);
+    assert_eq!(bio.block_size(), BlockSize::BS_512);
+    assert_eq!(bio.storage(), &123);
+    assert_eq!(bio.storage_mut(), &mut 123);
+    let data: u32 = bio.take_storage();
+    assert_eq!(data, 123);
+}
+
 fn test_block_io_read<Io>(mut bio: Io) -> Io
 where
     Io: BlockIo,
@@ -245,6 +254,8 @@ fn test_std_block_io() {
 
 #[test]
 fn test_block_io() {
+    test_block_io_adapter();
+
     test_slice_block_io();
 
     #[cfg(feature = "alloc")]
