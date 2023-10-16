@@ -15,7 +15,7 @@ use gpt_disk_types::{BlockSize, Lba};
 #[cfg(feature = "std")]
 use std::fs::{self, File, OpenOptions};
 
-fn test_block_io_read<Io>(mut bio: Io)
+fn test_block_io_read<Io>(mut bio: Io) -> Io
 where
     Io: BlockIo,
 {
@@ -44,9 +44,11 @@ where
     assert_eq!(buf[511], 2);
     assert_eq!(buf[512], 3);
     assert_eq!(buf[1023], 4);
+
+    bio
 }
 
-fn test_block_io_write1<Io>(mut bio: Io) -> Result<(), Io::Error>
+fn test_block_io_write1<Io>(mut bio: Io) -> Result<Io, Io::Error>
 where
     Io: BlockIo,
 {
@@ -64,10 +66,10 @@ where
 
     bio.flush()?;
 
-    Ok(())
+    Ok(bio)
 }
 
-fn test_block_io_write2<Io>(mut bio: Io)
+fn test_block_io_write2<Io>(mut bio: Io) -> Io
 where
     Io: BlockIo,
 {
@@ -81,6 +83,8 @@ where
     bio.write_blocks(Lba(1), &buf).expect("write_blocks failed");
 
     bio.flush().expect("flush failed");
+
+    bio
 }
 
 #[test]
@@ -147,6 +151,39 @@ fn test_slice_block_io() {
     assert_eq!(data[1535], 12);
 }
 
+#[cfg(feature = "alloc")]
+fn test_vec_block_io() {
+    let mut data = vec![0; 512 * 3];
+
+    // Write data to the beginning and end of the first two blocks.
+    data[0] = 1;
+    data[511] = 2;
+    data[512] = 3;
+    data[1023] = 4;
+
+    let mut bio = BlockIoAdapter::new(data.clone(), BlockSize::BS_512);
+    assert_eq!(bio.num_blocks(), Ok(3));
+    let bio = test_block_io_read(bio);
+
+    let bio = test_block_io_write1(bio).unwrap();
+    {
+        let data = bio.storage();
+        assert_eq!(data[0], 5);
+        assert_eq!(data[511], 6);
+        assert_eq!(data[512], 7);
+        assert_eq!(data[1023], 8);
+    }
+
+    let bio = test_block_io_write2(bio);
+    {
+        let data = bio.storage();
+        assert_eq!(data[512], 9);
+        assert_eq!(data[1023], 10);
+        assert_eq!(data[1024], 11);
+        assert_eq!(data[1535], 12);
+    }
+}
+
 #[cfg(feature = "std")]
 fn test_std_block_io() {
     let path = "tmp_test_block_io_file.bin";
@@ -209,6 +246,9 @@ fn test_std_block_io() {
 #[test]
 fn test_block_io() {
     test_slice_block_io();
+
+    #[cfg(feature = "alloc")]
+    test_vec_block_io();
 
     #[cfg(feature = "std")]
     test_std_block_io();
