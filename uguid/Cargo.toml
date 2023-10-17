@@ -20,7 +20,7 @@ repository.workspace = true
 
 [dependencies]
 bytemuck = { workspace = true, features = ["derive"], optional = true }
-serde = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
+serde = { version = "1.0.189", default-features = false, features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde_test = "1.0.0"
