@@ -13,8 +13,13 @@ use gpt_disk_io::{BlockIo, BlockIoAdapter, SliceBlockIoError};
 use gpt_disk_types::{BlockSize, Lba};
 
 #[cfg(feature = "std")]
-use std::fs::{self, File, OpenOptions};
+use {
+    gpt_disk_io::ReadWriteSeek,
+    std::fs::{self, OpenOptions},
+    std::io::Write,
+};
 
+#[test]
 fn test_block_io_adapter() {
     let mut bio = BlockIoAdapter::new(123, BlockSize::BS_512);
     assert_eq!(bio.block_size(), BlockSize::BS_512);
@@ -22,78 +27,6 @@ fn test_block_io_adapter() {
     assert_eq!(bio.storage_mut(), &mut 123);
     let data: u32 = bio.take_storage();
     assert_eq!(data, 123);
-}
-
-fn test_block_io_read<Io>(mut bio: Io) -> Io
-where
-    Io: BlockIo,
-{
-    let mut buf = vec![0; 512];
-
-    // Read first block.
-    bio.read_blocks(Lba(0), &mut buf)
-        .expect("read_blocks failed");
-    assert_eq!(buf[0], 1);
-    assert_eq!(buf[511], 2);
-
-    // Read second block.
-    bio.read_blocks(Lba(1), &mut buf)
-        .expect("read_blocks failed");
-    assert_eq!(buf[0], 3);
-    assert_eq!(buf[511], 4);
-
-    // Only three blocks.
-    assert!(bio.read_blocks(Lba(3), &mut buf).is_err());
-
-    // Read two blocks at once.
-    let mut buf = vec![0; 1024];
-    bio.read_blocks(Lba(0), &mut buf)
-        .expect("read_blocks failed");
-    assert_eq!(buf[0], 1);
-    assert_eq!(buf[511], 2);
-    assert_eq!(buf[512], 3);
-    assert_eq!(buf[1023], 4);
-
-    bio
-}
-
-fn test_block_io_write1<Io>(mut bio: Io) -> Result<Io, Io::Error>
-where
-    Io: BlockIo,
-{
-    let mut buf = vec![0; 512];
-
-    // Write first block.
-    buf[0] = 5;
-    buf[511] = 6;
-    bio.write_blocks(Lba(0), &buf)?;
-
-    // Write first block.
-    buf[0] = 7;
-    buf[511] = 8;
-    bio.write_blocks(Lba(1), &buf)?;
-
-    bio.flush()?;
-
-    Ok(bio)
-}
-
-fn test_block_io_write2<Io>(mut bio: Io) -> Io
-where
-    Io: BlockIo,
-{
-    let mut buf = vec![0; 512 * 2];
-
-    // Write two blocks at once, at an offset of one block.
-    buf[0] = 9;
-    buf[511] = 10;
-    buf[512] = 11;
-    buf[1023] = 12;
-    bio.write_blocks(Lba(1), &buf).expect("write_blocks failed");
-
-    bio.flush().expect("flush failed");
-
-    bio
 }
 
 #[test]
@@ -118,7 +51,7 @@ fn test_slice_block_io_error() {
     );
 }
 
-fn test_slice_block_io() {
+fn get_read_data() -> Vec<u8> {
     let mut data = vec![0; 512 * 3];
 
     // Write data to the beginning and end of the first two blocks.
@@ -127,140 +60,163 @@ fn test_slice_block_io() {
     data[512] = 3;
     data[1023] = 4;
 
-    test_block_io_read(BlockIoAdapter::new(data.as_slice(), BlockSize::BS_512));
-    // Test that writes to a read-only slice fail.
-    assert_eq!(
-        test_block_io_write1(BlockIoAdapter::new(
-            data.as_slice(),
-            BlockSize::BS_512
-        )),
-        Err(SliceBlockIoError::ReadOnly)
-    );
-
-    let bio = BlockIoAdapter::new(data.as_mut_slice(), BlockSize::BS_512);
-    test_block_io_read(bio);
-
-    test_block_io_write1(BlockIoAdapter::new(
-        data.as_mut_slice(),
-        BlockSize::BS_512,
-    ))
-    .unwrap();
-    assert_eq!(data[0], 5);
-    assert_eq!(data[511], 6);
-    assert_eq!(data[512], 7);
-    assert_eq!(data[1023], 8);
-
-    test_block_io_write2(BlockIoAdapter::new(
-        data.as_mut_slice(),
-        BlockSize::BS_512,
-    ));
-    assert_eq!(data[512], 9);
-    assert_eq!(data[1023], 10);
-    assert_eq!(data[1024], 11);
-    assert_eq!(data[1535], 12);
+    data
 }
 
-#[cfg(feature = "alloc")]
-fn test_vec_block_io() {
-    let mut data = vec![0; 512 * 3];
+fn check_read<S>(storage: S) -> S
+where
+    BlockIoAdapter<S>: BlockIo,
+{
+    let mut bio = BlockIoAdapter::new(storage, BlockSize::BS_512);
+    assert_eq!(bio.num_blocks().unwrap(), 3);
+    assert_eq!(BlockIo::block_size(&bio), BlockSize::BS_512);
 
-    // Write data to the beginning and end of the first two blocks.
-    data[0] = 1;
-    data[511] = 2;
-    data[512] = 3;
-    data[1023] = 4;
+    // Read first block.
+    let mut buf = vec![0; 512];
+    bio.read_blocks(Lba(0), &mut buf)
+        .expect("read_blocks failed");
+    assert_eq!(buf[0], 1);
+    assert_eq!(buf[511], 2);
 
-    let mut bio = BlockIoAdapter::new(data.clone(), BlockSize::BS_512);
-    assert_eq!(bio.num_blocks(), Ok(3));
-    let bio = test_block_io_read(bio);
+    // Read second block.
+    bio.read_blocks(Lba(1), &mut buf)
+        .expect("read_blocks failed");
+    assert_eq!(buf[0], 3);
+    assert_eq!(buf[511], 4);
 
-    let bio = test_block_io_write1(bio).unwrap();
-    {
-        let data = bio.storage();
-        assert_eq!(data[0], 5);
-        assert_eq!(data[511], 6);
-        assert_eq!(data[512], 7);
-        assert_eq!(data[1023], 8);
-    }
+    // Only three blocks.
+    assert!(bio.read_blocks(Lba(3), &mut buf).is_err());
 
-    let bio = test_block_io_write2(bio);
-    {
-        let data = bio.storage();
-        assert_eq!(data[512], 9);
-        assert_eq!(data[1023], 10);
-        assert_eq!(data[1024], 11);
-        assert_eq!(data[1535], 12);
-    }
+    // Read two blocks at once.
+    let mut buf = vec![0; 1024];
+    bio.read_blocks(Lba(0), &mut buf)
+        .expect("read_blocks failed");
+    assert_eq!(buf[0], 1);
+    assert_eq!(buf[511], 2);
+    assert_eq!(buf[512], 3);
+    assert_eq!(buf[1023], 4);
+
+    bio.take_storage()
 }
 
-#[cfg(feature = "std")]
-fn test_std_block_io() {
-    let path = "tmp_test_block_io_file.bin";
-    let empty = vec![0; 512 * 3];
+fn check_write<S, G>(storage: S, get_bytes: G)
+where
+    BlockIoAdapter<S>: BlockIo,
+    G: Fn(&BlockIoAdapter<S>) -> Vec<u8>,
+{
+    let mut bio = BlockIoAdapter::new(storage, BlockSize::BS_512);
+    assert_eq!(bio.num_blocks().unwrap(), 3);
 
-    {
-        // Write data to the beginning and end of the first two blocks.
-        let mut data = empty.clone();
-        data[0] = 1;
-        data[511] = 2;
-        data[512] = 3;
-        data[1023] = 4;
+    let mut buf = vec![0; 512];
 
-        fs::write(path, data).unwrap();
-        let file = File::open(path).unwrap();
+    // Write first block.
+    buf[0] = 5;
+    buf[511] = 6;
+    bio.write_blocks(Lba(0), &buf).unwrap();
 
-        test_block_io_read(BlockIoAdapter::new(file, BlockSize::BS_512));
-        fs::remove_file(path).unwrap();
-    };
+    // Write second block.
+    buf[0] = 7;
+    buf[511] = 8;
+    bio.write_blocks(Lba(1), &buf).unwrap();
+    bio.flush().unwrap();
 
-    {
-        fs::write(path, &empty).unwrap();
-        let file = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .open(path)
-            .unwrap();
+    // Check write output.
+    let mut expected = vec![0; 512 * 3];
+    expected[0] = 5;
+    expected[511] = 6;
+    expected[512] = 7;
+    expected[1023] = 8;
+    assert_eq!(get_bytes(&bio), expected);
 
-        test_block_io_write1(BlockIoAdapter::new(file, BlockSize::BS_512))
-            .unwrap();
+    // Write two blocks at once, at an offset of one block.
+    let mut buf = vec![0; 1024];
+    buf[0] = 9;
+    buf[511] = 10;
+    buf[512] = 11;
+    buf[1023] = 12;
+    bio.write_blocks(Lba(1), &buf).unwrap();
+    bio.flush().unwrap();
 
-        let data = fs::read(path).unwrap();
-        assert_eq!(data.len(), 512 * 3);
-        assert_eq!(data[0], 5);
-        assert_eq!(data[511], 6);
-        assert_eq!(data[512], 7);
-        assert_eq!(data[1023], 8);
-        fs::remove_file(path).unwrap();
-    }
+    // Check write output.
+    expected[512] = 9;
+    expected[1023] = 10;
+    expected[1024] = 11;
+    expected[1535] = 12;
+    assert_eq!(get_bytes(&bio), expected);
+}
 
-    {
-        fs::write(path, &empty).unwrap();
-        let file = OpenOptions::new()
-            .read(true)
-            .write(true)
-            .open(path)
-            .unwrap();
-        test_block_io_write2(BlockIoAdapter::new(file, BlockSize::BS_512));
-
-        let data = fs::read(path).unwrap();
-        assert_eq!(data.len(), 512 * 3);
-        assert_eq!(data[512], 9);
-        assert_eq!(data[1023], 10);
-        assert_eq!(data[1024], 11);
-        assert_eq!(data[1535], 12);
-        fs::remove_file(path).unwrap();
-    }
+fn check_read_and_write<S, G>(storage: S, get_bytes: G)
+where
+    BlockIoAdapter<S>: BlockIo,
+    G: Fn(&BlockIoAdapter<S>) -> Vec<u8>,
+{
+    let storage = check_read(storage);
+    check_write(storage, get_bytes);
 }
 
 #[test]
-fn test_block_io() {
-    test_block_io_adapter();
+fn test_block_io_slice_read() {
+    let data = get_read_data();
+    let storage: &[u8] = &data;
 
-    test_slice_block_io();
+    check_read(storage);
+}
 
-    #[cfg(feature = "alloc")]
-    test_vec_block_io();
+#[test]
+#[should_panic]
+fn test_block_io_slice_write() {
+    let data = get_read_data();
+    let storage: &[u8] = &data;
 
-    #[cfg(feature = "std")]
-    test_std_block_io();
+    check_write(storage, |bio| bio.storage().to_vec());
+}
+
+#[test]
+fn test_block_io_mut_slice() {
+    let mut data = get_read_data();
+    let storage: &mut [u8] = &mut data;
+
+    check_read_and_write(storage, |bio| bio.storage().to_vec());
+}
+
+#[cfg(feature = "alloc")]
+#[test]
+fn test_block_io_vec() {
+    let storage: Vec<u8> = get_read_data();
+    check_read_and_write(storage, |bio| bio.storage().to_vec());
+}
+
+#[cfg(feature = "std")]
+#[test]
+fn test_block_io_file() {
+    let path = "/tmp/test_block_io_std_1.bin";
+    let mut file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(path)
+        .unwrap();
+    file.write_all(&get_read_data()).unwrap();
+
+    check_read_and_write(file, |_| fs::read(path).unwrap());
+
+    fs::remove_file(path).unwrap();
+}
+
+#[cfg(feature = "std")]
+#[test]
+fn test_block_io_dyn_readwriteseek() {
+    let path = "/tmp/test_block_io_std_2.bin";
+    let mut file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(path)
+        .unwrap();
+    file.write_all(&get_read_data()).unwrap();
+
+    let storage: &mut dyn ReadWriteSeek = &mut file;
+    check_read_and_write(storage, |_| fs::read(path).unwrap());
+
+    fs::remove_file(path).unwrap();
 }
