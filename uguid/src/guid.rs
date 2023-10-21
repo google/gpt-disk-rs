@@ -210,19 +210,17 @@ impl Guid {
     /// Create a GUID from a 16-byte array. No changes to byte order are made.
     #[must_use]
     pub const fn from_bytes(bytes: [u8; 16]) -> Self {
-        Self {
-            time_low: u32::from_le_bytes([
-                bytes[0], bytes[1], bytes[2], bytes[3],
-            ]),
-            time_mid: [bytes[4], bytes[5]],
-            time_high_and_version: [bytes[6], bytes[7]],
-            clock_seq_high_and_reserved: bytes[8],
-            clock_seq_low: bytes[9],
-            node: [
+        Self::new(
+            [bytes[0], bytes[1], bytes[2], bytes[3]],
+            [bytes[4], bytes[5]],
+            [bytes[6], bytes[7]],
+            bytes[8],
+            bytes[9],
+            [
                 bytes[10], bytes[11], bytes[12], bytes[13], bytes[14],
                 bytes[15],
             ],
-        }
+        )
     }
 
     /// Convert to a 16-byte array.
