@@ -154,34 +154,24 @@ impl Guid {
             return Err(GuidFromStrError::Separator(23));
         }
 
-        Ok(Self {
-            time_low: u32::from_le_bytes([
-                mtry!(parse_byte_from_ascii_str_at(s, 6)),
-                mtry!(parse_byte_from_ascii_str_at(s, 4)),
-                mtry!(parse_byte_from_ascii_str_at(s, 2)),
-                mtry!(parse_byte_from_ascii_str_at(s, 0)),
-            ]),
-            time_mid: [
-                mtry!(parse_byte_from_ascii_str_at(s, 11)),
-                mtry!(parse_byte_from_ascii_str_at(s, 9)),
-            ],
-            time_high_and_version: [
-                mtry!(parse_byte_from_ascii_str_at(s, 16)),
-                mtry!(parse_byte_from_ascii_str_at(s, 14)),
-            ],
-            clock_seq_high_and_reserved: mtry!(parse_byte_from_ascii_str_at(
-                s, 19
-            )),
-            clock_seq_low: mtry!(parse_byte_from_ascii_str_at(s, 21)),
-            node: [
-                mtry!(parse_byte_from_ascii_str_at(s, 24)),
-                mtry!(parse_byte_from_ascii_str_at(s, 26)),
-                mtry!(parse_byte_from_ascii_str_at(s, 28)),
-                mtry!(parse_byte_from_ascii_str_at(s, 30)),
-                mtry!(parse_byte_from_ascii_str_at(s, 32)),
-                mtry!(parse_byte_from_ascii_str_at(s, 34)),
-            ],
-        })
+        Ok(Self::from_bytes([
+            mtry!(parse_byte_from_ascii_str_at(s, 6)),
+            mtry!(parse_byte_from_ascii_str_at(s, 4)),
+            mtry!(parse_byte_from_ascii_str_at(s, 2)),
+            mtry!(parse_byte_from_ascii_str_at(s, 0)),
+            mtry!(parse_byte_from_ascii_str_at(s, 11)),
+            mtry!(parse_byte_from_ascii_str_at(s, 9)),
+            mtry!(parse_byte_from_ascii_str_at(s, 16)),
+            mtry!(parse_byte_from_ascii_str_at(s, 14)),
+            mtry!(parse_byte_from_ascii_str_at(s, 19)),
+            mtry!(parse_byte_from_ascii_str_at(s, 21)),
+            mtry!(parse_byte_from_ascii_str_at(s, 24)),
+            mtry!(parse_byte_from_ascii_str_at(s, 26)),
+            mtry!(parse_byte_from_ascii_str_at(s, 28)),
+            mtry!(parse_byte_from_ascii_str_at(s, 30)),
+            mtry!(parse_byte_from_ascii_str_at(s, 32)),
+            mtry!(parse_byte_from_ascii_str_at(s, 34)),
+        ]))
     }
 
     /// Parse a GUID from a string, panicking on failure.
