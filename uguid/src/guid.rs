@@ -265,32 +265,29 @@ impl Guid {
     /// The output is in "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" format.
     #[must_use]
     pub const fn to_ascii_hex_lower(self) -> [u8; 36] {
-        let time_low = self.time_low.to_le_bytes();
-        let time_mid = self.time_mid;
-        let time_high_and_version = self.time_high_and_version;
+        let bytes = self.to_bytes();
 
         let mut buf = [0; 36];
-        (buf[0], buf[1]) = byte_to_ascii_hex_lower(time_low[3]);
-        (buf[2], buf[3]) = byte_to_ascii_hex_lower(time_low[2]);
-        (buf[4], buf[5]) = byte_to_ascii_hex_lower(time_low[1]);
-        (buf[6], buf[7]) = byte_to_ascii_hex_lower(time_low[0]);
+        (buf[0], buf[1]) = byte_to_ascii_hex_lower(bytes[3]);
+        (buf[2], buf[3]) = byte_to_ascii_hex_lower(bytes[2]);
+        (buf[4], buf[5]) = byte_to_ascii_hex_lower(bytes[1]);
+        (buf[6], buf[7]) = byte_to_ascii_hex_lower(bytes[0]);
         buf[8] = b'-';
-        (buf[9], buf[10]) = byte_to_ascii_hex_lower(time_mid[1]);
-        (buf[11], buf[12]) = byte_to_ascii_hex_lower(time_mid[0]);
+        (buf[9], buf[10]) = byte_to_ascii_hex_lower(bytes[5]);
+        (buf[11], buf[12]) = byte_to_ascii_hex_lower(bytes[4]);
         buf[13] = b'-';
-        (buf[14], buf[15]) = byte_to_ascii_hex_lower(time_high_and_version[1]);
-        (buf[16], buf[17]) = byte_to_ascii_hex_lower(time_high_and_version[0]);
+        (buf[14], buf[15]) = byte_to_ascii_hex_lower(bytes[7]);
+        (buf[16], buf[17]) = byte_to_ascii_hex_lower(bytes[6]);
         buf[18] = b'-';
-        (buf[19], buf[20]) =
-            byte_to_ascii_hex_lower(self.clock_seq_high_and_reserved);
-        (buf[21], buf[22]) = byte_to_ascii_hex_lower(self.clock_seq_low);
+        (buf[19], buf[20]) = byte_to_ascii_hex_lower(bytes[8]);
+        (buf[21], buf[22]) = byte_to_ascii_hex_lower(bytes[9]);
         buf[23] = b'-';
-        (buf[24], buf[25]) = byte_to_ascii_hex_lower(self.node[0]);
-        (buf[26], buf[27]) = byte_to_ascii_hex_lower(self.node[1]);
-        (buf[28], buf[29]) = byte_to_ascii_hex_lower(self.node[2]);
-        (buf[30], buf[31]) = byte_to_ascii_hex_lower(self.node[3]);
-        (buf[32], buf[33]) = byte_to_ascii_hex_lower(self.node[4]);
-        (buf[34], buf[35]) = byte_to_ascii_hex_lower(self.node[5]);
+        (buf[24], buf[25]) = byte_to_ascii_hex_lower(bytes[10]);
+        (buf[26], buf[27]) = byte_to_ascii_hex_lower(bytes[11]);
+        (buf[28], buf[29]) = byte_to_ascii_hex_lower(bytes[12]);
+        (buf[30], buf[31]) = byte_to_ascii_hex_lower(bytes[13]);
+        (buf[32], buf[33]) = byte_to_ascii_hex_lower(bytes[14]);
+        (buf[34], buf[35]) = byte_to_ascii_hex_lower(bytes[15]);
         buf
     }
 }
