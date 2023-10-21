@@ -73,7 +73,7 @@ impl Guid {
         node: [u8; 6],
     ) -> Self {
         Self {
-            time_low: u32::from_le_bytes([
+            time_low: u32::from_ne_bytes([
                 time_low[0],
                 time_low[1],
                 time_low[2],
@@ -93,7 +93,7 @@ impl Guid {
     /// The little-endian low field of the timestamp.
     #[must_use]
     pub const fn time_low(self) -> [u8; 4] {
-        self.time_low.to_le_bytes()
+        self.time_low.to_ne_bytes()
     }
 
     /// The little-endian middle field of the timestamp.
