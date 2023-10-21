@@ -238,7 +238,7 @@ impl Guid {
     /// Convert to a 16-byte array.
     #[must_use]
     pub const fn to_bytes(self) -> [u8; 16] {
-        let time_low = self.time_low.to_le_bytes();
+        let time_low = self.time_low();
 
         [
             time_low[0],
