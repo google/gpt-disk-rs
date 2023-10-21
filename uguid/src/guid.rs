@@ -44,9 +44,8 @@ pub struct Guid {
     // of the type in a `repr(packed)` struct. For more discussion, see
     // https://github.com/rust-lang/rfcs/pull/1358#issuecomment-217582887
     time_low: u32,
-    // For consistency with the above field, use `u16` for these fields.
-    time_mid: u16,
-    time_high_and_version: u16,
+    time_mid: [u8; 2],
+    time_high_and_version: [u8; 2],
     clock_seq_high_and_reserved: u8,
     clock_seq_low: u8,
     node: [u8; 6],
@@ -56,8 +55,8 @@ impl Guid {
     /// GUID with all fields set to zero.
     pub const ZERO: Self = Self {
         time_low: 0,
-        time_mid: 0,
-        time_high_and_version: 0,
+        time_mid: [0, 0],
+        time_high_and_version: [0, 0],
         clock_seq_high_and_reserved: 0,
         clock_seq_low: 0,
         node: [0; 6],
@@ -80,11 +79,11 @@ impl Guid {
                 time_low[2],
                 time_low[3],
             ]),
-            time_mid: u16::from_le_bytes([time_mid[0], time_mid[1]]),
-            time_high_and_version: u16::from_le_bytes([
+            time_mid: [time_mid[0], time_mid[1]],
+            time_high_and_version: [
                 time_high_and_version[0],
                 time_high_and_version[1],
-            ]),
+            ],
             clock_seq_high_and_reserved,
             clock_seq_low,
             node,
@@ -100,14 +99,14 @@ impl Guid {
     /// The little-endian middle field of the timestamp.
     #[must_use]
     pub const fn time_mid(self) -> [u8; 2] {
-        self.time_mid.to_le_bytes()
+        self.time_mid
     }
 
     /// The little-endian high field of the timestamp multiplexed with
     /// the version number.
     #[must_use]
     pub const fn time_high_and_version(self) -> [u8; 2] {
-        self.time_high_and_version.to_le_bytes()
+        self.time_high_and_version
     }
 
     /// The high field of the clock sequence multiplexed with the
@@ -162,14 +161,14 @@ impl Guid {
                 mtry!(parse_byte_from_ascii_str_at(s, 2)),
                 mtry!(parse_byte_from_ascii_str_at(s, 0)),
             ]),
-            time_mid: u16::from_le_bytes([
+            time_mid: [
                 mtry!(parse_byte_from_ascii_str_at(s, 11)),
                 mtry!(parse_byte_from_ascii_str_at(s, 9)),
-            ]),
-            time_high_and_version: u16::from_le_bytes([
+            ],
+            time_high_and_version: [
                 mtry!(parse_byte_from_ascii_str_at(s, 16)),
                 mtry!(parse_byte_from_ascii_str_at(s, 14)),
-            ]),
+            ],
             clock_seq_high_and_reserved: mtry!(parse_byte_from_ascii_str_at(
                 s, 19
             )),
@@ -225,8 +224,8 @@ impl Guid {
             time_low: u32::from_le_bytes([
                 bytes[0], bytes[1], bytes[2], bytes[3],
             ]),
-            time_mid: u16::from_le_bytes([bytes[4], bytes[5]]),
-            time_high_and_version: u16::from_le_bytes([bytes[6], bytes[7]]),
+            time_mid: [bytes[4], bytes[5]],
+            time_high_and_version: [bytes[6], bytes[7]],
             clock_seq_high_and_reserved: bytes[8],
             clock_seq_low: bytes[9],
             node: [
@@ -240,18 +239,16 @@ impl Guid {
     #[must_use]
     pub const fn to_bytes(self) -> [u8; 16] {
         let time_low = self.time_low.to_le_bytes();
-        let time_mid = self.time_mid.to_le_bytes();
-        let time_high_and_version = self.time_high_and_version.to_le_bytes();
 
         [
             time_low[0],
             time_low[1],
             time_low[2],
             time_low[3],
-            time_mid[0],
-            time_mid[1],
-            time_high_and_version[0],
-            time_high_and_version[1],
+            self.time_mid[0],
+            self.time_mid[1],
+            self.time_high_and_version[0],
+            self.time_high_and_version[1],
             self.clock_seq_high_and_reserved,
             self.clock_seq_low,
             self.node[0],
@@ -269,8 +266,8 @@ impl Guid {
     #[must_use]
     pub const fn to_ascii_hex_lower(self) -> [u8; 36] {
         let time_low = self.time_low.to_le_bytes();
-        let time_mid = self.time_mid.to_le_bytes();
-        let time_high_and_version = self.time_high_and_version.to_le_bytes();
+        let time_mid = self.time_mid;
+        let time_high_and_version = self.time_high_and_version;
 
         let mut buf = [0; 36];
         (buf[0], buf[1]) = byte_to_ascii_hex_lower(time_low[3]);
