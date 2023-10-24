@@ -22,12 +22,18 @@ use bytemuck::{Pod, Zeroable};
 
 /// Globally-unique identifier.
 ///
-/// The format is described in Appendix A of the UEFI
-/// Specification. Note that the first three fields are little-endian.
+/// The format is defined in [RFC 4122]. However, unlike "normal" UUIDs
+/// (such as those provided by the [`uuid`] crate), the first three
+/// fields are little-endian. See also [Appendix A] of the UEFI
+/// Specification.
 ///
-/// This type is 4-byte aligned. The UEFI Specification says the type
-/// should be 8-byte aligned, but most C implementations have 4-byte
-/// alignment, so we do the same here for compatibility.
+/// This type is 4-byte aligned. The UEFI Specification says the GUID
+/// type should be 8-byte aligned, but most C implementations have
+/// 4-byte alignment, so we do the same here for compatibility.
+///
+/// [Appendix A]: https://uefi.org/specs/UEFI/2.10/Apx_A_GUID_and_Time_Formats.html
+/// [RFC 4122]: https://datatracker.ietf.org/doc/html/rfc4122
+/// [`uuid`]: https://docs.rs/uuid/latest/uuid
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "bytemuck", derive(Pod, Zeroable))]
 #[repr(C)]
