@@ -7,9 +7,15 @@
 // except according to those terms.
 
 //! Library providing a GUID (Globally Unique Identifier) type. The
-//! format is described in Appendix A of the UEFI
+//! format is defined in [RFC 4122]. However, unlike "normal" UUIDs
+//! (such as those provided by the [`uuid`] crate), the first three
+//! fields are little-endian. See [Appendix A] of the UEFI
 //! Specification. This format of GUID is also used in Microsoft
 //! Windows.
+//!
+//! [Appendix A]: https://uefi.org/specs/UEFI/2.10/Apx_A_GUID_and_Time_Formats.html
+//! [RFC 4122]: https://datatracker.ietf.org/doc/html/rfc4122
+//! [`uuid`]: https://docs.rs/uuid/latest/uuid
 //!
 //! # Features
 //!
