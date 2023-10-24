@@ -139,7 +139,7 @@ macro_rules! guid {
     ($s:literal) => {{
         // Create a temporary const value to force an error in the input
         // to fail at compile time.
-        const g: $crate::Guid = $crate::Guid::parse_or_panic($s);
-        g
+        const G: $crate::Guid = $crate::Guid::parse_or_panic($s);
+        G
     }};
 }
