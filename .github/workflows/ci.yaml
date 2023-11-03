@@ -50,6 +50,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: |
           cargo xtask test_uguid
+          cargo test --examples
 
   test-gpt-disk-types:
     name: Test gpt_disk_types
