@@ -2,6 +2,7 @@
 
 * Added `Variant` enum and `Guid::variant` method.
 * Added `Guid::version` method.
+* Added `Guid::is_zero` method.
 * Conversions of the `time_low` field to/from bytes now treat that field
   as native endian rather than little endian.
 * Fix non-upper-case-globals linter warning.

@@ -90,6 +90,37 @@ impl Guid {
         }
     }
 
+    /// True if all bits are zero, false otherwise.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use uguid::guid;
+    ///
+    /// assert!(guid!("00000000-0000-0000-0000-000000000000").is_zero());
+    /// assert!(!guid!("308bbc16-a308-47e8-8977-5e5646c5291f").is_zero());
+    /// ```
+    #[must_use]
+    pub const fn is_zero(self) -> bool {
+        let b = self.to_bytes();
+        b[0] == 0
+            && b[1] == 0
+            && b[2] == 0
+            && b[3] == 0
+            && b[4] == 0
+            && b[5] == 0
+            && b[6] == 0
+            && b[7] == 0
+            && b[8] == 0
+            && b[9] == 0
+            && b[10] == 0
+            && b[11] == 0
+            && b[12] == 0
+            && b[13] == 0
+            && b[14] == 0
+            && b[15] == 0
+    }
+
     /// The little-endian low field of the timestamp.
     #[must_use]
     pub const fn time_low(self) -> [u8; 4] {
