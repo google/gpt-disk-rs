@@ -114,7 +114,7 @@ mod guid;
 mod util;
 
 pub use error::GuidFromStrError;
-pub use guid::Guid;
+pub use guid::{Guid, Variant};
 
 #[cfg(feature = "std")]
 impl std::error::Error for GuidFromStrError {}

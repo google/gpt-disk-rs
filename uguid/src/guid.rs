@@ -128,6 +128,34 @@ impl Guid {
         self.node
     }
 
+    /// Get the GUID variant.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use uguid::{guid, Variant};
+    ///
+    /// assert_eq!(
+    ///     guid!("308bbc16-a308-47e8-8977-5e5646c5291f").variant(),
+    ///     Variant::Rfc4122
+    /// );
+    /// ```
+    #[must_use]
+    pub const fn variant(self) -> Variant {
+        // Get the 3 most significant bits of `clock_seq_high_and_reserved`.
+        let bits = (self.clock_seq_high_and_reserved & 0b1110_0000) >> 5;
+
+        if (bits & 0b100) == 0 {
+            Variant::ReservedNcs
+        } else if (bits & 0b010) == 0 {
+            Variant::Rfc4122
+        } else if (bits & 0b001) == 0 {
+            Variant::ReservedMicrosoft
+        } else {
+            Variant::ReservedFuture
+        }
+    }
+
     /// Parse a GUID from a string.
     ///
     /// This is functionally the same as [`Self::from_str`], but is
@@ -350,4 +378,22 @@ impl<'de> Deserialize<'de> for Guid {
     {
         deserializer.deserialize_str(DeserializerVisitor)
     }
+}
+
+/// Variant or type of GUID, as defined in [RFC4122].
+///
+/// [RFC4122]: https://datatracker.ietf.org/doc/html/rfc4122#section-4.1.3
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd)]
+pub enum Variant {
+    /// Reserved, NCS backward compatibility.
+    ReservedNcs,
+
+    /// The GUID variant described by RFC4122.
+    Rfc4122,
+
+    /// Reserved, Microsoft Corporation backward compatibility.
+    ReservedMicrosoft,
+
+    /// Reserved for future use.
+    ReservedFuture,
 }
