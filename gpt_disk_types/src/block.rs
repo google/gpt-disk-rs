@@ -200,6 +200,22 @@ impl LbaRangeInclusive {
         let r = self.to_byte_range(block_size)?;
         r.end().checked_sub(*r.start())?.checked_add(1)
     }
+
+    /// Get the number of blocks in the LBA range.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use gpt_disk_types::{Lba, LbaRangeInclusive};
+    ///
+    /// let r = LbaRangeInclusive::new(Lba(1), Lba(2)).unwrap();
+    /// assert_eq!(r.num_blocks(), 2);
+    /// ```
+    #[must_use]
+    pub fn num_blocks(self) -> u64 {
+        // Add one here since the range is inclusive.
+        self.end().to_u64() - self.start.to_u64() + 1
+    }
 }
 
 impl Display for LbaRangeInclusive {
