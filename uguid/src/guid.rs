@@ -156,6 +156,23 @@ impl Guid {
         }
     }
 
+    /// Get the GUID version. This is a sub-type of the variant as
+    /// defined in [RFC4122].
+    ///
+    /// [RFC4122]: https://datatracker.ietf.org/doc/html/rfc4122#section-4.1.3
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use uguid::guid;
+    ///
+    /// assert_eq!(guid!("308bbc16-a308-47e8-8977-5e5646c5291f").version(), 4);
+    /// ```
+    #[must_use]
+    pub const fn version(self) -> u8 {
+        (self.time_high_and_version[1] & 0b1111_0000) >> 4
+    }
+
     /// Parse a GUID from a string.
     ///
     /// This is functionally the same as [`Self::from_str`], but is
