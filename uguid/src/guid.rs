@@ -90,6 +90,39 @@ impl Guid {
         }
     }
 
+    /// Create a version 4 GUID from provided random bytes.
+    ///
+    /// See [RFC 4122 section 4.4][rfc] for the definition of a version
+    /// 4 GUID.
+    ///
+    /// This constructor does not itself generate random bytes, but
+    /// instead expects the caller to provide suitably random bytes.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use uguid::{Guid, Variant};
+    ///
+    /// let guid = Guid::from_random_bytes([
+    ///     104, 192, 95, 215, 120, 33, 249, 1, 102, 21, 171, 84, 233, 204, 68, 176,
+    /// ]);
+    /// assert_eq!(guid.variant(), Variant::Rfc4122);
+    /// assert_eq!(guid.version(), 4);
+    /// ```
+    ///
+    /// [rfc]: https://datatracker.ietf.org/doc/html/rfc4122#section-4.4
+    #[must_use]
+    pub const fn from_random_bytes(mut random_bytes: [u8; 16]) -> Self {
+        // Set the variant in byte 8: set bit 7, clear bit 6.
+        random_bytes[8] &= 0b1011_1111;
+        random_bytes[8] |= 0b1000_0000;
+        // Set the version in byte 7: set the most-significant-nibble to 4.
+        random_bytes[7] &= 0b0000_1111;
+        random_bytes[7] |= 0b0100_1111;
+
+        Self::from_bytes(random_bytes)
+    }
+
     /// True if all bits are zero, false otherwise.
     ///
     /// # Example

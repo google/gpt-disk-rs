@@ -70,6 +70,23 @@ fn test_guid() {
 }
 
 #[test]
+fn test_from_random_bytes() {
+    let random_bytes = [
+        0x68, 0xc0, 0x5f, 0xd7, 0x78, 0x21, 0xf9, 0x01, 0x66, 0x15, 0xab, 0x54,
+        0xe9, 0xcc, 0x44, 0xb0,
+    ];
+    let expected_bytes = [
+        0x68, 0xc0, 0x5f, 0xd7, 0x78, 0x21, 0xf9, 0x4f, 0xa6, 0x15, 0xab, 0x54,
+        0xe9, 0xcc, 0x44, 0xb0,
+    ];
+
+    let guid = Guid::from_random_bytes(random_bytes);
+    assert_eq!(guid.to_bytes(), expected_bytes);
+    assert_eq!(guid.variant(), Variant::Rfc4122);
+    assert_eq!(guid.version(), 4);
+}
+
+#[test]
 fn test_parse_or_panic_success() {
     let _g = Guid::parse_or_panic("01234567-89ab-cdef-0123-456789abcdef");
 }
