@@ -7,7 +7,7 @@
 // except according to those terms.
 
 use core::mem;
-use uguid::{guid, Guid, GuidFromStrError};
+use uguid::{guid, Guid, GuidFromStrError, Variant};
 
 #[test]
 fn test_guid() {
@@ -125,6 +125,40 @@ fn test_guid_error() {
         GuidFromStrError::Hex(10).to_string(),
         "GUID string contains invalid ASCII hex at index 10"
     );
+}
+
+#[test]
+fn test_guid_variant() {
+    assert_eq!(
+        guid!("00000000-0000-0000-0000-000000000000").variant(),
+        Variant::ReservedNcs
+    );
+    assert_eq!(
+        guid!("00000000-0000-0000-8000-000000000000").variant(),
+        Variant::Rfc4122
+    );
+    assert_eq!(
+        guid!("00000000-0000-0000-c000-000000000000").variant(),
+        Variant::ReservedMicrosoft
+    );
+    assert_eq!(
+        guid!("00000000-0000-0000-e000-000000000000").variant(),
+        Variant::ReservedFuture
+    );
+}
+
+#[test]
+fn test_guid_version() {
+    assert_eq!(guid!("00000000-0000-0000-8000-000000000000").version(), 0);
+    assert_eq!(guid!("00000000-0000-1000-8000-000000000000").version(), 1);
+    assert_eq!(guid!("00000000-0000-2000-8000-000000000000").version(), 2);
+    assert_eq!(guid!("00000000-0000-4000-8000-000000000000").version(), 4);
+}
+
+#[test]
+fn test_guid_is_zero() {
+    assert!(guid!("00000000-0000-0000-0000-000000000000").is_zero());
+    assert!(!guid!("308bbc16-a308-47e8-8977-5e5646c5291f").is_zero());
 }
 
 /// Inner module that only imports the `guid!` macro.
