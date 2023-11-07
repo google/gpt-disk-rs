@@ -29,12 +29,16 @@ fn format_bytes(bytes: &[u8]) -> String {
 fn format_guid(guid: Guid) -> String {
     format!(
         "guid: {guid}
+  version: {version}
+  variant: {variant:?} 
   time_low: {time_low}
   time_mid: {time_mid}
   time_high_and_version: {time_high_and_version}
   clock_seq_high_and_reserved: {clock_seq_high_and_reserved}
   clock_seq_low: {clock_seq_low}
   node: {node}",
+        version = guid.version(),
+        variant = guid.variant(),
         time_low = format_bytes(&guid.time_low()),
         time_mid = format_bytes(&guid.time_mid()),
         time_high_and_version = format_bytes(&guid.time_high_and_version()),
