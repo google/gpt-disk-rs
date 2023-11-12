@@ -7,6 +7,7 @@
 // except according to those terms.
 
 mod package;
+mod release;
 mod util;
 
 use package::Package;
@@ -110,11 +111,13 @@ fn test_gpt_disk_io() {
 
 fn main() {
     let args: Vec<_> = env::args().collect();
+    let arg_auto_release = "auto_release";
     let arg_test_all = "test_all";
     let arg_test_uguid = "test_uguid";
     let arg_test_gpt_disk_types = "test_gpt_disk_types";
     let arg_test_gpt_disk_io = "test_gpt_disk_io";
     let actions = &[
+        arg_auto_release,
         arg_test_all,
         arg_test_uguid,
         arg_test_gpt_disk_types,
@@ -126,6 +129,9 @@ fn main() {
     }
 
     let action = &args[1];
+    if action == arg_auto_release {
+        release::auto_release();
+    }
     if action == arg_test_all || action == arg_test_uguid {
         test_uguid();
     }
