@@ -6,12 +6,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use anyhow::{bail, Result};
 use std::process::Command;
 
-pub fn run_cmd(mut cmd: Command) {
+pub fn run_cmd(mut cmd: Command) -> Result<()> {
     println!("Running: {}", format!("{cmd:?}").replace('"', ""));
     let status = cmd.status().expect("failed to launch");
-    if !status.success() {
-        panic!("command failed: {status}");
+    if status.success() {
+        Ok(())
+    } else {
+        bail!("command failed: {status}");
     }
 }

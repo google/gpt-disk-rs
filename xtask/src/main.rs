@@ -52,8 +52,8 @@ fn get_cargo_cmd(
 }
 
 fn test_package(package: &str, features: &[&str]) {
-    run_cmd(get_cargo_cmd(CargoAction::Lint, package, features));
-    run_cmd(get_cargo_cmd(CargoAction::Test, package, features));
+    run_cmd(get_cargo_cmd(CargoAction::Lint, package, features)).unwrap();
+    run_cmd(get_cargo_cmd(CargoAction::Test, package, features)).unwrap();
 }
 
 fn test_uguid() {
