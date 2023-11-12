@@ -6,21 +6,16 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+mod util;
+
 use std::env;
 use std::process::{exit, Command};
+use util::run_cmd;
 
 const FEAT_OPTIONS: [bool; 2] = [false, true];
 const FEAT_BYTEMUCK: &str = "bytemuck";
 const FEAT_SERDE: &str = "serde";
 const FEAT_STD: &str = "std";
-
-fn run_cmd(mut cmd: Command) {
-    println!("Running: {}", format!("{cmd:?}").replace('"', ""));
-    let status = cmd.status().expect("failed to launch");
-    if !status.success() {
-        panic!("command failed: {status}");
-    }
-}
 
 #[derive(Clone, Copy)]
 enum CargoAction {
