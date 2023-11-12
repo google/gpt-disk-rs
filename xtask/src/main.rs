@@ -6,8 +6,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+mod package;
 mod util;
 
+use package::Package;
 use std::env;
 use std::process::{exit, Command};
 use util::run_cmd;
@@ -34,11 +36,11 @@ impl CargoAction {
 
 fn get_cargo_cmd(
     action: CargoAction,
-    package: &str,
+    package: Package,
     features: &[&str],
 ) -> Command {
     let mut cmd = Command::new("cargo");
-    cmd.args([action.as_str(), "--package", package]);
+    cmd.args([action.as_str(), "--package", package.name()]);
     if !features.is_empty() {
         cmd.args(["--features", &features.join(",")]);
     }
@@ -51,7 +53,7 @@ fn get_cargo_cmd(
     cmd
 }
 
-fn test_package(package: &str, features: &[&str]) {
+fn test_package(package: Package, features: &[&str]) {
     run_cmd(get_cargo_cmd(CargoAction::Lint, package, features)).unwrap();
     run_cmd(get_cargo_cmd(CargoAction::Test, package, features)).unwrap();
 }
@@ -71,7 +73,7 @@ fn test_uguid() {
                     features.push(FEAT_STD);
                 }
 
-                test_package("uguid", &features);
+                test_package(Package::Uguid, &features);
             }
         }
     }
@@ -88,7 +90,7 @@ fn test_gpt_disk_types() {
                 features.push(FEAT_STD);
             }
 
-            test_package("gpt_disk_types", &features);
+            test_package(Package::GptDiskTypes, &features);
         }
     }
 }
@@ -102,7 +104,7 @@ fn test_gpt_disk_io() {
     ];
 
     for features in feature_lists {
-        test_package("gpt_disk_io", &features);
+        test_package(Package::GptDiskIo, &features);
     }
 }
 
