@@ -9,12 +9,26 @@
 use anyhow::{bail, Result};
 use std::process::Command;
 
-pub fn run_cmd(mut cmd: Command) -> Result<()> {
+fn print_cmd(cmd: &Command) {
     println!("Running: {}", format!("{cmd:?}").replace('"', ""));
+}
+
+pub fn run_cmd(mut cmd: Command) -> Result<()> {
+    print_cmd(&cmd);
     let status = cmd.status().expect("failed to launch");
     if status.success() {
         Ok(())
     } else {
         bail!("command failed: {status}");
+    }
+}
+
+pub fn get_cmd_stdout(mut cmd: Command) -> Result<Vec<u8>> {
+    print_cmd(&cmd);
+    let output = cmd.output().expect("failed to launch");
+    if output.status.success() {
+        Ok(output.stdout)
+    } else {
+        bail!("command failed: {}", output.status);
     }
 }
