@@ -130,7 +130,7 @@ fn main() {
 
     let action = &args[1];
     if action == arg_auto_release {
-        release::auto_release();
+        release::auto_release().unwrap();
     }
     if action == arg_test_all || action == arg_test_uguid {
         test_uguid();
