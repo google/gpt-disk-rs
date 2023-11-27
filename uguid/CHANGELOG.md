@@ -1,4 +1,4 @@
-# Unreleased
+# 2.2.0
 
 * Added `Variant` enum and `Guid::variant` method.
 * Added `Guid::from_random_bytes` constructor.
