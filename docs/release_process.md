@@ -13,13 +13,16 @@ To release new versions of one or more packages in the workspace:
       functionality. Patch version bumps do not require a change in the
       dependent package. Note that in cargo's version of semver, `0.x.y`
       treats `x` as the major version number.
-   3. Update the changelogs.
+   3. Run `cargo build` to ensure `Cargo.lock` is updated.
+   4. Update the changelogs.
 2. Commit those changes. The commit message subject must start with
    `release:`. Without that prefix, the automatic part of the release
    process will not run.
-3. Push the branch and create a PR.
+3. Push the branch and create a PR. See for example [#158].
 4. When the PR is reviewed and merged, the automatic release process
    will kick off.
+   
+[#158]: https://github.com/google/gpt-disk-rs/pull/158
 
 ## The automatic part
 
