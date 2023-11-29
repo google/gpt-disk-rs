@@ -1,4 +1,4 @@
-# Unreleased
+# 0.16.0
 
 * Bump MSRV to 1.68.
 * Relax the requirements of `BlockIo::read_blocks` and
@@ -12,6 +12,7 @@
   `BlockIoAdapter` instead.
 * Remove `BlockIo::assert_valid_buffer`. Use
   `BlockSize::assert_valid_block_buffer` instead.
+* Update to latest `gpt_disk_types`.
 
 # 0.15.0
 
