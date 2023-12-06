@@ -23,7 +23,7 @@ bytemuck = { workspace = true, features = ["derive"], optional = true }
 serde = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
 
 [dev-dependencies]
-serde_test = "1.0.0"
+serde_test = "1.0.176"
 trybuild = "1.0.80"
 
 [features]
