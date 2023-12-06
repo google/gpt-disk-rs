@@ -20,7 +20,7 @@ repository.workspace = true
 
 [dependencies]
 bytemuck = { workspace = true, features = ["derive"], optional = true }
-crc = "3.0.0"
+crc = "3.0.1"
 uguid = { version = "2.1.0", path = "../uguid" }
 ucs2 = "0.3.2"
 
