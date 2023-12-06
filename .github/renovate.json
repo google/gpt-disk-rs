@@ -6,5 +6,5 @@
   "lockFileMaintenance": {
     "enabled": true
   },
-  "rangeStrategy": "replace"
+  "rangeStrategy": "update-lockfile"
 }
