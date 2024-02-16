@@ -18,7 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo xtask auto_release
+      - run: |
+          cargo install auto-release
+          auto-release --condition subject -p uguid -p gpt_disk_types -p gpt_disk_io
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
