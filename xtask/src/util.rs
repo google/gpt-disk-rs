@@ -22,13 +22,3 @@ pub fn run_cmd(mut cmd: Command) -> Result<()> {
         bail!("command failed: {status}");
     }
 }
-
-pub fn get_cmd_stdout(mut cmd: Command) -> Result<Vec<u8>> {
-    print_cmd(&cmd);
-    let output = cmd.output().expect("failed to launch");
-    if output.status.success() {
-        Ok(output.stdout)
-    } else {
-        bail!("command failed: {}", output.status);
-    }
-}

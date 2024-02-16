@@ -23,10 +23,4 @@ impl Package {
             Self::GptDiskIo => "gpt_disk_io",
         }
     }
-
-    /// The order in which to publish packages. Later packages depend on
-    /// earlier ones.
-    pub fn publish_order() -> &'static [Self] {
-        &[Self::Uguid, Self::GptDiskTypes, Self::GptDiskIo]
-    }
 }
