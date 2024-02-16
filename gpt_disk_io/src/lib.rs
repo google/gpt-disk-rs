@@ -138,8 +138,8 @@ mod block_io;
 mod disk;
 #[cfg(feature = "std")]
 mod std_support;
-// TODO: add alloc feature?
-#[cfg(feature = "std")]
+// TODO: allow some or all of this with just std? And/or add alloc feature?
+#[cfg(feature = "easy")]
 pub mod easy;
 
 // Re-export dependencies.

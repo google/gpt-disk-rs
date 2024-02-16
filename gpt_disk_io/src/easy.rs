@@ -134,9 +134,9 @@ impl Default for DiskBuilder {
     }
 }
 
-enum DiskImpl {}
+// enum DiskImpl {}
 
-pub struct Disk(DiskImpl);
+// pub struct Disk(DiskImpl);
 
 #[derive(Default)]
 pub struct Gpt {
