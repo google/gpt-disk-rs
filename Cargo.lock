@@ -45,9 +45,9 @@ dependencies = [
 
 [[package]]
 name = "crc"
-version = "3.0.1"
+version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86ec7a15cbe22e59248fc7eadb1907dab5ba09372595da4d73dd805ed4417dfe"
+checksum = "af1babde0954990bc132378e0b597e53e8f5370b867d79f31f38ba80776b79f6"
 dependencies = [
  "crc-catalog",
 ]
