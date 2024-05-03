@@ -103,11 +103,8 @@ jobs:
         uses: taiki-e/install-action@cargo-llvm-cov
       - name: Generate code coverage
         run: cargo llvm-cov --all-features --workspace --exclude xtask --lcov --output-path lcov.info
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: lcov.info
-          fail_ci_if_error: true
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
 
   spellcheck:
     runs-on: ubuntu-22.04
