@@ -18,13 +18,13 @@
 //! ```
 //!
 //! 1. The first block of the disk contains a protective MBR. See
-//! [`MasterBootRecord::protective_mbr`].
+//!    [`MasterBootRecord::protective_mbr`].
 //! 2. The second block of the disk contains the primary GPT header. See
-//! [`GptHeader`].
+//!    [`GptHeader`].
 //! 3. Additional blocks after the header contain the partition entry
-//! array. See [`GptPartitionEntry`] and [`GptPartitionEntryArray`].
+//!    array. See [`GptPartitionEntry`] and [`GptPartitionEntryArray`].
 //! 4. At the end of the disk is a secondary GPT header and partition
-//! entry array.
+//!    entry array.
 //!
 //! # Endianness
 //!
