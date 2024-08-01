@@ -32,7 +32,7 @@ jobs:
       - run: rustup default $rust_version
       - uses: Swatinem/rust-cache@v2
       - run: rustc --version
-      - run: cargo test --all-features
+      - run: cargo build -p uguid -p gpt_disk_types -p gpt_disk_io --all-features
 
   check:
     name: Check
