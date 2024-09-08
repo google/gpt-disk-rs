@@ -42,7 +42,7 @@ where
 
     // Debug/Display
     assert!(!format!("{a:?}").is_empty());
-    format!("{a}");
+    let _ = format!("{a}");
 
     // Hash
     let mut hasher = DefaultHasher::new();
