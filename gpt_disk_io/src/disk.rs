@@ -152,10 +152,7 @@ where
 ///
 /// The disk is accessed via an object implementing the [`BlockIo`]
 /// trait, so all reads and writes are on block boundaries. Writes are
-/// not guaranteed to be completed until [`flush`] is called. This
-/// happens automatically when the `Disk` is dropped, but if an error
-/// occurs at that point it will be silently ignored so it is
-/// recommended to call [`flush`] directly before dropping the disk.
+/// not guaranteed to be completed until [`flush`] is called.
 ///
 /// Many of the methods on `Disk` take a `block_buf` argument, which is
 /// a mutable byte buffer with a length of at least one block. (The
@@ -420,17 +417,13 @@ impl<Io: BlockIo> Disk<Io> {
 
     /// Flush any pending writes to the disk.
     ///
-    /// This is called automatically when the disk is dropped, but if an
-    /// error occurs at that point it will be silently ignored. It is
-    /// recommended to call this method directly before dropping the disk.
+    /// It is recommended to call this method directly before dropping the disk.
     pub fn flush(&mut self) -> Result<(), DiskError<Io::Error>> {
         Ok(self.io.flush()?)
     }
-}
 
-impl<Io: BlockIo> Drop for Disk<Io> {
-    fn drop(&mut self) {
-        // Throw away any errors.
-        let _r = self.flush();
+    /// Retrieve the inner IO
+    pub fn io(self) -> Io {
+        self.io
     }
 }
