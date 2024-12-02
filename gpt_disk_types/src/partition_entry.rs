@@ -212,7 +212,7 @@ struct GptPartitionNameCharIter<'a> {
     byte_index: usize,
 }
 
-impl<'a> Iterator for GptPartitionNameCharIter<'a> {
+impl Iterator for GptPartitionNameCharIter<'_> {
     type Item = char;
 
     fn next(&mut self) -> Option<Self::Item> {
