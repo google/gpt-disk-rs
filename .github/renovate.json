@@ -3,8 +3,15 @@
   "extends": [
     "config:recommended"
   ],
+  "rangeStrategy": "update-lockfile",
+  "automerge": true,
   "lockFileMaintenance": {
     "enabled": true
   },
-  "rangeStrategy": "update-lockfile"
+  "packageRules": [
+    {
+      "matchPackageNames": ["crate-ci/typos"],
+      "extends": ["schedule:monthly"]
+    }
+  ]
 }
