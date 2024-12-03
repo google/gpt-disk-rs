@@ -11,16 +11,5 @@ allow = [
   "Apache-2.0",
   "MIT",
   "MPL-2.0",
-  "Unicode-DFS-2016",
-
-  # Needed for xtask only.
-  "ISC",
-  "OpenSSL",
-]
-
-[[licenses.clarify]]
-name = "ring"
-expression = "MIT AND ISC AND OpenSSL"
-license-files = [
-    { path = "LICENSE", hash = 0xbd0eed23 }
+  "Unicode-3.0",
 ]
