@@ -103,7 +103,7 @@ impl<T: ?Sized> Captures<'_, '_> for T {}
 
 /// Error type used by [`Disk`] methods.
 #[allow(clippy::module_name_repetitions)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum DiskError<IoError: Debug + Display> {
     /// The storage buffer is not large enough.
     BufferTooSmall,
