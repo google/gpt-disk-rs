@@ -58,7 +58,7 @@ const fn parse_byte_from_ascii_char_pair(a: u8, b: u8) -> Option<u8> {
         return None;
     };
 
-    Some(a << 4 | b)
+    Some((a << 4) | b)
 }
 
 /// Parse a pair of hexadecimal ASCII characters at position `start` as
