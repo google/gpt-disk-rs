@@ -1,3 +1,7 @@
+# 0.16.1
+
+* Derive `PartialEq` for `DiskError`.
+
 # 0.16.0
 
 * Bump MSRV to 1.68.
