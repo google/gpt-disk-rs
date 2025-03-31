@@ -1,6 +1,7 @@
 # Unreleased
 
 * MSRV increased to 1.81.
+* The `Error` trait is now unconditionally implemented for `GuidFromStrError`.
 
 # 2.2.0
 
