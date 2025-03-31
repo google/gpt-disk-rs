@@ -13,8 +13,10 @@ See also the [`gpt_disk_types`] package.
 
 ## Features
 
-* `std`: Enables the `StdBlockIo` type, as well as `std::error::Error`
-  implementations for all of the error types. Off by default.
+No features are enabled by default.
+
+* `alloc`: Enables `Vec` implementation of `BlockIoAdapter`.
+* `std`: Enables `std::io` implementations of `BlockIoAdapter`.
   
 ## Minimum Supported Rust Version (MSRV)
 

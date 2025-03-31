@@ -22,9 +22,7 @@
 //! # Features
 //!
 //! * `alloc`: Enables [`Vec`] implementation of [`BlockIoAdapter`].
-//! * `std`: Enables [`std::io`] implementations of [`BlockIoAdapter`],
-//!   as well as `std::error::Error` implementations for all of the
-//!   error types. Off by default.
+//! * `std`: Enables [`std::io`] implementations of [`BlockIoAdapter`].
 //!
 //! # Examples
 //!
@@ -136,8 +134,6 @@ extern crate alloc;
 
 mod block_io;
 mod disk;
-#[cfg(feature = "std")]
-mod std_support;
 
 // Re-export dependencies.
 pub use gpt_disk_types;
