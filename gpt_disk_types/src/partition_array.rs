@@ -145,6 +145,8 @@ impl Display for GptPartitionEntryArrayError {
     }
 }
 
+impl core::error::Error for GptPartitionEntryArrayError {}
+
 /// Storage for a GPT partition entry array.
 #[allow(missing_debug_implementations)]
 pub struct GptPartitionEntryArray<'a> {

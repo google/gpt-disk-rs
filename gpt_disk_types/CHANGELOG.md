@@ -1,6 +1,7 @@
 # Unreleased
 
 * MSRV increased to 1.81.
+* The `Error` trait is now unconditionally implemented for all error types.
 
 # 0.16.0
 
