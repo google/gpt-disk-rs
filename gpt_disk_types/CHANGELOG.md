@@ -1,3 +1,7 @@
+# Unreleased
+
+* MSRV increased to 1.81.
+
 # 0.16.0
 
 * Bump MSRV to 1.68.

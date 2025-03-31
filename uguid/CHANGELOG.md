@@ -1,3 +1,7 @@
+# Unreleased
+
+* MSRV increased to 1.81.
+
 # 2.2.0
 
 * Added `Variant` enum and `Guid::variant` method.

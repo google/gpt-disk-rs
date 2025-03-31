@@ -19,7 +19,7 @@ resolver = "2"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/google/gpt-disk-rs"
-rust-version = "1.68"
+rust-version = "1.81"
 
 [workspace.dependencies]
 bytemuck = { version = "1.4.0", default-features = false }
