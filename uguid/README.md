@@ -14,7 +14,7 @@ No features are enabled by default.
 
 * `bytemuck`: Implements bytemuck's `Pod` and `Zeroable` traits for `Guid`.
 * `serde`: Implements serde's `Serialize` and `Deserialize` traits for `Guid`.
-* `std`: Provides `std::error::Error` implementation for the error type.
+* `std`: Currently has no effect.
 
 ## Minimum Supported Rust Version (MSRV)
 

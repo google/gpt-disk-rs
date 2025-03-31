@@ -10,10 +10,6 @@ use core::fmt::{self, Display, Formatter};
 
 /// Error type for [`Guid::try_parse`] and [`Guid::from_str`].
 ///
-/// If the `std` feature is enabled, this type implements the [`Error`]
-/// trait.
-///
-/// [`Error`]: std::error::Error
 /// [`Guid::from_str`]: core::str::FromStr::from_str
 /// [`Guid::try_parse`]: crate::Guid::try_parse
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
@@ -53,3 +49,5 @@ impl Display for GuidFromStrError {
         }
     }
 }
+
+impl core::error::Error for GuidFromStrError {}

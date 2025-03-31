@@ -23,7 +23,7 @@
 //!
 //! * `bytemuck`: Implements bytemuck's `Pod` and `Zeroable` traits for `Guid`.
 //! * `serde`: Implements serde's `Serialize` and `Deserialize` traits for `Guid`.
-//! * `std`: Provides `std::error::Error` implementation for the error type.
+//! * `std`: Currently has no effect.
 //!
 //! # Examples
 //!
@@ -82,7 +82,7 @@
 //! );
 //! ```
 
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![warn(missing_copy_implementations)]
 #![warn(missing_debug_implementations)]
@@ -115,9 +115,6 @@ mod util;
 
 pub use error::GuidFromStrError;
 pub use guid::{Guid, Variant};
-
-#[cfg(feature = "std")]
-impl std::error::Error for GuidFromStrError {}
 
 /// Create a [`Guid`] from a string at compile time.
 ///
