@@ -15,11 +15,6 @@ use gpt_disk_types::{BlockSize, Lba};
 use alloc::vec::Vec;
 
 /// Error type used for `&[u8]` and `&mut [u8]` versions of [`BlockIoAdapter`].
-///
-/// If the `std` feature is enabled, this type implements the [`Error`]
-/// trait.
-///
-/// [`Error`]: std::error::Error
 #[allow(clippy::module_name_repetitions)]
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub enum SliceBlockIoError {
@@ -59,6 +54,8 @@ impl Display for SliceBlockIoError {
         }
     }
 }
+
+impl core::error::Error for SliceBlockIoError {}
 
 #[track_caller]
 fn buffer_byte_range_opt(

@@ -146,6 +146,11 @@ where
     }
 }
 
+impl<IoError> core::error::Error for DiskError<IoError> where
+    IoError: Debug + Display
+{
+}
+
 /// Read and write GPT disk data.
 ///
 /// The disk is accessed via an object implementing the [`BlockIo`]
