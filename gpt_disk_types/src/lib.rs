@@ -44,8 +44,7 @@
 //! * `bytemuck`: Implements bytemuck's `Pod` and `Zeroable` traits for
 //!   many of the types in this crate. Also enables some methods that
 //!   rely on byte access.
-//! * `std`: Provides `std::error::Error` implementations for all of the
-//!   error types. Off by default.
+//! * `std`: Currently has no effect.
 //!
 //! # Examples
 //!
@@ -85,7 +84,7 @@
 //! };
 //! ```
 
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![warn(missing_copy_implementations)]
 #![warn(missing_debug_implementations)]
@@ -107,8 +106,6 @@ mod mbr;
 mod num;
 mod partition_array;
 mod partition_entry;
-#[cfg(feature = "std")]
-mod std_support;
 
 // Re-export dependencies.
 pub use crc;

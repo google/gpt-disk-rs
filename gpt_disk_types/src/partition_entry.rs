@@ -241,11 +241,6 @@ impl Iterator for GptPartitionNameCharIter<'_> {
 }
 
 /// Error type for [`GptPartitionName::set_char`].
-///
-/// If the `std` feature is enabled, this type implements the [`Error`]
-/// trait.
-///
-/// [`Error`]: std::error::Error
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub enum GptPartitionNameSetCharError {
     /// Character index is outside the range `0..36`.
@@ -265,6 +260,8 @@ impl Display for GptPartitionNameSetCharError {
         }
     }
 }
+
+impl core::error::Error for GptPartitionNameSetCharError {}
 
 /// Human readable partition label encoded as a null-terminated UCS-2
 /// string.
@@ -347,11 +344,6 @@ impl Default for GptPartitionName {
 }
 
 /// Error type for [`GptPartitionName::from_str`].
-///
-/// If the `std` feature is enabled, this type implements the [`Error`]
-/// trait.
-///
-/// [`Error`]: std::error::Error
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub enum GptPartitionNameFromStrError {
     /// Input string is too long.
@@ -378,6 +370,8 @@ impl From<ucs2::Error> for GptPartitionNameFromStrError {
         }
     }
 }
+
+impl core::error::Error for GptPartitionNameFromStrError {}
 
 impl FromStr for GptPartitionName {
     type Err = GptPartitionNameFromStrError;
@@ -466,11 +460,6 @@ impl Display for GptPartitionEntry {
 }
 
 /// Error returned by [`GptPartitionEntrySize::new`].
-///
-/// If the `std` feature is enabled, this type implements the [`Error`]
-/// trait.
-///
-/// [`Error`]: std::error::Error
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub struct GptPartitionEntrySizeError;
 
@@ -479,6 +468,8 @@ impl Display for GptPartitionEntrySizeError {
         f.write_str("partition entry size must be a power of two greater than or equal to 128")
     }
 }
+
+impl core::error::Error for GptPartitionEntrySizeError {}
 
 /// Size in bytes of entries in the partition entry array.
 ///
