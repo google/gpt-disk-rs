@@ -24,8 +24,7 @@ jobs:
     name: MSRV
     runs-on: ubuntu-latest
     env:
-      rust_version: "1.68"
-      CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+      rust_version: "1.81"
     steps:
       - uses: actions/checkout@v4
       - run: rustup toolchain install $rust_version --profile minimal --no-self-update
