@@ -8,7 +8,7 @@
 
 [package]
 name = "gpt_disk_types"
-version = "0.16.0"
+version = "0.16.1"
 categories = ["data-structures", "embedded", "no-std"]
 description = "GPT (GUID Partition Table) disk data types no_std library"
 keywords = ["disk", "gpt", "no_std", "partition", "uefi"]

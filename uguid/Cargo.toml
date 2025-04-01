@@ -8,7 +8,7 @@
 
 [package]
 name = "uguid"
-version = "2.2.0"
+version = "2.2.1"
 categories = ["data-structures", "embedded", "no-std"]
 description = "GUID (Globally Unique Identifier) no_std library"
 keywords = ["gpt", "guid", "no_std", "uefi"]

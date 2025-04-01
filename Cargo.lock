@@ -63,7 +63,7 @@ checksum = "a8d1add55171497b4705a648c6b583acafb01d58050a51727785f0b2c8e0a2b2"
 
 [[package]]
 name = "gpt_disk_io"
-version = "0.16.1"
+version = "0.16.2"
 dependencies = [
  "bytemuck",
  "gpt_disk_types",
@@ -71,7 +71,7 @@ dependencies = [
 
 [[package]]
 name = "gpt_disk_types"
-version = "0.16.0"
+version = "0.16.1"
 dependencies = [
  "bytemuck",
  "crc",
@@ -267,7 +267,7 @@ dependencies = [
 
 [[package]]
 name = "uguid"
-version = "2.2.0"
+version = "2.2.1"
 dependencies = [
  "bytemuck",
  "serde",
