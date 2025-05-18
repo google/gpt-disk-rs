@@ -2,6 +2,6 @@ error[E0080]: evaluation of constant value failed
   --> tests/ui/guid_len.rs:12:14
    |
 12 |     let _g = guid!("1234");
-   |              ^^^^^^^^^^^^^ the evaluated program panicked at 'GUID string has wrong length (expected 36 bytes)', $DIR/tests/ui/guid_len.rs:12:14
+   |              ^^^^^^^^^^^^^ evaluation panicked: GUID string has wrong length (expected 36 bytes)
    |
    = note: this error originates in the macro `guid` (in Nightly builds, run with -Z macro-backtrace for more info)
