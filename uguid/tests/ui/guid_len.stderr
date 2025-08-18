@@ -1,7 +1,7 @@
-error[E0080]: evaluation of constant value failed
+error[E0080]: evaluation panicked: GUID string has wrong length (expected 36 bytes)
   --> tests/ui/guid_len.rs:12:14
    |
 12 |     let _g = guid!("1234");
-   |              ^^^^^^^^^^^^^ evaluation panicked: GUID string has wrong length (expected 36 bytes)
+   |              ^^^^^^^^^^^^^ evaluation of `main::G` failed here
    |
    = note: this error originates in the macro `guid` (in Nightly builds, run with -Z macro-backtrace for more info)
