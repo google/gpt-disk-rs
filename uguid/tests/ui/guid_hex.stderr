@@ -1,7 +1,7 @@
-error[E0080]: evaluation of constant value failed
+error[E0080]: evaluation panicked: GUID string contains one or more invalid characters
   --> tests/ui/guid_hex.rs:12:14
    |
 12 |     let _g = guid!("g1234567-89ab-cdef-0123-456789abcdef");
-   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation panicked: GUID string contains one or more invalid characters
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ evaluation of `main::G` failed here
    |
    = note: this error originates in the macro `guid` (in Nightly builds, run with -Z macro-backtrace for more info)
