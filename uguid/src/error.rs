@@ -12,9 +12,10 @@ use core::fmt::{self, Display, Formatter};
 ///
 /// [`Guid::from_str`]: core::str::FromStr::from_str
 /// [`Guid::try_parse`]: crate::Guid::try_parse
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub enum GuidFromStrError {
     /// Input has the wrong length, expected 36 bytes.
+    #[default]
     Length,
 
     /// Input is missing a separator (`-`) at this byte index.
@@ -22,12 +23,6 @@ pub enum GuidFromStrError {
 
     /// Input contains invalid ASCII hex at this byte index.
     Hex(u8),
-}
-
-impl Default for GuidFromStrError {
-    fn default() -> Self {
-        Self::Length
-    }
 }
 
 impl Display for GuidFromStrError {
