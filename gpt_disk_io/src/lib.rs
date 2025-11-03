@@ -118,7 +118,7 @@
 //! [`EFI_BLOCK_IO_PROTOCOL`]: https://uefi.org/specs/UEFI/2.10/13_Protocols_Media_Access.html#block-i-o-protocol
 
 #![cfg_attr(not(feature = "std"), no_std)]
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 #![warn(missing_docs)]
 #![warn(trivial_casts)]
 #![warn(trivial_numeric_casts)]
