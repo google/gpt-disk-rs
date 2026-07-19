@@ -235,7 +235,7 @@ impl Display for GptHeader {
         write!(f, ", alternate_lba: {}", self.alternate_lba)?;
         write!(f, ", first_usable_lba: {}", self.first_usable_lba)?;
         write!(f, ", last_usable_lba: {}", self.last_usable_lba)?;
-        write!(f, ", disk_guid: {}", &{ self.disk_guid })?;
+        write!(f, ", disk_guid: {}", { self.disk_guid })?;
         write!(f, ", partition_entry_lba: {}", self.partition_entry_lba)?;
         write!(
             f,
