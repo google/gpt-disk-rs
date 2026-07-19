@@ -447,8 +447,8 @@ impl GptPartitionEntry {
 impl Display for GptPartitionEntry {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         f.write_str("GptPartitionEntry { ")?;
-        write!(f, "partition_type_guid: {}", &{ self.partition_type_guid })?;
-        write!(f, ", unique_partition_guid: {}", &{
+        write!(f, "partition_type_guid: {}", { self.partition_type_guid })?;
+        write!(f, ", unique_partition_guid: {}", {
             self.unique_partition_guid
         })?;
         write!(f, ", starting_lba: {}", self.starting_lba)?;
