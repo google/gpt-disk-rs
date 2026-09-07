@@ -85,7 +85,10 @@ impl<Io: BlockIo> Iterator for GptPartitionEntryIter<'_, '_, Io> {
         if let Some(entry) = self.read_current_entry() {
             Some(entry)
         } else {
-            let next_lba = Lba(self.current_lba.to_u64() + 1);
+            let next_lba = match self.current_lba.to_u64().checked_add(1) {
+                Some(v) => Lba(v),
+                None => return Some(Err(DiskError::Overflow)),
+            };
             if let Err(err) = self.set_current_lba(next_lba) {
                 Some(Err(err))
             } else {
