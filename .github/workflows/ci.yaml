@@ -16,6 +16,8 @@ on:
 
 name: CI
 
+permissions: {}
+
 env:
   RUSTFLAGS: "-D warnings"
 
