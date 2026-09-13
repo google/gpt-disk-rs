@@ -6,8 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use crate::util::{byte_to_ascii_hex_lower, parse_byte_from_ascii_str_at};
 use crate::GuidFromStrError;
+use crate::util::{byte_to_ascii_hex_lower, parse_byte_from_ascii_str_at};
 use core::fmt::{self, Display, Formatter};
 use core::str::{self, FromStr};
 
@@ -197,7 +197,7 @@ impl Guid {
     /// # Example
     ///
     /// ```
-    /// use uguid::{guid, Variant};
+    /// use uguid::{Variant, guid};
     ///
     /// assert_eq!(
     ///     guid!("308bbc16-a308-47e8-8977-5e5646c5291f").variant(),

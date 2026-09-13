@@ -11,7 +11,7 @@ mod util;
 
 use package::Package;
 use std::env;
-use std::process::{exit, Command};
+use std::process::{Command, exit};
 use util::run_cmd;
 
 const FEAT_OPTIONS: [bool; 2] = [false, true];

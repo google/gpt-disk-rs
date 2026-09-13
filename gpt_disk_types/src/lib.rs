@@ -51,7 +51,7 @@
 //! Construct a GPT header:
 //!
 //! ```
-//! use gpt_disk_types::{guid, Crc32, GptHeader, LbaLe, U32Le};
+//! use gpt_disk_types::{Crc32, GptHeader, LbaLe, U32Le, guid};
 //!
 //! let header = GptHeader {
 //!     header_crc32: Crc32(U32Le::from_u32(0xa4877843)),
@@ -70,7 +70,7 @@
 //! Construct a GPT partition entry:
 //!
 //! ```
-//! use gpt_disk_types::{guid, GptPartitionEntry, GptPartitionType, LbaLe};
+//! use gpt_disk_types::{GptPartitionEntry, GptPartitionType, LbaLe, guid};
 //!
 //! let entry = GptPartitionEntry {
 //!     partition_type_guid: GptPartitionType(guid!(
@@ -110,7 +110,7 @@ mod partition_entry;
 // Re-export dependencies.
 pub use crc;
 pub use ucs2;
-pub use uguid::{guid, Guid, GuidFromStrError};
+pub use uguid::{Guid, GuidFromStrError, guid};
 
 pub use block::{BlockSize, Lba, LbaLe, LbaRangeInclusive};
 pub use crc32::Crc32;

@@ -7,7 +7,7 @@
 // except according to those terms.
 
 use core::mem;
-use uguid::{guid, Guid, GuidFromStrError, Variant};
+use uguid::{Guid, GuidFromStrError, Variant, guid};
 
 #[test]
 fn test_guid() {

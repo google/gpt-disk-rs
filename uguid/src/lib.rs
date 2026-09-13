@@ -121,7 +121,7 @@ pub use guid::{Guid, Variant};
 /// # Examples
 ///
 /// ```
-/// use uguid::{guid, Guid};
+/// use uguid::{Guid, guid};
 /// assert_eq!(
 ///     guid!("01234567-89ab-cdef-0123-456789abcdef"),
 ///     Guid::new(

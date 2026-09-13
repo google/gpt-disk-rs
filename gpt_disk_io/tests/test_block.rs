@@ -54,17 +54,21 @@ fn test_lba_range_inclusive() {
         .unwrap()
     );
     // Start is not on a block boundary.
-    assert!(LbaRangeInclusive::from_byte_range(
-        514..=512 + 512 + (512 - 1),
-        block_size
-    )
-    .is_none());
+    assert!(
+        LbaRangeInclusive::from_byte_range(
+            514..=512 + 512 + (512 - 1),
+            block_size
+        )
+        .is_none()
+    );
     // End is not on a block boundary.
-    assert!(LbaRangeInclusive::from_byte_range(
-        512..=512 + 512 + (512 - 2),
-        block_size
-    )
-    .is_none());
+    assert!(
+        LbaRangeInclusive::from_byte_range(
+            512..=512 + 512 + (512 - 2),
+            block_size
+        )
+        .is_none()
+    );
 }
 
 #[test]
