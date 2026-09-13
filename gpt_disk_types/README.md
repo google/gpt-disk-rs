@@ -24,7 +24,7 @@ No features are enabled by default.
   
 ## Minimum Supported Rust Version (MSRV)
 
-The current MSRV is 1.81.
+The current MSRV is 1.85.
 
 ## License
 
