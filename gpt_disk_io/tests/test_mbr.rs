@@ -94,7 +94,8 @@ signature: 0x3412
     assert_eq!(mbr.to_string(), expected.replace('\n', " "));
 
     mbr.boot_strap_code[0] = 1;
-    assert!(mbr
-        .to_string()
-        .starts_with("MasterBootRecord { boot_strap_code: <non-zero>,"));
+    assert!(
+        mbr.to_string()
+            .starts_with("MasterBootRecord { boot_strap_code: <non-zero>,")
+    );
 }

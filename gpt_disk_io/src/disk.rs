@@ -300,7 +300,7 @@ impl<Io: BlockIo> Disk<Io> {
         mut block_buf: &'buf mut [u8],
     ) -> Result<
         impl Iterator<Item = Result<GptPartitionEntry, DiskError<Io::Error>>>
-            + Captures<'disk, 'buf>,
+        + Captures<'disk, 'buf>,
         DiskError<Io::Error>,
     > {
         block_buf = self.clip_block_buf_size(block_buf)?;

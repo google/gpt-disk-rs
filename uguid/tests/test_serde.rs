@@ -9,7 +9,7 @@
 #![cfg(feature = "serde")]
 
 use serde_test::Token;
-use uguid::{guid, Guid};
+use uguid::{Guid, guid};
 
 #[test]
 fn test_serde() {
@@ -27,5 +27,6 @@ fn test_serde() {
 
     serde_test::assert_de_tokens_error::<Guid>(
         &[Token::U64(1234)],
-        "invalid type: integer `1234`, expected a string in the format \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"");
+        "invalid type: integer `1234`, expected a string in the format \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"",
+    );
 }

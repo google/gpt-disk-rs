@@ -15,7 +15,7 @@ use core::fmt::{self, Display, Formatter};
 use core::mem;
 
 #[cfg(feature = "bytemuck")]
-use bytemuck::{bytes_of, Pod, Zeroable};
+use bytemuck::{Pod, Zeroable, bytes_of};
 
 /// GPT header signature.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
@@ -68,14 +68,14 @@ impl GptHeaderRevision {
     #[allow(clippy::missing_panics_doc)]
     #[must_use]
     pub fn major(self) -> u16 {
-        u16::from_le_bytes(self.0 .0[2..4].try_into().unwrap())
+        u16::from_le_bytes(self.0.0[2..4].try_into().unwrap())
     }
 
     /// Get the minor part of the version.
     #[allow(clippy::missing_panics_doc)]
     #[must_use]
     pub fn minor(self) -> u16 {
-        u16::from_le_bytes(self.0 .0[0..2].try_into().unwrap())
+        u16::from_le_bytes(self.0.0[0..2].try_into().unwrap())
     }
 }
 

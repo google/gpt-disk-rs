@@ -6,7 +6,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use std::process::Command;
 
 fn print_cmd(cmd: &Command) {

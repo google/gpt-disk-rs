@@ -7,7 +7,7 @@
 // except according to those terms.
 
 use crate::{
-    guid, Guid, GuidFromStrError, LbaLe, LbaRangeInclusive, U16Le, U64Le,
+    Guid, GuidFromStrError, LbaLe, LbaRangeInclusive, U16Le, U64Le, guid,
 };
 use core::fmt::{self, Display, Formatter};
 use core::num::NonZeroU32;
@@ -98,14 +98,14 @@ impl GptPartitionAttributes {
     pub const LEGACY_BIOS_BOOTABLE_BIT: u8 = 2;
 
     fn get_bit(self, bit: u8) -> bool {
-        self.0 .0[0] & (1 << bit) != 0
+        self.0.0[0] & (1 << bit) != 0
     }
 
     fn set_bit(&mut self, bit: u8, set: bool) {
         if set {
-            self.0 .0[0] |= 1 << bit;
+            self.0.0[0] |= 1 << bit;
         } else {
-            self.0 .0[0] &= !(1 << bit);
+            self.0.0[0] &= !(1 << bit);
         }
     }
 
@@ -159,15 +159,15 @@ impl GptPartitionAttributes {
     /// depends on [`GptPartitionEntry::partition_type_guid`].
     #[must_use]
     pub fn type_specific_attributes(self) -> U16Le {
-        U16Le([self.0 .0[6], self.0 .0[7]])
+        U16Le([self.0.0[6], self.0.0[7]])
     }
 
     /// Set bits `48..=63`. These bits are reserved for custom use by
     /// the partition type, so their meaning depends on
     /// [`GptPartitionEntry::partition_type_guid`].
     pub fn update_type_specific_attributes(&mut self, attrs: U16Le) {
-        self.0 .0[6] = attrs.0[0];
-        self.0 .0[7] = attrs.0[1];
+        self.0.0[6] = attrs.0[0];
+        self.0.0[7] = attrs.0[1];
     }
 }
 

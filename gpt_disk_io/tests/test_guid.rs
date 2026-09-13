@@ -9,7 +9,7 @@
 mod common;
 
 use common::check_derives;
-use gpt_disk_types::{guid, Guid, GuidFromStrError};
+use gpt_disk_types::{Guid, GuidFromStrError, guid};
 
 #[test]
 fn test_guid() {

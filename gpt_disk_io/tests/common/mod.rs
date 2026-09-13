@@ -9,7 +9,7 @@
 use core::fmt::{Debug, Display};
 use core::hash::Hash;
 use gpt_disk_types::{
-    guid, Crc32, GptHeader, GptPartitionEntry, GptPartitionType, LbaLe, U32Le,
+    Crc32, GptHeader, GptPartitionEntry, GptPartitionType, LbaLe, U32Le, guid,
 };
 use std::collections::hash_map::DefaultHasher;
 

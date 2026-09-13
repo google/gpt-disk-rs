@@ -61,10 +61,13 @@ fn test_header_impls() {
 
     let mut header = create_primary_header();
 
-    assert_eq!(header.to_string(), "GptHeader { signature: Signature(\"EFI PART\"), revision: 0x00010000, header_size: 92, header_crc32: 0xa4877843, my_lba: 1, alternate_lba: 8191, first_usable_lba: 34, last_usable_lba: 8158, disk_guid: 57a7feb6-8cd5-4922-b7bd-c78b0914e870, partition_entry_lba: 2, number_of_partition_entries: 128, size_of_partition_entry: 128, partition_entry_array_crc32: 0x9206adff }");
+    assert_eq!(
+        header.to_string(),
+        "GptHeader { signature: Signature(\"EFI PART\"), revision: 0x00010000, header_size: 92, header_crc32: 0xa4877843, my_lba: 1, alternate_lba: 8191, first_usable_lba: 34, last_usable_lba: 8158, disk_guid: 57a7feb6-8cd5-4922-b7bd-c78b0914e870, partition_entry_lba: 2, number_of_partition_entries: 128, size_of_partition_entry: 128, partition_entry_array_crc32: 0x9206adff }"
+    );
 
     // Test invalid signature.
-    header.signature.0 .0[0] = 0xef;
+    header.signature.0.0[0] = 0xef;
     assert!(header.to_string().starts_with(
         "GptHeader { signature: Signature(Invalid: 0x54524150204946ef),"
     ));
