@@ -1,3 +1,8 @@
+# Unreleased
+
+* Handle potential arithmetic overflow in `GptPartitionEntryIter`.
+* MSRV increased to 1.85.
+
 # 0.16.2
 
 * MSRV increased to 1.81.

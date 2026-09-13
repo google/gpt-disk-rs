@@ -24,7 +24,7 @@ jobs:
     name: MSRV
     runs-on: ubuntu-latest
     env:
-      rust_version: "1.81"
+      rust_version: "1.85"
     steps:
       - uses: actions/checkout@v7
       - run: rustup toolchain install $rust_version --profile minimal --no-self-update
