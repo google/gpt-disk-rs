@@ -1,4 +1,4 @@
-# Unreleased
+# 0.17.0
 
 * Handle potential arithmetic overflow in `GptPartitionEntryIter`.
 * MSRV increased to 1.85.
