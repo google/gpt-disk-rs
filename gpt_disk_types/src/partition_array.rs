@@ -17,6 +17,16 @@ use {
     core::ops::Range,
 };
 
+/// Offset for a GptPartitionEntry
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
+pub struct GptPartitionEntryOffset {
+    /// Logical block containing the entry.
+    pub lba: Lba,
+
+    /// Byte offset from the start of the logical block.
+    pub byte_offset: u64,
+}
+
 /// Disk layout of a GPT partition entry array.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub struct GptPartitionEntryArrayLayout {
@@ -110,6 +120,40 @@ impl GptPartitionEntryArrayLayout {
         block_size: BlockSize,
     ) -> Option<usize> {
         self.num_bytes_rounded_to_block(block_size)?.try_into().ok()
+    }
+
+    /// Get the offset of a GptPartitionEntry at `index` for this layout
+    /// with this `block_size`.
+    ///
+    /// Returns `None` if overflow occurs or if `index` >= [`num_entries`].
+    ///
+    /// [`num_entries`]: Self::num_entries
+    #[must_use]
+    pub fn get_entry_offset(
+        &self,
+        block_size: BlockSize,
+        index: u32,
+    ) -> Option<GptPartitionEntryOffset> {
+        if index >= self.num_entries {
+            return None;
+        }
+
+        let entry_size = self.entry_size.to_u64();
+        let entries_per_block = block_size.to_u64().checked_div(entry_size)?;
+
+        // lba = start_lba + (index \ entries_per_block)
+        let lba_offset = u64::from(index).checked_div(entries_per_block)?;
+        let lba = self.start_lba.to_u64().checked_add(lba_offset)?;
+
+        // byte_offset = (index % entries_per_block) * entry_size
+        let byte_offset = u64::from(index)
+            .checked_rem(entries_per_block)?
+            .checked_mul(entry_size)?;
+
+        Some(GptPartitionEntryOffset {
+            lba: Lba(lba),
+            byte_offset: byte_offset,
+        })
     }
 }
 
