@@ -242,7 +242,10 @@ impl MasterBootRecord {
     /// See section 5.2.3 "Protective MBR" of the UEFI Specification.
     #[must_use]
     pub fn protective_mbr(num_blocks: u64) -> Self {
-        let size_in_lba = u32::try_from(num_blocks).unwrap_or(0xffff_ffff);
+        // The partition covers the whole disk except for the MBR
+        // block. If that doesn't fit in 32 bits, use 0xffff_ffff.
+        let size_in_lba =
+            u32::try_from(num_blocks.saturating_sub(1)).unwrap_or(0xffff_ffff);
 
         Self {
             boot_strap_code: [0; 440],
@@ -260,7 +263,7 @@ impl MasterBootRecord {
                     )
                     .unwrap_or(Chs([0xff, 0xff, 0xff])),
                     starting_lba: U32Le::from_u32(1),
-                    size_in_lba: U32Le::from_u32(size_in_lba - 1),
+                    size_in_lba: U32Le::from_u32(size_in_lba),
                 },
                 MbrPartitionRecord::default(),
                 MbrPartitionRecord::default(),
