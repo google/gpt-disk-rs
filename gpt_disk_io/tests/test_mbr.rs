@@ -99,3 +99,21 @@ signature: 0x3412
             .starts_with("MasterBootRecord { boot_strap_code: <non-zero>,")
     );
 }
+
+#[test]
+fn test_protective_mbr_size_in_lba() {
+    let size_in_lba = |num_blocks: u64| {
+        MasterBootRecord::protective_mbr(num_blocks).partitions[0]
+            .size_in_lba
+            .to_u32()
+    };
+
+    // The size is the number of blocks minus one (the MBR block).
+    assert_eq!(size_in_lba(8192), 8191);
+    assert_eq!(size_in_lba(0xffff_ffff), 0xffff_fffe);
+    assert_eq!(size_in_lba(0x1_0000_0000), 0xffff_ffff);
+
+    // If the size doesn't fit, it is set to 0xffff_ffff.
+    assert_eq!(size_in_lba(0x1_0000_0001), 0xffff_ffff);
+    assert_eq!(size_in_lba(0x2_0000_0000), 0xffff_ffff);
+}
