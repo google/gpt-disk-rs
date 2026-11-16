@@ -198,10 +198,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "target-tuple"
-version = "1.0.2"
+name = "target-triple"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "876fef147edbcbddc8ac5cbbba92c7b86519e314e86638596c09673b2ed01e7f"
+checksum = "c3a6bfce3d99adfa72d24750a61f782f3036a81e7f86d8841ee1326deaebd171"
 
 [[package]]
 name = "termcolor"
@@ -253,15 +253,15 @@ checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
 
 [[package]]
 name = "trybuild"
-version = "1.0.123"
+version = "1.0.119"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5dc7029163734745d9a24da4e1c74122e719d5045495c2d8d55c4cc2f6055fdf"
+checksum = "4c5c9f7b7b1a048dd2bebdb7260b0cc71ec5587b19352fa5c3cd9e1c067103f0"
 dependencies = [
  "glob",
  "serde",
  "serde_derive",
  "serde_json",
- "target-tuple",
+ "target-triple",
  "termcolor",
  "toml",
 ]
